@@ -1,0 +1,9 @@
+spring:
+  profiles:
+#    active: bb
+#    active: dev
+    active: blank
+
+logging:
+  file:
+    path: classpath:logback-spring-${spring.profiles.active}.xml
