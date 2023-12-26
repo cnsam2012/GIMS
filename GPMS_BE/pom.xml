@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>me.chang</groupId>
-	<artifactId>GPMS</artifactId>
+	<artifactId>GPMS_BE</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>GPMS</name>
 	<description>GPMS</description>

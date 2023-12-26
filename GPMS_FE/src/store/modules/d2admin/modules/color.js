@@ -6,8 +6,8 @@ export default {
   namespaced: true,
   state: {
     // 颜色
-    value: process.env.VUE_APP_ELEMENT_COLOR
-    // value: '#3fb355'
+    // value: process.env.VUE_APP_ELEMENT_COLOR
+    value: '#3fb355'
   },
   actions: {
     /**

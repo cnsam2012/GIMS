@@ -2,6 +2,7 @@ package me.chang.gpms.ctrler.api;
 
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import me.chang.gpms.util.R;
@@ -14,10 +15,11 @@ import java.util.HashMap;
 
 @RestController
 @Tag(name = "DFC", description = "Demo Fetch Controller")
-@CrossOrigin
 public class DemoFetchController {
     @RequestMapping(value = "_df", method = {RequestMethod.GET, RequestMethod.POST})
     @Operation(summary = "Contains demo data")
+    @CrossOrigin
+    @SecurityRequirement(name = "ticket")
     public R demoFetch(HttpServletResponse resp) {
         var data = new HashMap<String, Object>();
 
