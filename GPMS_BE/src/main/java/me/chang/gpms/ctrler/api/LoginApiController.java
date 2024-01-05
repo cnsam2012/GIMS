@@ -5,12 +5,15 @@ import com.google.code.kaptcha.Producer;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import me.chang.gpms.pojo.ro.RegisterRo;
+import me.chang.gpms.util.HostHolder;
+import me.chang.gpms.util.constant.GPMSResponseCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import me.chang.gpms.pojo.User;
 import me.chang.gpms.pojo.ro.LoginUserRo;
 import me.chang.gpms.service.UserService;
-import me.chang.gpms.util.BbUtil;
+import me.chang.gpms.util.GPMSUtil;
 import me.chang.gpms.util.R;
 import me.chang.gpms.util.RedisKeyUtil;
 import me.chang.gpms.util.constant.BbExpiredSeconds;
@@ -21,9 +24,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
+
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
@@ -36,33 +41,42 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RestController
 @Tag(description = "Login Api Controller", name = "LAC")
+@CrossOrigin
 public class LoginApiController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private Producer kaptchaProducer;
+    private final Producer kaptchaProducer;
 
-    @Autowired
-    private RedisTemplate redisTemplate;
+    private final RedisTemplate redisTemplate;
+
+    private final HostHolder hostHolder;
 
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
+    @Autowired
+    public LoginApiController(UserService userService, Producer kaptchaProducer, RedisTemplate redisTemplate, HostHolder hostHolder) {
+        this.userService = userService;
+        this.kaptchaProducer = kaptchaProducer;
+        this.redisTemplate = redisTemplate;
+        this.hostHolder = hostHolder;
+    }
+
     /**
      * 注册用户
      *
-     * @param user
+     * @param rr
      * @param resp
      * @return
      */
     @PostMapping("api/register")
     public R register(
             @RequestBody
-            User user,
+            RegisterRo rr,
             HttpServletResponse resp
     ) {
+        var user = User.getUserByRr(rr);
         Map<String, Object> map = userService.register(user);
         Map<String, Object> data = new HashMap<>();
         if (map == null || map.isEmpty()) {
@@ -98,7 +112,7 @@ public class LoginApiController {
         BufferedImage image = kaptchaProducer.createImage(text); // 生成图片
 
         // 验证码的归属者
-        String kaptchaOwner = BbUtil.generateUUID();
+        String kaptchaOwner = GPMSUtil.generateUUID();
         Cookie cookie = new Cookie("kaptchaOwner", kaptchaOwner);
         cookie.setMaxAge(60);
         cookie.setPath(contextPath);
@@ -157,7 +171,7 @@ public class LoginApiController {
             @RequestBody
             LoginUserRo user,
             HttpServletResponse response,
-            @CookieValue("kaptchaOwner")
+            @CookieValue(value = "kaptchaOwner", required = false)
             String kaptchaOwner
     ) {
         var username = user.getUsername();
@@ -191,21 +205,30 @@ public class LoginApiController {
 
         if (map.containsKey("ticket")) {
             // 账号和密码均正确，则服务端会生成 ticket，浏览器通过 cookie 存储 ticket
-            Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
+            var ticketStr = map.get("ticket").toString();
+            Cookie cookie = new Cookie("ticket", ticketStr);
             cookie.setPath(contextPath); // cookie 有效范围
             cookie.setMaxAge(expiredSeconds);
             response.addCookie(cookie);
-            var status = HttpStatus.SC_OK;
-            response.setStatus(status);
-//            return BbUtil.getJSONString(status, "login_success");
-            return R.ok(status, "登录成功");
+            // 添加登录用户信息
+            User userLogined = userService.findUserByName(user.getUsername());
+            data.put("userinfo", userLogined);
+            data.put("ticket", ticketStr);
+            return R.ok(
+                    GPMSResponseCode.OK.value(),
+                    "登录成功",
+                    data
+            );
         } else {
             data.put("usernameMsg", map.get("usernameMsg"));
             data.put("passwordMsg", map.get("passwordMsg"));
             var status = HttpStatus.SC_BAD_REQUEST;
             response.setStatus(status);
-//            return BbUtil.getJSONString(status, "login_failed", data);
-            return R.error(status, "登录失败", data);
+            return R.error(
+                    GPMSResponseCode.CLIENT_ERROR.value(),
+                    "登录失败",
+                    data
+            );
         }
 
     }
@@ -224,7 +247,8 @@ public class LoginApiController {
         userService.logout(ticket);
         SecurityContextHolder.clearContext();
         var status = HttpStatus.SC_OK;
-        return R.ok(status, username + " 已退出");
+        log.info("{} logged out", username);
+        return R.ok(status, username + " logged out");
     }
 
     /**
@@ -321,6 +345,16 @@ public class LoginApiController {
         }
     }
 
+    @PostMapping("api/getLoginUserInfo")
+    @ResponseBody
+    public R getLoginUserInfo() {
+        var loginUser = hostHolder.getUser();
+        log.info(String.valueOf(loginUser));
+        var data = new HashMap<String, Object>();
+        data.put("loginUser", loginUser);
+        return R.ok("login user got", data);
+    }
+
     /**
      * 检查 邮件 验证码
      *
@@ -341,6 +375,65 @@ public class LoginApiController {
         }
         return "";
     }
-
-
 }
+
+//    /**
+//     * 用户登录，去除验证码验证
+//     *
+//     * @param user
+//     * @param response
+//     * @param kaptchaOwner
+//     * @return
+//     */
+//    @PostMapping("api/loginWithoutCpc")
+//    public R loginWCPC(
+//            @Parameter(required = true)
+//            @RequestBody
+//            LoginUserRo user,
+//            HttpServletResponse response,
+//            @CookieValue(value = "kaptchaOwner", required = false)
+//            String kaptchaOwner
+//    ) {
+//        var username = user.getUsername();
+//        var password = user.getPassword();
+//        var code = user.getCode();
+//        var rememberMe = user.isRememberMe();
+//
+//        Map<String, Object> data = new HashMap<>();
+//
+//        // 检查验证码
+//        String kaptcha = null;
+//        if (StringUtils.isNotBlank(kaptchaOwner)) {
+//            String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
+//            kaptcha = (String) redisTemplate.opsForValue().get(redisKey);
+//        }
+//
+//        // 凭证过期时间（是否记住我）: 7天 & 12小时
+//        var rem = BbExpiredSeconds.REMEMBER_EXPIRED_SECONDS.value();
+//        var def = BbExpiredSeconds.DEFAULT_EXPIRED_SECONDS.value();
+//        int expiredSeconds = rememberMe ? rem : def;
+//
+//        // 验证用户名和密码
+//        Map<String, Object> map = userService.login(username, password, expiredSeconds);
+//
+//        if (map.containsKey("ticket")) {
+//            // 账号和密码均正确，则服务端会生成 ticket，浏览器通过 cookie 存储 ticket
+//            var ticketStr = map.get("ticket").toString();
+//            Cookie cookie = new Cookie("ticket", ticketStr);
+//            cookie.setPath(contextPath); // cookie 有效范围
+//            cookie.setMaxAge(expiredSeconds);
+//            response.addCookie(cookie);
+//            var status = GPMSResponseCode.DEFAULT.value();
+//            User userLogined = userService.findUserByName(user.getUsername());
+//            data.put("userinfo", userLogined);
+//            data.put("ticket", ticketStr);
+//            return R.ok(status, "登录成功", data);
+//        } else {
+//            data.put("usernameMsg", map.get("usernameMsg"));
+//            data.put("passwordMsg", map.get("passwordMsg"));
+//            var status = HttpStatus.SC_BAD_REQUEST;
+//            response.setStatus(status);
+//            return R.error(status, "登录失败", data);
+//        }
+//
+//    }

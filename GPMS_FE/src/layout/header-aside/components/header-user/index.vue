@@ -34,3 +34,20 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.message-logout {
+  .el-button--primary {
+    color: white;
+    background-color: #3fb355;
+    border-color: #3fb355;
+  }
+  .el-button--primary:hover {
+    color: #3fb355;
+    background-color: rgba(63, 179, 85, 0.12);
+  }
+  .el-button:hover {
+    border-color: #3fb355;
+  }
+}
+</style>

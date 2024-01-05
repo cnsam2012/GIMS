@@ -9,7 +9,8 @@ import { errorLog, errorCreate } from './tools'
  */
 function createService () {
   // 创建一个 axios 实例
-  const service = axios.create()
+  const service = axios.create({ withCredentials: true }) // 允许携带cookie
+  // const service = axios.create() // 允许携带cookie
   // 请求拦截
   service.interceptors.request.use(
     config => config,
@@ -57,9 +58,20 @@ function createService () {
     },
     error => {
       const status = get(error, 'response.status')
+      const msg = get(error, 'response.data.msg')
+      const errorMsg = get(error, 'response.data.data')
       switch (status) {
         case 400:
-          error.message = '请求错误'
+          var errorStr = ''
+          if (msg != null) {
+            errorStr = errorStr + msg + ' '
+          }
+          for (const errorMsgKey in errorMsg) {
+            if (errorMsgKey != null && errorMsg[errorMsgKey] != null) {
+              errorStr = errorStr + errorMsg[errorMsgKey] + ' '
+            }
+          }
+          error.message = '请求错误：' + errorStr
           break
         case 401:
           error.message = '未授权，请登录'

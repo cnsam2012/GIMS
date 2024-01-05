@@ -58,6 +58,15 @@ const frameIn = [
         },
         component: _import('my/my')
       },
+      {
+        path: 'TEST_LOGIN',
+        name: 'TEST_LOGIN',
+        meta: {
+          title: '测试登录',
+          auth: true
+        },
+        component: _import('TEST_LOGIN/tel')
+      },
       // 系统 前端日志
       {
         path: 'log',

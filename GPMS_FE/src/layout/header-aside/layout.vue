@@ -27,7 +27,7 @@
           <!--          <d2-header-theme/>-->
           <d2-header-size/>
           <!--          <d2-header-locales/>-->
-          <d2-header-color/>
+<!--          <d2-header-color/>-->
           <d2-header-user/>
         </div>
       </div>
@@ -86,7 +86,7 @@ import d2HeaderUser from './components/header-user'
 import d2HeaderLog from './components/header-log'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import mixinSearch from './mixins/search'
-import d2HeaderColor from './components/header-color/index.vue'
+// import d2HeaderColor from './components/header-color/index.vue'
 // import d2HeaderTheme from './components/header-theme'
 // import d2HeaderLocales from './components/header-locales'
 
@@ -96,7 +96,7 @@ export default {
     mixinSearch
   ],
   components: {
-    d2HeaderColor,
+    // d2HeaderColor,
     d2MenuSide,
     d2MenuHeader,
     d2Tabs,
@@ -163,4 +163,9 @@ export default {
 <style lang="scss">
 // 注册主题
 @import '~@/assets/style/theme/register.scss';
+// 更改顶栏选中颜色
+.theme-d2 .el-menu--horizontal .el-menu-item:not(.is-disabled):hover {
+  color: #3fb355;
+  background-color: rgba(63, 179, 85, 0.12);
+}
 </style>

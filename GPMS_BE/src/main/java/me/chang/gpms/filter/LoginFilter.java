@@ -1,9 +1,8 @@
 package me.chang.gpms.filter;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import me.chang.gpms.service.UserService;
-import me.chang.gpms.util.BbUtil;
+import me.chang.gpms.util.GPMSUtil;
 import me.chang.gpms.util.CookieUtil;
 import me.chang.gpms.util.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Component;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 
 /**
@@ -40,28 +40,16 @@ public class LoginFilter implements Filter {
         String requestURI = request.getRequestURI();
         log.info("requestURI is {}", requestURI);
         String ticket = null;
-        // 对于调用api的请求，从header中取token
-        if (requestURI.indexOf("/api") > -1) {
-            if (ticket == null || StringUtils.isBlank(ticket) || ticket == "null") {
-                ticket = request.getHeader("ticket");
-                log.info("在header中取得ticket: {}", ticket);
-            }
-
-            if (ticket == null || StringUtils.isBlank(ticket) || ticket == "null") {
-                ticket = request.getHeader("Ticket");
-                log.info("在header中取得Ticket: {}", ticket);
-            }
-        } else {
-            // 其他请求从cookie中取header
-            try {
-                ticket = CookieUtil.getValue(request, "ticket");
-                log.info("在cookie中取得ticket: {}", ticket);
-            } catch (Exception e) {
-                log.error(e.toString());
-            }
+        // 从cookie中取header
+        try {
+            ticket = CookieUtil.getValue(request, "ticket");
+            log.info("在cookie中取得ticket: {}", ticket);
+        } catch (Exception e) {
+            log.error(e.toString());
         }
 
-        BbUtil.setContext(ticket, userService, hostHolder);
+
+        GPMSUtil.setContext(ticket, userService, hostHolder);
 
         // 让请求继续向下执行.
         chain.doFilter(request, response);

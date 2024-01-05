@@ -183,3 +183,13 @@ export default {
   }
 }
 </script>
+<style  lang="scss">
+.el-button:focus, .el-button:hover {
+  color: #3fb355;
+  background-color: rgba(63, 179, 85, 0.12);
+}
+.el-dropdown-menu__item:focus, .el-dropdown-menu__item:not(.is-disabled):hover {
+  color: #3fb355;
+  background-color: rgba(63, 179, 85, 0.12);
+}
+</style>

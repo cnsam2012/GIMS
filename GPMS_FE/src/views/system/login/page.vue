@@ -55,15 +55,17 @@
                     v-model="formLogin.code"
                     placeholder="验证码">
                     <template slot="append">
-                      <img class="login-code" src="./image/login-code.png">
+                      <img class="login-code" :src="imgSrc" alt="kaptcha_pic" @click="refreshKaptcha">
+<!--                      <img class="login-code" src="./image/login-code.png" alt="kaptcha_pic" @click="refreshKaptcha">-->
                     </template>
                   </el-input>
                 </el-form-item>
                 <el-button
                   size="default"
                   @click="submit"
-                  type="primary"
-                  class="button-login">
+                  type="success"
+                  class="button-login"
+                >
                   登录
                 </el-button>
               </el-form>
@@ -132,6 +134,7 @@
 import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
 import localeMixin from '@/locales/mixin.js'
+import kaptchaFaild from './image/login-code.png'
 
 export default {
   mixins: [
@@ -164,7 +167,7 @@ export default {
       formLogin: {
         username: '',
         password: '',
-        code: 'V9AM'
+        code: ''
       },
       // 表单校验
       rules: {
@@ -189,13 +192,15 @@ export default {
             trigger: 'blur'
           }
         ]
-      }
+      },
+      imgSrc: kaptchaFaild
     }
   },
   mounted () {
     this.timeInterval = setInterval(() => {
       this.refreshTime()
     }, 1000)
+    this.refreshKaptcha()
   },
   beforeDestroy () {
     clearInterval(this.timeInterval)
@@ -217,6 +222,23 @@ export default {
       this.submit()
     },
     /**
+     * 刷新验证码
+     * @returns {Promise<void>}
+     */
+    async refreshKaptcha () {
+      this.$api.GET_KAPTCHA().then(res => {
+        if (res.type === 'application/json') {
+          console.error(res)
+          console.error('kaptcha got faild')
+        } else if (res) {
+          this.imgSrc = window.URL.createObjectURL(res)
+        } else {
+          console.error(res)
+          console.error('kaptcha got faild')
+        }
+      })
+    },
+    /**
      * @description 提交表单
      */
     // 提交登录信息
@@ -224,11 +246,12 @@ export default {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           // 登录
-          // 注意 这里的演示没有传验证码
-          // 具体需要传递的数据请自行修改代码
           this.login({
             username: this.formLogin.username,
-            password: this.formLogin.password
+            password: this.formLogin.password,
+            code: this.formLogin.code,
+            // 记住我 设置为true
+            rememberMe: true
           })
             .then(() => {
               // 重定向对象不存在则返回顶层路径
@@ -244,7 +267,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .page-login {
   @extend %unable-select;
   $backgroundColor: #F0F2F5;
@@ -307,7 +330,12 @@ export default {
     // 登录按钮
     .button-login {
       width: 100%;
-      background: $color-primary;
+      //background-color: $color-primary;
+    }
+
+    .el-button:hover {
+      width: 100%;
+      background-color: rgba(63, 179, 85, 0.16);
     }
 
     // 输入框左边的图表区域缩窄
@@ -529,4 +557,5 @@ export default {
     }
   }
 }
+
 </style>

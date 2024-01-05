@@ -10,13 +10,12 @@ import me.chang.gpms.pojo.LoginTicket;
 import me.chang.gpms.pojo.User;
 import me.chang.gpms.pojo.ro.WeLoginRo;
 import me.chang.gpms.pojo.vo.WeUserInfoVo;
-import me.chang.gpms.util.BbUtil;
+import me.chang.gpms.util.GPMSUtil;
 import me.chang.gpms.util.MailClient;
 import me.chang.gpms.util.RedisKeyUtil;
 import me.chang.gpms.util.WechatLoginUtil;
 import me.chang.gpms.util.constant.BbActivationStatus;
 import me.chang.gpms.util.constant.BbExpiredSeconds;
-import me.chang.gpms.util.constant.BbUserAuth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -144,6 +143,11 @@ public class UserService {
             return map;
         }
 
+        if (StringUtils.isBlank(String.valueOf(user.getDepartmentId()))) {
+            map.put("depMsg", "部门不能为空");
+            return map;
+        }
+
         // 验证账号是否已存在
         User u = userMapper.selectByName(user.getUsername());
         if (u != null) {
@@ -159,16 +163,21 @@ public class UserService {
         }
 
         // 注册用户
-        user.setSalt(BbUtil.generateUUID().substring(0, 5)); // salt
-        user.setPassword(BbUtil.md5(user.getPassword() + user.getSalt())); // 加盐加密
+        user.setSalt(GPMSUtil.generateUUID().substring(0, 5)); // salt
+        user.setPassword(GPMSUtil.md5(user.getPassword() + user.getSalt())); // 加盐加密
         user.setType(0); // 默认普通用户
         user.setStatus(0); // 默认未激活
-        user.setActivationCode(BbUtil.generateUUID()); // 激活码
+        user.setActivationCode(GPMSUtil.generateUUID()); // 激活码
 
         // 随机头像（用户登录后可以自行修改）
         user.setHeaderUrl(String.format("http://images.nowcoder.com/head/%dt.png", new Random().nextInt(1000)));
         user.setCreateTime(new Date()); // 注册时间
+
+        // 设置部门
+        user.setDepartmentId(user.getDepartmentId());
+
         userMapper.insertUser(user);
+
 
         // 给注册用户发送激活邮件
         Context context = new Context();
@@ -240,7 +249,7 @@ public class UserService {
         }
 
         // 验证密码
-        password = BbUtil.md5(password + user.getSalt());
+        password = GPMSUtil.md5(password + user.getSalt());
         if (!user.getPassword().equals(password)) {
             map.put("passwordMsg", "密码错误");
             return map;
@@ -249,7 +258,7 @@ public class UserService {
         // 用户名和密码均正确，为该用户生成登录凭证
         LoginTicket loginTicket = new LoginTicket();
         loginTicket.setUserId((int) user.getId());
-        loginTicket.setTicket(BbUtil.generateUUID()); // 随机凭证
+        loginTicket.setTicket(GPMSUtil.generateUUID()); // 随机凭证
         loginTicket.setStatus(0); // 设置凭证状态为有效（当用户登出的时候，设置凭证状态为无效）
         loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000)); // 设置凭证到期时间
 
@@ -286,8 +295,9 @@ public class UserService {
 
         String redisKey = RedisKeyUtil.getTicketKey(ticket);
         // TODO
-        log.info("get from redis -- {}", (LoginTicket) redisTemplate.opsForValue().get(redisKey));
-        return (LoginTicket) redisTemplate.opsForValue().get(redisKey);
+        var gfr =  (LoginTicket) redisTemplate.opsForValue().get(redisKey);
+        log.info("get from redis -- {}", gfr);
+        return gfr;
     }
 
     /**
@@ -314,7 +324,7 @@ public class UserService {
     public int updatePassword(int userId, String newPassword) {
         User user = userMapper.selectById(userId);
         // 重新加盐加密
-        newPassword = BbUtil.md5(newPassword + user.getSalt());
+        newPassword = GPMSUtil.md5(newPassword + user.getSalt());
         clearCache(userId);
         return userMapper.updatePassword(userId, newPassword);
     }
@@ -423,7 +433,7 @@ public class UserService {
         }
 
         // 生成6位验证码
-        String randomCode = BbUtil.getRandomCode(6);
+        String randomCode = GPMSUtil.getRandomCode(6);
         // 给注册用户发送激活邮件
         Context context = new Context();
         context.setVariable("email", "您的验证码是 " + randomCode);
@@ -456,7 +466,7 @@ public class UserService {
             map.put("errMsg", "未发现账号");
             return map;
         }
-        final String passwordEncode = BbUtil.md5(password + user.getSalt());
+        final String passwordEncode = GPMSUtil.md5(password + user.getSalt());
         int i = userMapper.updatePassword((int) user.getId(), passwordEncode);
         if (i <= 0) {
             map.put("errMsg", "修改数据库密码错误");
@@ -522,7 +532,7 @@ public class UserService {
         var expiredSeconds = BbExpiredSeconds.REMEMBER_EXPIRED_SECONDS.value();
         LoginTicket loginTicket = new LoginTicket();
         loginTicket.setUserId((int) user.getId());
-        loginTicket.setTicket(BbUtil.generateUUID()); // 随机凭证
+        loginTicket.setTicket(GPMSUtil.generateUUID()); // 随机凭证
         loginTicket.setStatus(0); // 设置凭证状态为有效（当用户登出的时候，设置凭证状态为无效）
         loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000)); // 设置凭证到期时间
 

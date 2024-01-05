@@ -1,9 +1,11 @@
 // 主题名称
 $theme-name: 'd2';
 // 主题背景颜色
-$theme-bg-color: #ebf1f6;
+$theme-bg-color: rgba(73, 138, 86, 0.01);
 // 主题背景图片遮罩
 $theme-bg-mask: rgba(#000, 0);
+
+$--color-primary: #3fb355 !important;
 
 // 消息提示
 $theme-message-info-background-color: $color-bg;

@@ -15,10 +15,10 @@ import java.util.HashMap;
 
 @RestController
 @Tag(name = "DFC", description = "Demo Fetch Controller")
+@CrossOrigin
 public class DemoFetchController {
     @RequestMapping(value = "_df", method = {RequestMethod.GET, RequestMethod.POST})
     @Operation(summary = "Contains demo data")
-    @CrossOrigin
     @SecurityRequirement(name = "ticket")
     public R demoFetch(HttpServletResponse resp) {
         var data = new HashMap<String, Object>();

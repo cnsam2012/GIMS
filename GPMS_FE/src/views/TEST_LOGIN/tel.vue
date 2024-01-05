@@ -2,7 +2,7 @@
   <d2-container>
     <template slot="header">
       <h1>
-        {{ getTimeState() }}这里是header
+        {{ getTimeState() }}这里是测试登录页面
       </h1>
     </template>
     <el-descriptions title="用户信息">
@@ -16,23 +16,31 @@
       <el-descriptions-item label="msg">{{ msg }}</el-descriptions-item>
     </el-descriptions>
     <template>
-      <el-button @click="submit" type="success">TEST</el-button>
+      <el-button @click="submit" type="success">TEST - 登录</el-button>
     </template>
+    <div style="margin-top: 1rem">
+      <el-descriptions title="Kaptcha TEST">
+        <el-descriptions-item label="用户名">okkkk</el-descriptions-item>
+      </el-descriptions>
+      <img :src="imgSrc" alt="wsdwd" @click="refreshKaptcha"/>
+    </div>
     <template slot="footer">footer</template>
   </d2-container>
 </template>
 <script>
-import util from '@/libs/util.js'
 export default {
   data () {
     return {
-      msg: '正在加载...'
+      msg: '正在加载...',
+      imgSrc: './image/login-code.png'
     }
   },
   mounted () {
-    this.timeInterval = setInterval(() => {
-      this.refreshData()
-    }, 30 * 1000)
+    // this.timeInterval = setInterval(() => {
+    //   this.refreshData()
+    // }, 30 * 1000)
+    console.log('MOUNTED')
+    this.refreshKaptcha()
   },
   // beforeDestroy () {
   // },
@@ -42,13 +50,17 @@ export default {
      * @returns {Promise<void>}
      */
     async submit () {
-      console.log('manual refresh')
-      console.log('refreshing data')
+      console.log('trying logging')
       try {
-        const res = await this.$api.DEMO_FETCH()
+        var data = {
+          username: 'cc',
+          password: '2012',
+          code: 'string',
+          rememberMe: true
+        }
+        const res = await this.$api.SYS_USER_LOGIN(data)
         console.log(res)
-        console.log(util.cookies.getAll())
-        this.msg = res.reMsg
+        this.msg = res.userinfo.username
       } catch (error) {
         console.error(error)
       }
@@ -58,14 +70,27 @@ export default {
      * @returns {Promise<void>}
      */
     async refreshData () {
-      console.log('refreshing data')
-      try {
-        const res = await this.$api.DEMO_FETCH()
-        console.log('data got')
-        console.log(res)
-      } catch (error) {
-        console.error(error)
-      }
+      // console.log('refreshing data')
+      // try {
+      //   const res = await this.$api.DEMO_FETCH()
+      //   console.log('data got')
+      //   console.log(res)
+      // } catch (error) {
+      //   console.error(error)
+      // }
+    },
+    async refreshKaptcha () {
+      this.$api.GET_KAPTCHA().then(res => {
+        if (res.type === 'application/json') {
+          console.error(res)
+          console.error('kaptcha got faild')
+        } else if (res) {
+          this.imgSrc = window.URL.createObjectURL(res)
+        } else {
+          console.error(res)
+          console.error('kaptcha got faild')
+        }
+      })
     },
     /**
      * 自适应问候
@@ -94,5 +119,4 @@ export default {
 }
 </script>
 <style>
-
 </style>

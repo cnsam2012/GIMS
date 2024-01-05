@@ -8,10 +8,10 @@ const users = [
 
 export default ({ service, request, serviceForMock, requestForMock, mock, faker, tools }) => ({
   /**
-   * @description 登录
+   * @description 模拟登录
    * @param {Object} data 登录携带的信息
    */
-  SYS_USER_LOGIN (data = {}) {
+  FAKE_SYS_USER_LOGIN (data = {}) {
     // 模拟数据
     mock
       .onAny('/login')
@@ -26,6 +26,32 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
       url: '/login',
       method: 'post',
       data
+    })
+  },
+  /**
+   * 登录
+   * @param data
+   * @returns {*}
+   * @constructor
+   */
+  SYS_USER_LOGIN (data = {}) {
+    // 接口请求
+    return request({
+      url: 'http://localhost:8088/api/login',
+      method: 'post',
+      data
+    })
+  },
+  /**
+   * 注销
+   * @returns {*}
+   * @constructor
+   */
+  SYS_USER_LOGOUT () {
+    // 接口请求
+    return request({
+      url: 'http://localhost:8088/api/logout',
+      method: 'GET'
     })
   }
 })

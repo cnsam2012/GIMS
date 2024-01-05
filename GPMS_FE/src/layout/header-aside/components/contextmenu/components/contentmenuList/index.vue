@@ -41,6 +41,7 @@ export default {
     &:hover {
       background: #ecf5ff;
       color: #66b1ff;
+      //color: #3fb355;
     }
     .d2-contentmenu-item-title {
       margin-left: 10px;

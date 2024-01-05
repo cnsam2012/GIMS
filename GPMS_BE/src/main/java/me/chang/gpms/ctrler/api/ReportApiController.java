@@ -16,7 +16,7 @@ import me.chang.gpms.service.CommentService;
 import me.chang.gpms.service.ReportService;
 import me.chang.gpms.service.LikeService;
 import me.chang.gpms.service.UserService;
-import me.chang.gpms.util.BbUtil;
+import me.chang.gpms.util.GPMSUtil;
 import me.chang.gpms.util.HostHolder;
 import me.chang.gpms.util.R;
 import me.chang.gpms.util.RedisKeyUtil;
@@ -102,7 +102,7 @@ public class ReportApiController {
             // 获取上传文件的名称
             String trueFileName = file.getOriginalFilename();
             String suffix = trueFileName.substring(trueFileName.lastIndexOf("."));
-            String fileName = BbUtil.generateUUID() + suffix;
+            String fileName = GPMSUtil.generateUUID() + suffix;
 
             // 图片存储路径
             File dest = new File(editormdUploadPath + "/" + fileName);
@@ -118,10 +118,10 @@ public class ReportApiController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return BbUtil.getEditorMdJSONString(500, "上传失败", url);
+            return GPMSUtil.getEditorMdJSONString(500, "上传失败", url);
         }
 
-        return BbUtil.getEditorMdJSONString(201, "上传成功", url);
+        return GPMSUtil.getEditorMdJSONString(201, "上传成功", url);
     }
 
     /**

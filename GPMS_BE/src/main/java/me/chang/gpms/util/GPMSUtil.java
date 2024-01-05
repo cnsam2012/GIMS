@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
-public class BbUtil {
+public class GPMSUtil {
 
     /**
      * 生成随机字符串
@@ -107,7 +107,7 @@ public class BbUtil {
         if (ticket != null) {
             // 查询凭证
             LoginTicket loginTicket = userService.findLoginTicket(ticket);
-            // 检查凭证状态（是否有效）以及是否过期
+            // 检查凭证状态（是否有效）以及是否过期  状态为1即为注销
             if (loginTicket != null && loginTicket.getStatus() == 0 && loginTicket.getExpired().after(new Date())) {
                 // 根据凭证查询用户
                 User user = userService.findUserByIdReturnPwd(loginTicket.getUserId());
@@ -169,7 +169,7 @@ public class BbUtil {
         map.put("age", 18);
 
         log.info(getJSONString(0, "ok", map));
-        log.info(BbUtil.generateUUID());
+        log.info(GPMSUtil.generateUUID());
 
         Assertions.assertEquals(1, 1);
     }

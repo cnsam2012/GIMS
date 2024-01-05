@@ -1,8 +1,9 @@
 package me.chang.gpms.config;
 
 import me.chang.gpms.filter.LoginFilter;
-import me.chang.gpms.util.BbUtil;
+import me.chang.gpms.util.R;
 import me.chang.gpms.util.constant.BbUserAuth;
+import me.chang.gpms.util.constant.GPMSResponseCode;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -115,7 +116,9 @@ public class SecurityConfig {
                                 response.setContentType("application/json;charset=utf-8");
                                 PrintWriter writer = response.getWriter();
                                 response.setStatus(HttpStatus.SC_FORBIDDEN);
-                                writer.write(BbUtil.getJSONString(403, "你还没有登录"));
+//                                writer.write(BbUtil.getJSONString(403, "你还没有登录"));
+                                var r = R.error(GPMSResponseCode.CLIENT_NO_LOGIN.value(), "您还没有登录");
+                                writer.write(r.toJsonString());
 //                        } else {
 //                            // 普通请求
 //                            response.sendRedirect(request.getContextPath() + "/login");
@@ -130,7 +133,9 @@ public class SecurityConfig {
                                 response.setContentType("application/json;charset=utf-8");
                                 PrintWriter writer = response.getWriter();
                                 response.setStatus(HttpStatus.SC_FORBIDDEN);
-                                writer.write(BbUtil.getJSONString(403, "你没有访问该功能的权限"));
+//                                writer.write(BbUtil.getJSONString(403, "你没有访问该功能的权限"));
+                                var r = R.error(GPMSResponseCode.CLIENT_NO_AUTHORITY.value(), "您还没有登录");
+                                writer.write(r.toJsonString());
 //                        } else {
 //                            // 普通请求
 //                            response.sendRedirect(request.getContextPath() + "/denied");
@@ -138,11 +143,12 @@ public class SecurityConfig {
                             });
                 }
         );
+
         // Security 底层会默认拦截 /logout 请求，进行退出处理
         // 此处赋予它一个根本不存在的退出路径，使得程序能够执行到我们自己编写的退出代码
         http.logout(
                 (logout) -> {
-                    logout.logoutUrl("/securitylogout");
+                    logout.logoutUrl("/_securitylogout");
                 }
         );
         http.headers(

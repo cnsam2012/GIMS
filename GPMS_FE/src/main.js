@@ -9,8 +9,10 @@ import store from '@/store/index'
 
 // 菜单和路由设置
 import router from './router'
-import { menuHeader, menuAside } from '@/menu'
+import { menuHeader, menuAside, menuSearchSuggest } from '@/menu'
 import { frameInRoutes } from '@/router/routes'
+// import axios from 'axios'
+// axios.defaults.withCredentials = true
 
 // 核心插件
 Vue.use(d2Admin)
@@ -28,7 +30,7 @@ new Vue({
     // 设置侧边栏菜单
     this.$store.commit('d2admin/menu/asideSet', menuAside)
     // 初始化菜单搜索功能
-    this.$store.commit('d2admin/search/init', menuHeader)
+    this.$store.commit('d2admin/search/init', menuSearchSuggest)
   },
   mounted () {
     // 展示系统信息

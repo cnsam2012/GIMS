@@ -1,15 +1,23 @@
 package me.chang.gpms.util;
 
+import cn.hutool.core.util.ObjectUtil;
+import com.alibaba.fastjson.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+
 import java.io.Serializable;
+import java.util.HashMap;
+
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Slf4j
 public class R<T> implements Serializable {
 
     private static final long serialVersionUID = 5187687995319002219L;
@@ -18,6 +26,9 @@ public class R<T> implements Serializable {
     private Boolean success;
     private String msg;
     private T data;
+
+//    public R() {
+//    }
 
     public static <T> R<T> definition(int code, String message, Boolean success, T data) {
         R<T> r = new R<>();
@@ -198,5 +209,37 @@ public class R<T> implements Serializable {
         r.setData(null);
         resp.setStatus(code);
         return r;
+    }
+
+    public String toJsonString() {
+        JSONObject json = new JSONObject();
+        /**
+         *     private Integer code;
+         *     private Boolean success;
+         *     private String msg;
+         *     private T data;
+         */
+        if (ObjectUtil.isNotEmpty(this.code)) {
+            json.put("code", this.code);
+        }
+        if (ObjectUtil.isNotEmpty(this.success)) {
+            json.put("success", this.success);
+        }
+        if (ObjectUtil.isNotEmpty(this.msg)) {
+            json.put("msg", this.msg);
+        }
+        if (ObjectUtil.isNotEmpty(this.data)) {
+            json.put("data", this.data);
+        }
+
+        return json.toJSONString();
+    }
+
+    @Test
+    public void test() {
+        var data = new HashMap<>();
+        data.put("data", 732034);
+        String string = R.ok(123, "456", data).toJsonString();
+        log.info(string);
     }
 }
