@@ -387,7 +387,7 @@ public class UserService {
         list.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                switch ((int) user.getType()) {
+                return switch ((int) user.getType()) {
                     /**
                      * 1-students-学生;
                      * 2-instructors-指导老师;
@@ -395,17 +395,12 @@ public class UserService {
                      * 9-admin-院系管理员;
                      * 99-superuser-超级用户
                      */
-                    case 2:
-                        return GPMSUserAuth.AUTHORITY_INSTRUCTORS.value();
-                    case 3:
-                        return GPMSUserAuth.AUTHORITY_COMPANIES.value();
-                    case 9:
-                        return GPMSUserAuth.AUTHORITY_ADMIN.value();
-                    case 99:
-                        return GPMSUserAuth.AUTHORITY_SU.value();
-                    default:
-                        return GPMSUserAuth.AUTHORITY_STUDENT.value();
-                }
+                    case 2 -> GPMSUserAuth.AUTHORITY_INSTRUCTORS.value();
+                    case 3 -> GPMSUserAuth.AUTHORITY_COMPANIES.value();
+                    case 9 -> GPMSUserAuth.AUTHORITY_ADMIN.value();
+                    case 99 -> GPMSUserAuth.AUTHORITY_SU.value();
+                    default -> GPMSUserAuth.AUTHORITY_STUDENT.value();
+                };
             }
         });
         log.info("取得用户权限 -- {}", user.getType());

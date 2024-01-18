@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.chang.gpms.dao.DepartmentsMapper">
+
+    <sql id="insertFields">
+        <!-- type: 1-Academic_Department-院系部门; 2-companies-实习单位 -->
+        type
+        , name, content, belong_to
+    </sql>
+
+    <sql id="selectFields">
+        id
+        , type, name, content, belong_to
+    </sql>
+
+    <!--根据 Id 查询部门信息-->
+    <select id="selectById" resultType="me.chang.gpms.pojo.Departments">
+        select
+        <include refid="selectFields"></include>
+        from departments
+        where id = #{id}
+    </select>
+
+    <!--根据 Name 查询部门信息-->
+    <select id="selectByName" resultType="me.chang.gpms.pojo.Departments">
+        select
+        <include refid="selectFields"></include>
+        from departments
+        where name = #{name}
+    </select>
+
+    <select id="selectDepartments" resultType="me.chang.gpms.pojo.Departments">
+        select
+        <include refid="selectFields"></include>
+        from departments
+        order by id desc
+        limit #{offset}, #{limit}
+    </select>
+
+
+    <!--插入部门信息-->
+    <insert id="insertDepartment" parameterType="me.chang.gpms.pojo.Departments" keyProperty="id">
+        insert into departments (<include refid="insertFields"></include>)
+        values(#{type}, #{name}, #{content}, #{belongTo})
+    </insert>
+
+    <!--修改部门类型-->
+    <update id="updateType">
+        update departments
+        set type = #{type}
+        where id = #{id}
+    </update>
+
+    <!--修改部门说明-->
+    <update id="updateContent">
+        update departments
+        set content = #{content}
+        where id = #{id}
+    </update>
+
+</mapper>

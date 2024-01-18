@@ -118,7 +118,7 @@ CREATE TABLE `user`  (
   `header_url` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
   `create_time` timestamp NULL DEFAULT NULL,
   `wechat_open_id` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL,
-  `department_id` int NOT NULL,
+  `department_id` int NOT NULL default -1,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `index_username`(`username`(20) ASC) USING BTREE,
   INDEX `index_email`(`email`(20) ASC) USING BTREE

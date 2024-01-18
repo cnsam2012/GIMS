@@ -53,6 +53,11 @@ export const menuHeader = supplementPath([
     path: '/TEST_LOGIN',
     title: '测试登录',
     icon: 'address-card-o'
+  },
+  {
+    path: '/department_management',
+    title: '部门管理',
+    icon: 'building-o'
   }
 ])
 
@@ -94,6 +99,11 @@ export const menuAside = supplementPath([
     path: '/TEST_LOGIN',
     title: '测试登录',
     icon: 'address-card-o'
+  },
+  {
+    path: '/department_management',
+    title: '部门管理',
+    icon: 'building-o'
   }
 ])
 
@@ -107,5 +117,10 @@ export const menuSearchSuggest = supplementPath([
     path: '/TEST_LOGIN',
     title: '测试登录',
     icon: 'address-card-o'
+  },
+  {
+    path: '/department_management',
+    title: '部门管理',
+    icon: 'building-o'
   }
 ])

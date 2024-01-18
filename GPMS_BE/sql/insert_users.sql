@@ -19,7 +19,7 @@ VALUES (1, 'SYSTEM', 'SYSTEM', 'SYSTEM', 'system@banbang.com', 0, 1, NULL,
         '3563733cece74ee4b61b86b0b375987c', 'http://qnvxyvq1p.hd-bkt.clouddn.com/71616bd74fd9418b8b27a67b059ee9e3',
         '2021-02-10 22:29:03', NULL, 1);
 
-INSERT INTO `departments`(`id`,
-                          `type`,
-                          `name`,
-                          `content`)
+-- INSERT INTO `departments`(`id`,
+--                           `type`,
+--                           `name`,
+--                           `content`)

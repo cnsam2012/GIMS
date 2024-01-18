@@ -143,8 +143,6 @@ public class ReportApiController {
 
 
         User user = hostHolder.getUser();
-
-
         if (user == null) {
             var status = HttpStatus.SC_UNAUTHORIZED;
             resp.setStatus(status);

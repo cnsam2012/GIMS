@@ -107,10 +107,8 @@ public class LoginApiController {
     ) {
         // 生成验证码
         String text = kaptchaProducer.createText(); // 生成随机字符
-
         log.info("验证码：" + text);
         BufferedImage image = kaptchaProducer.createImage(text); // 生成图片
-
         // 验证码的归属者
         String kaptchaOwner = GPMSUtil.generateUUID();
         Cookie cookie = new Cookie("kaptchaOwner", kaptchaOwner);
@@ -118,12 +116,9 @@ public class LoginApiController {
         cookie.setPath(contextPath);
         response.addCookie(cookie);
         log.info("验证码属于：{}", kaptchaOwner);
-
-
         // 将验证码存入 redis
         String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
         redisTemplate.opsForValue().set(redisKey, text, 60, TimeUnit.SECONDS);
-
         // 将图片输出给浏览器
         response.setContentType("image/png");
         try {
