@@ -5,19 +5,20 @@
         {{ getTimeState() }}这里是部门管理
       </h1>
     </template>
-    <el-descriptions title="用户信息">
-      <el-descriptions-item label="用户名">kooriookami</el-descriptions-item>
-      <el-descriptions-item label="手机号">18100000000</el-descriptions-item>
-      <el-descriptions-item label="居住地">苏州市</el-descriptions-item>
-      <el-descriptions-item label="备注">
-        <el-tag size="small" type="success">学校</el-tag>
-      </el-descriptions-item>
-      <el-descriptions-item label="联系地址">江苏省苏州市吴中区吴中大道 1188 号</el-descriptions-item>
-      <el-descriptions-item label="msg">{{ msg }}</el-descriptions-item>
-    </el-descriptions>
     <template>
       <el-button @click="submit" type="success">TEST</el-button>
     </template>
+    <!-- d2-crud start here -->
+    <div>
+      <d2-crud-x
+        ref="d2Crud"
+        :columns="columns"
+        :data="data"
+        :loading="loading"
+        :options="options"
+      />
+    </div>
+    <!-- d2-crud end -->
     <template>
     </template>
     <template slot="footer">footer</template>
@@ -25,16 +26,59 @@
 </template>
 <script>
 import util from '@/libs/util.js'
+
 export default {
   data () {
     return {
-      msg: '正在加载...'
+      msg: '正在加载...',
+      columns: [
+        {
+          title: '日期',
+          key: 'date',
+          width: '180'
+        },
+        {
+          title: '姓名',
+          key: 'name',
+          width: '180'
+        },
+        {
+          title: '地址',
+          key: 'address'
+        }
+      ],
+      data: [
+        {
+          date: '2016-05-02',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        },
+        {
+          date: '2016-05-04',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1517 弄'
+        },
+        {
+          date: '2016-05-01',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1519 弄'
+        },
+        {
+          date: '2016-05-03',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1516 弄'
+        }
+      ],
+      loading: true,
+      options: {
+        stripe: true
+      }
     }
   },
   mounted () {
-    this.timeInterval = setInterval(() => {
-      this.refreshData()
-    }, 30 * 1000)
+    // 获取变化后的表格数据
+    console.log(this.$refs.d2Crud.d2CrudData)
+    this.loading = false
   },
   // beforeDestroy () {
   // },

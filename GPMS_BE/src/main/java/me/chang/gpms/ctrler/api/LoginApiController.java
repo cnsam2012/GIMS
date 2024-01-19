@@ -344,10 +344,13 @@ public class LoginApiController {
     @ResponseBody
     public R getLoginUserInfo() {
         var loginUser = hostHolder.getUser();
-        log.info(String.valueOf(loginUser));
         var data = new HashMap<String, Object>();
         data.put("loginUser", loginUser);
-        return R.ok("login user got", data);
+        return R.ok(
+                GPMSResponseCode.OK.value(),
+                "login user got",
+                data
+        );
     }
 
     /**
