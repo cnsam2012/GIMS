@@ -68,13 +68,13 @@ const frameIn = [
         component: _import('TEST_LOGIN/tel')
       },
       {
-        path: 'department_management',
-        name: 'department_management',
+        path: 'departments_management',
+        name: 'departments_management',
         meta: {
           title: '部门管理',
           auth: true
         },
-        component: _import('admin/department_management')
+        component: _import('admin/departments_management')
       },
       // 系统 前端日志
       {

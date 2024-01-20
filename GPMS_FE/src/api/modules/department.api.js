@@ -1,15 +1,14 @@
 export default ({ service, request, serviceForMock, requestForMock, mock, faker, tools }) => ({
   /**
-   * 获取验证码
-   * @returns {*}
-   * @constructor
+   * @description demo接口
+   * @param {Object} data 请求携带的信息
    */
-  GET_KAPTCHA () {
+  FETCH_ALL_DEPARTMENTS (page = {}) {
     return request({
       // url: 'http://localhost:8088/_demofetch',
-      url: '/kaptcha',
+      url: '/department',
       method: 'get',
-      responseType: 'blob'
+      page
     })
   }
 })

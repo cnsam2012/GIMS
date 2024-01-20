@@ -55,7 +55,7 @@ export const menuHeader = supplementPath([
     icon: 'address-card-o'
   },
   {
-    path: '/department_management',
+    path: '/departments_management',
     title: '部门管理',
     icon: 'building-o'
   }
@@ -101,7 +101,7 @@ export const menuAside = supplementPath([
     icon: 'address-card-o'
   },
   {
-    path: '/department_management',
+    path: '/departments_management',
     title: '部门管理',
     icon: 'building-o'
   }
@@ -119,7 +119,7 @@ export const menuSearchSuggest = supplementPath([
     icon: 'address-card-o'
   },
   {
-    path: '/department_management',
+    path: '/departments_management',
     title: '部门管理',
     icon: 'building-o'
   }

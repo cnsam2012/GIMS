@@ -17,7 +17,7 @@ import java.util.HashMap;
 @Tag(name = "DFC", description = "Demo Fetch Controller")
 @CrossOrigin
 public class DemoFetchController {
-    @RequestMapping(value = "_df", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "api/_df", method = {RequestMethod.GET, RequestMethod.POST})
     @Operation(summary = "Contains demo data")
     @SecurityRequirement(name = "ticket")
     public R demoFetch(HttpServletResponse resp) {

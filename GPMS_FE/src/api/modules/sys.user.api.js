@@ -37,7 +37,7 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
   SYS_USER_LOGIN (data = {}) {
     // 接口请求
     return request({
-      url: 'http://localhost:8088/api/login',
+      url: '/login',
       method: 'post',
       data
     })
@@ -50,7 +50,7 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
   SYS_USER_LOGOUT () {
     // 接口请求
     return request({
-      url: 'http://localhost:8088/api/logout',
+      url: '/logout',
       method: 'GET'
     })
   }

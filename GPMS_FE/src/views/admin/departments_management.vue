@@ -40,38 +40,78 @@ export default {
         {
           title: '姓名',
           key: 'name',
-          width: '180'
+          width: '180',
+          // fixed: true,
+          fixed: 'left'
+        },
+        {
+          title: '省份',
+          key: 'province',
+          width: '300'
+        },
+        {
+          title: '市区',
+          key: 'city',
+          width: '300'
         },
         {
           title: '地址',
-          key: 'address'
+          key: 'address',
+          width: '300'
+        },
+        {
+          title: '邮编',
+          key: 'zip'
         }
       ],
       data: [
         {
+          date: '2016-05-03',
+          name: '王小虎',
+          province: '上海',
+          city: '普陀区',
+          address: '上海市普陀区金沙江路 1518 弄',
+          zip: 200333
+        },
+        {
           date: '2016-05-02',
           name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
+          province: '上海',
+          city: '普陀区',
+          address: '上海市普陀区金沙江路 1518 弄',
+          zip: 200333
         },
         {
           date: '2016-05-04',
           name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
+          province: '上海',
+          city: '普陀区',
+          address: '上海市普陀区金沙江路 1518 弄',
+          zip: 200333
         },
         {
           date: '2016-05-01',
           name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
+          province: '上海',
+          city: '普陀区',
+          address: '上海市普陀区金沙江路 1518 弄',
+          zip: 200333
         }
       ],
       loading: true,
       options: {
-        stripe: true
+        // stripe: true,
+        // border: true,
+        rowClassName ({ row, rowIndex }) {
+          if (rowIndex === 1) {
+            return 'warning-row'
+          } else if (rowIndex === 3) {
+            return 'success-row'
+          }
+          return ''
+        }
+        // height: '250',
+
       }
     }
   },
@@ -113,6 +153,9 @@ export default {
         console.error(error)
       }
     },
+    async fetchData () {
+
+    },
     /**
      * 自适应问候
      * @returns {string}
@@ -140,5 +183,11 @@ export default {
 }
 </script>
 <style>
+.el-table .warning-row {
+  background: oldlace;
+}
 
+.el-table .success-row {
+  background: #f0f9eb;
+}
 </style>
