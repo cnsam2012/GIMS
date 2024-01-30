@@ -83,7 +83,7 @@ export default {
       // 加载页面过渡效果设置
       await dispatch('d2admin/transition/load', null, { root: true })
       // 持久化数据加载上次退出时的多页列表
-      await dispatch('d2admin/page/openedLoad', null, { root: true })
+      // await dispatch('d2admin/page/openedLoad', null, { root: true })
       // 持久化数据加载侧边栏配置
       await dispatch('d2admin/menu/asideLoad', null, { root: true })
       // 持久化数据加载全局尺寸
