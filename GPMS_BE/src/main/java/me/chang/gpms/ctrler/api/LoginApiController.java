@@ -20,6 +20,7 @@ import me.chang.gpms.util.constant.BbExpiredSeconds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -115,6 +116,10 @@ public class LoginApiController {
         cookie.setMaxAge(60);
         cookie.setPath(contextPath);
         response.addCookie(cookie);
+
+        var responseCookie = ResponseCookie.from("", "");
+
+
         log.info("验证码属于：{}", kaptchaOwner);
         // 将验证码存入 redis
         String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
@@ -178,10 +183,13 @@ public class LoginApiController {
 
         // 检查验证码
         String kaptcha = null;
+        log.info(" -- 验证码属于：{}", kaptchaOwner);
         if (StringUtils.isNotBlank(kaptchaOwner)) {
             String redisKey = RedisKeyUtil.getKaptchaKey(kaptchaOwner);
             kaptcha = (String) redisTemplate.opsForValue().get(redisKey);
         }
+        log.info(" -- 用户输入验证码：{}", code);
+        log.info(" -- 验证码：{}", kaptcha);
         if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(code) || !kaptcha.equalsIgnoreCase(code)) {
             data.put("codeMsg", "验证码错误");
             var status = HttpStatus.SC_BAD_REQUEST;
@@ -344,6 +352,9 @@ public class LoginApiController {
     @ResponseBody
     public R getLoginUserInfo() {
         var loginUser = hostHolder.getUser();
+        // 去除敏感信息
+        loginUser.setPassword("");
+        loginUser.setSalt("");
         var data = new HashMap<String, Object>();
         data.put("loginUser", loginUser);
         return R.ok(
