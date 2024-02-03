@@ -75,7 +75,7 @@ export default {
         },
         {
           date: '2016-05-02',
-          name: '王小虎',
+          name: '王小2',
           province: '上海',
           city: '普陀区',
           address: '上海市普陀区金沙江路 1518 弄',
@@ -83,7 +83,7 @@ export default {
         },
         {
           date: '2016-05-04',
-          name: '王小虎',
+          name: '王小3',
           province: '上海',
           city: '普陀区',
           address: '上海市普陀区金沙江路 1518 弄',
@@ -91,7 +91,7 @@ export default {
         },
         {
           date: '2016-05-01',
-          name: '王小虎',
+          name: '王小4',
           province: '上海',
           city: '普陀区',
           address: '上海市普陀区金沙江路 1518 弄',
@@ -100,16 +100,16 @@ export default {
       ],
       loading: true,
       options: {
-        // stripe: true,
-        // border: true,
-        rowClassName ({ row, rowIndex }) {
-          if (rowIndex === 1) {
-            return 'warning-row'
-          } else if (rowIndex === 3) {
-            return 'success-row'
-          }
-          return ''
-        }
+        stripe: true,
+        border: true
+        // rowClassName ({ row, rowIndex }) {
+        //   if (rowIndex === 1) {
+        //     return 'warning-row'
+        //   } else if (rowIndex === 3) {
+        //     return 'success-row'
+        //   }
+        //   return ''
+        // }
         // height: '250',
 
       }

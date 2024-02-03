@@ -103,6 +103,7 @@ public class LoginApiController {
      * @param response
      */
     @GetMapping("api/kaptcha")
+    @CrossOrigin
     public void getKaptcha(
             HttpServletResponse response
     ) {
@@ -117,7 +118,8 @@ public class LoginApiController {
         cookie.setPath(contextPath);
         response.addCookie(cookie);
 
-        var responseCookie = ResponseCookie.from("", "");
+        var responseCookie = ResponseCookie.from("", "").sameSite("None");
+
 
 
         log.info("验证码属于：{}", kaptchaOwner);

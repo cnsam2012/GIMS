@@ -2,6 +2,9 @@ server:
   port: 8088
   servlet:
     context-path: /
+    session:
+      cookie:
+        same-site: None
 spring:
   mail:
     default-encoding: UTF-8
