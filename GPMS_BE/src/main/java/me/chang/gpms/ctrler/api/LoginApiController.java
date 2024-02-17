@@ -1,5 +1,6 @@
 package me.chang.gpms.ctrler.api;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.google.code.kaptcha.Producer;
 
 import io.swagger.v3.oas.annotations.Parameter;
@@ -119,7 +120,6 @@ public class LoginApiController {
         response.addCookie(cookie);
 
         var responseCookie = ResponseCookie.from("", "").sameSite("None");
-
 
 
         log.info("验证码属于：{}", kaptchaOwner);
@@ -354,16 +354,23 @@ public class LoginApiController {
     @ResponseBody
     public R getLoginUserInfo() {
         var loginUser = hostHolder.getUser();
-        // 去除敏感信息
-        loginUser.setPassword("");
-        loginUser.setSalt("");
-        var data = new HashMap<String, Object>();
-        data.put("loginUser", loginUser);
-        return R.ok(
-                GPMSResponseCode.OK.value(),
-                "login user got",
-                data
-        );
+        if (ObjectUtil.isNotNull(loginUser)) {
+            // 去除敏感信息
+            loginUser.setPassword("");
+            loginUser.setSalt("");
+            var data = new HashMap<String, Object>();
+            data.put("loginUser", loginUser);
+            return R.ok(
+                    GPMSResponseCode.OK.value(),
+                    "login user got",
+                    data
+            );
+        } else {
+            return R.error(
+                    GPMSResponseCode.CLIENT_ERROR.value(),
+                    "no login user"
+            );
+        }
     }
 
     /**
