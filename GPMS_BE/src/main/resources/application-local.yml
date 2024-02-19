@@ -26,7 +26,7 @@ spring:
     # mysql5 if needed
     #    driver-class-name: com.mysql.jdbc.Driver
     password: gpms87654321
-    url: jdbc:mysql://banbang.ren:3306/cc_gpms_test?characterEncoding=utf-8&useSSL=false&serverTimezone=Hongkong&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://175.178.152.67:3306/cc_gpms_test?characterEncoding=utf-8&useSSL=false&serverTimezone=Hongkong&allowPublicKeyRetrieval=true
     username: gpms
   data:
     #    elasticsearch:
@@ -74,3 +74,11 @@ caffeine:
   reports:
     expire-seconds: 180
     max-size: 15
+qiniu:
+  bucket:
+    header:
+      name: banbang
+      url: http://s0mebygzu.hn-bkt.clouddn.com
+  key:
+    access: u5skkgjubSV1jFUJDCxcD56aLPbxFt0x5Nt9gFHl
+    secret: zwzJu9Adr0ggvLi8ad_6D1mLi_x-JRPuV2PbBubV

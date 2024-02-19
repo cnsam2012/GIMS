@@ -28,6 +28,10 @@ spring:
     elasticsearch:
       cluster-name: community
       cluster-nodes: 127.0.0.1:9300
+    redis:
+      database: 11
+      host: localhost
+      port: 6379
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     password: Banbang.ren87654321
@@ -65,9 +69,5 @@ spring:
             class: org.quartz.simpl.SimpleThreadPool
             threadCount: 5
     scheduler-name: communityScheduler
-  redis:
-    database: 11
-    host: localhost
-    port: 6379
   thymeleaf:
     cache: true
