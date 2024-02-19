@@ -81,14 +81,11 @@ public class UserApiController {
     /**
      * 账号设置信息
      *
-     * @param resp
      * @return
      */
     @GetMapping("setting")
     @Operation(summary = "账号设置信息")
-    public R getSettingPage(
-            HttpServletResponse resp
-    ) {
+    public R getSettingPage() {
         var data = new HashMap<String, Object>();
 
         // 生成上传文件的名称
@@ -161,8 +158,7 @@ public class UserApiController {
     public R updatePassword(
             @RequestBody
             @Parameter(required = true)
-            OldNewPasswordRo onpr,
-            HttpServletResponse resp
+            OldNewPasswordRo onpr
     ) {
         var oldPassword = onpr.getOldPwd();
         var newPassword = onpr.getNewPwd();
@@ -210,7 +206,6 @@ public class UserApiController {
      * 修改用户名
      *
      * @param ur
-     * @param resp
      * @return
      */
     @PutMapping("username")
@@ -218,8 +213,7 @@ public class UserApiController {
     public R updateUsername(
             @RequestBody
             @Parameter(required = true)
-            UsernameRo ur,
-            HttpServletResponse resp
+            UsernameRo ur
     ) {
         User user = hostHolder.getUser();
         var oldName = user.getUsername();
@@ -261,14 +255,12 @@ public class UserApiController {
      * 个人主页（个人数据）
      *
      * @param userId
-     * @param resp
      * @return
      */
     @GetMapping("profile/{userId}")
     @Operation(summary = "个人主页（个人数据）")
     public R getProfilePage(
-            @PathVariable("userId") int userId,
-            HttpServletResponse resp
+            @PathVariable("userId") int userId
     ) {
         var data = new HashMap<String, Object>();
         User user = userService.findUserById(userId);
@@ -308,15 +300,13 @@ public class UserApiController {
      *
      * @param userId
      * @param page
-     * @param resp
      * @return
      */
     @GetMapping("discuss/{userId}")
     @Operation(summary = "进入我的帖子（查询某个用户的帖子列表）")
     public R getMyDiscussPosts(
             @PathVariable("userId") int userId,
-            Page page,
-            HttpServletResponse resp
+            Page page
     ) {
         var data = new HashMap<String, Object>();
         User user = userService.findUserById(userId);
