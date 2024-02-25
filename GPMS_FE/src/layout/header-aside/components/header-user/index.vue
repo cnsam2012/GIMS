@@ -43,7 +43,7 @@ export default {
       console.log('alterPassword')
     },
     alterUsername () {
-      console.log('alterPassword')
+      console.log('alterUsername')
     }
   }
 }

@@ -76,6 +76,15 @@ const frameIn = [
         },
         component: _import('admin/departments_management')
       },
+      {
+        path: 'alterPassword',
+        name: 'alterPassword',
+        meta: {
+          title: '修改密码',
+          auth: true
+        },
+        component: _import('userSettings/password/password')
+      },
       // 系统 前端日志
       {
         path: 'log',
