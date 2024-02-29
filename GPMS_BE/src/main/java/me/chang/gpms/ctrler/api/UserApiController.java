@@ -150,7 +150,6 @@ public class UserApiController {
      * 修改用户密码
      *
      * @param onpr
-     * @param resp
      * @return
      */
     @PutMapping("password")
@@ -167,6 +166,31 @@ public class UserApiController {
         // 验证原密码是否正确
         User user = hostHolder.getUser();
         String md5OldPassword = GPMSUtil.md5(oldPassword + user.getSalt());
+
+        if (
+                oldPassword.isEmpty()
+                        || oldPassword.contains(" ")
+                        || oldPassword.contains("\n")
+                        || oldPassword.contains("\t")
+        ) {
+            data.put("oldPasswordError", "原密码为空或包含空（格）字符");
+//            return R.error(resp, "非法密码", data);
+            return R.error(
+                    GPMSResponseCode.CLIENT_ERROR.value(),
+                    "非法密码",
+                    data
+            );
+        }
+
+        if (newPassword.isEmpty() || oldPassword.contains(" ")) {
+            data.put("newPasswordError", "新密码为空或包含空（格）字符");
+//            return R.error(resp, "非法密码", data);
+            return R.error(
+                    GPMSResponseCode.CLIENT_ERROR.value(),
+                    "非法密码",
+                    data
+            );
+        }
 
         // 注释此段暂时取消判断原密码、验证密码
         if (!user.getPassword().equals(md5OldPassword)) {
@@ -189,7 +213,6 @@ public class UserApiController {
                     "非法密码",
                     data
             );
-
         }
 
         // 修改用户密码
