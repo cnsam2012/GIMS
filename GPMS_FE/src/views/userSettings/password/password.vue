@@ -64,9 +64,9 @@ export default {
       if (value === '') {
         callback(new Error('请输入原密码'))
       } else {
-        if (this.ruleForm.oldPass !== '') {
-          this.$refs.ruleForm.validateField('checkPass')
-        }
+        // if (this.ruleForm.oldPass !== '') {
+        //   this.$refs.ruleForm.validateField('oldPass')
+        // }
         callback()
       }
     }
@@ -195,6 +195,11 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           alert('submit!')
+          var data = {
+            oldPwd: this.ruleForm.oldPass,
+            newPwd: this.ruleForm.pass
+          }
+          console.log(data)
         } else {
           console.log('error submit!!')
           return false

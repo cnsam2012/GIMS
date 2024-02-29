@@ -53,5 +53,18 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
       url: '/logout',
       method: 'GET'
     })
+  },
+  /**
+   * 修改密码
+   * @returns {*}
+   * @constructor
+   */
+  SYS_USER_ALTER_PASSWORD (data = {}) {
+    // 接口请求
+    return request({
+      url: '/user/password',
+      method: 'POST',
+      data
+    })
   }
 })
