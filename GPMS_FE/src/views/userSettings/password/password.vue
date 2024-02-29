@@ -65,7 +65,7 @@ export default {
         callback(new Error('请输入原密码'))
       } else {
         if (this.ruleForm.oldPass !== '') {
-          this.$refs.ruleForm.validateField('oldPass')
+          this.$refs.ruleForm.validateField('checkPass')
         }
         callback()
       }
