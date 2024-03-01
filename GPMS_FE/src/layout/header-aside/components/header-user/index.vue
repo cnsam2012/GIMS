@@ -17,7 +17,6 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-
 export default {
   computed: {
     ...mapState('d2admin/user', [
@@ -41,6 +40,9 @@ export default {
      */
     alterPassword () {
       console.log('alterPassword')
+      this.$router.push({
+        path: 'alterPassword'
+      })
     },
     alterUsername () {
       console.log('alterUsername')
