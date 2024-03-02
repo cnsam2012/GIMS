@@ -40,6 +40,9 @@ export default {
      */
     alterPassword () {
       console.log('alterPassword')
+      this.$router.push({
+        path: 'alterPassword'
+      })
     },
     alterUsername () {
       console.log('alterUsername')
