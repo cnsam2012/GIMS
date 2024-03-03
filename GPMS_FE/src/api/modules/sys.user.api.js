@@ -63,7 +63,7 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
     // 接口请求
     return request({
       url: '/user/password',
-      method: 'POST',
+      method: 'PUT',
       data
     })
   }
