@@ -10,15 +10,26 @@
         <el-descriptions-item label="用户名">{{ username }}</el-descriptions-item>
       </el-descriptions>
     </div>
+
+    <!--    <div style="margin-top: 1rem">-->
+    <!--      <el-input placeholder="请输入原密码" v-model="originPassword" show-password></el-input>-->
+    <!--      <el-input placeholder="请输入新密码" v-model="newPassword" show-password></el-input>-->
+    <!--      <el-input placeholder="请再次输入新密码" v-model="newPasswordConfirm" show-password></el-input>-->
+    <!--    </div>-->
+    <!--    <div>-->
+    <!--      <el-button @click="submit" type="success">修改</el-button>-->
+    <!--    </div>-->
+
     <div style="width: 40%">
-      <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="auto" label-position="left" class="demo-ruleForm">
-        <el-form-item label="原密码" prop="oldPass">
+      <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="auto" label-position="left"
+               class="demo-ruleForm">
+        <el-form-item label="原密码" prop="oldPass" :error="formError.oldPass">
           <el-input type="password" v-model="ruleForm.oldPass" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="新密码" prop="pass">
+        <el-form-item label="新密码" prop="pass" :error="formError.pass">
           <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="确认密码" prop="checkPass">
+        <el-form-item label="确认密码" prop="checkPass" :error="formError.checkPass">
           <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item>
@@ -32,7 +43,20 @@
   </d2-container>
 </template>
 <script>
+import { mapActions, mapState } from 'vuex'
+import api from '@/api'
+import { Loading } from 'element-ui'
+
 export default {
+  computed: {
+    ...mapState('d2admin/user', [
+      'info'
+    ]),
+    ...mapState('d2admin/page', [
+      'opened',
+      'current'
+    ])
+  },
   data () {
     // var checkAge = (rule, value, callback) => {
     //   if (!value) {
@@ -55,7 +79,7 @@ export default {
         callback(new Error('请输入原密码'))
       } else {
         // if (this.ruleForm.oldPass !== '') {
-        //   this.$refs.ruleForm.validateField('oldPass')
+        //   this.$refs.ruleForm.validateField('pass')
         // }
         callback()
       }
@@ -86,50 +110,50 @@ export default {
       ruleForm: {
         pass: '',
         checkPass: '',
-        age: ''
+        oldPass: ''
+      },
+      formError: {
+        pass: '',
+        checkPass: '',
+        oldPass: ''
       },
       rules: {
         oldPass: [
-          { validator: validateOldPass, trigger: 'blur' }
+          {
+            validator: validateOldPass,
+            trigger: 'blur'
+          }
         ],
         pass: [
-          { validator: validatePass, trigger: 'blur' }
+          {
+            validator: validatePass,
+            trigger: 'blur'
+          }
         ],
         checkPass: [
-          { validator: validatePass2, trigger: 'blur' }
+          {
+            validator: validatePass2,
+            trigger: 'blur'
+          }
         ]
       }
     }
   },
-  mounted () {
-    // this.timeInterval = setInterval(() => {
-    //   this.refreshData()
-    // }, 30 * 1000)
-    console.log('MOUNTED')
-    this.refreshKaptcha()
+  async mounted () {
+    this.refreshData()
   },
   // beforeDestroy () {
   // },
   methods: {
-    /**
-     * 按键事件
-     * @returns {Promise<void>}
-     */
-    async submit () {
-      console.log('trying logging')
-      try {
-        var data = {
-          username: 'cc',
-          password: '2012',
-          code: 'string',
-          rememberMe: true
-        }
-        const res = await this.$api.SYS_USER_LOGIN(data)
-        console.log(res)
-        this.msg = res.userinfo.username
-      } catch (error) {
-        console.error(error)
-      }
+    ...mapActions('d2admin/page', [
+      'close'
+    ]),
+    startLoading () { // 使用Element loading-start 方法
+      return Loading.service({
+        lock: true,
+        text: '加载中……',
+        background: 'rgba(0, 0, 0, 0.7)'
+      })
     },
     /**
      * 刷新数据
@@ -137,13 +161,11 @@ export default {
      */
     async refreshData () {
       // console.log('refreshing data')
-      // try {
-      //   const res = await this.$api.DEMO_FETCH()
-      //   console.log('data got')
-      //   console.log(res)
-      // } catch (error) {
-      //   console.error(error)
-      // }
+      try {
+        this.username = this.info.name
+      } catch (error) {
+        console.error(error)
+      }
     },
     async refreshKaptcha () {
       this.$api.GET_KAPTCHA().then(res => {
@@ -158,43 +180,49 @@ export default {
         }
       })
     },
-    /**
-     * 自适应问候
-     * @returns {string}
-     */
-    getTimeState () {
-      // 获取当前时间
-      const timeNow = new Date()
-      // 获取当前小时
-      const hours = timeNow.getHours()
-      // 设置默认文字
-      let state = ''
-      // 判断当前时间段
-      if (hours >= 0 && hours <= 10) {
-        state = '早上好! '
-      } else if (hours > 10 && hours <= 14) {
-        state = '中午好! '
-      } else if (hours > 14 && hours <= 18) {
-        state = '下午好! '
-      } else if (hours > 18 && hours <= 24) {
-        state = '晚上好! '
+    async submitValidate (valid) {
+      const ld = this.startLoading()
+      if (valid) {
+        var data = {
+          oldPwd: this.ruleForm.oldPass,
+          newPwd: this.ruleForm.pass
+        }
+        const alterRes = await api.SYS_USER_ALTER_PASSWORD(data)
+        let oldPasswordError = ''
+        let newPasswordError = ''
+        try {
+          oldPasswordError = alterRes.oldPasswordError
+        } catch (e) {
+          console.info(e)
+        }
+        try {
+          newPasswordError = alterRes.newPasswordError
+        } catch (e) {
+          console.info(e)
+        }
+        if (oldPasswordError) {
+          this.formError.oldPass = oldPasswordError
+        } else if (newPasswordError) {
+          this.formError.pass = newPasswordError
+        } else {
+          this.$alert('修改成功', '提示', {
+            type: 'success',
+            confirmButtonClass: 'el-button el-button--default el-button--small el-button--success'
+          })
+          ld.close()
+          // await this.close({ tagname: this.$route.fullPath }) // TODO 未能正常关闭标签页
+          await this.close({ tagname: '/alterPassword' }) // TODO 未能正常关闭标签页
+        }
+        ld.close()
+      } else {
+        console.log('error submit!!')
+        return false
       }
-      return state
     },
     submitForm (formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          alert('submit!')
-          var data = {
-            oldPwd: this.ruleForm.oldPass,
-            newPwd: this.ruleForm.pass
-          }
-          console.log(data)
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+      this.formError.oldPass = ''
+      this.formError.pass = ''
+      this.$refs[formName].validate((valid) => this.submitValidate(valid))
     },
     resetForm (formName) {
       this.$refs[formName].resetFields()

@@ -179,10 +179,8 @@ public class ReportApiController {
 
     /**
      * 获取所有讨论
-     *
      * @param orderMode
      * @param page
-     * @param resp
      * @return
      */
     @GetMapping("detail/all")
@@ -192,8 +190,7 @@ public class ReportApiController {
             @Parameter(name = "orderMode", description = "默认是 0--按时间排序，可选 1--按分值排序", example = "0")
             int orderMode,
             @Parameter(required = false)
-            Page page,
-            HttpServletResponse resp
+            Page page
     ) {
 
         Map<String, Object> data = new HashMap<>();
@@ -227,7 +224,6 @@ public class ReportApiController {
         data.put("page", page);
 
         var status = HttpStatus.SC_OK;
-        resp.setStatus(status);
 
 
 //        return BbUtil.getJSONString(status, "success", data);

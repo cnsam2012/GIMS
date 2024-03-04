@@ -12,38 +12,39 @@ import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
  */
 @Configuration
 public class QuartzConfig {
-//
-//    /**
-//     * 刷新帖子分数任务
-//     * @return
-//     */
-//    @Bean
-//    public JobDetailFactoryBean postScoreRefreshJobDetail() {
-//        JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
-//
-//        factoryBean.setJobClass(me.chang.gpms.quartz.PostScoreRefreshJob.class);
-//        factoryBean.setName("postScoreRefreshJob");
-//        factoryBean.setGroup("communityJobGroup");
-//        factoryBean.setDurability(true);
-//        factoryBean.setRequestsRecovery(true);
-//
-//        return factoryBean;
-//    }
-//
-//    /**
-//     * 刷新帖子分数触发器
-//     * @return
-//     */
-//    @Bean
-//    public SimpleTriggerFactoryBean postScoreRefreshTrigger(JobDetail postScoreRefreshJobDetail) {
-//        SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
-//
-//        factoryBean.setJobDetail(postScoreRefreshJobDetail);
-//        factoryBean.setName("postScoreRefreshTrigger");
-//        factoryBean.setGroup("communityTriggerGroup");
+
+    /**
+     * 连接保活任务
+     * @return
+     */
+    @Bean
+    public JobDetailFactoryBean mysqlConnectionRefreshJobDetail() {
+        JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
+
+        factoryBean.setJobClass(me.chang.gpms.quartz.MysqlConnectionRefreshJob.class);
+        factoryBean.setName("mysqlConnectionRefreshJob");
+        factoryBean.setGroup("gpmsJobGroup");
+        factoryBean.setDurability(true);
+        factoryBean.setRequestsRecovery(true);
+
+        return factoryBean;
+    }
+
+    /**
+     * 连接保活触发器
+     * @return
+     */
+    @Bean
+    public SimpleTriggerFactoryBean postScoreRefreshTrigger(JobDetail mysqlConnectionRefreshJobDetail) {
+        SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+
+        factoryBean.setJobDetail(mysqlConnectionRefreshJobDetail);
+        factoryBean.setName("mysqlConnectionRefreshTrigger");
+        factoryBean.setGroup("gpmsTriggerGroup");
 //        factoryBean.setRepeatInterval(1000 * 60 * 5); // 5分钟刷新一次
-//        factoryBean.setJobDataMap(new JobDataMap());
-//
-//        return factoryBean;
-//    }
+        factoryBean.setRepeatInterval(1000 * 60 * 1); // 1 min
+        factoryBean.setJobDataMap(new JobDataMap());
+
+        return factoryBean;
+    }
 }

@@ -6,7 +6,7 @@
 
     <sql id="selectFields">
         id
-        , user_id, title, content, type, status, create_time, comment_count, score
+        , user_id, title, content, type, status, create_time, score
 -- id
 -- user_id
 -- title
@@ -21,7 +21,7 @@
 
     <sql id="insertFields">
         user_id
-        , title, content, type, status, create_time, comment_count, score
+        , title, content, type, status, create_time, score
     </sql>
 
     <sql id="logicDelete">
@@ -79,7 +79,6 @@
         #{type},
         #{status},
         #{createTime},
-        #{comment_count},
         #{score}
         )
     </insert>
@@ -92,12 +91,12 @@
         <include refid="logicDelete"></include>
     </select>
 
-    <update id="updateCommentCount">
-        update report
-        set comment_count = #{commentCount}
-        where id = #{id}
-        <include refid="logicDelete"></include>
-    </update>
+<!--    <update id="updateCommentCount">-->
+<!--        update report-->
+<!--        set comment_count = #{commentCount}-->
+<!--        where id = #{id}-->
+<!--        <include refid="logicDelete"></include>-->
+<!--    </update>-->
 
     <!--修改报告类型：1-周记; 2-月记; 3-总结-->
     <update id="updateType">

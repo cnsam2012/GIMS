@@ -104,6 +104,7 @@ export default {
      */
     isTabClosable (page) {
       return page.name !== 'index'
+      // return true
     },
     /**
      * @description 右键菜单功能点击
