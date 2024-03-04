@@ -47,11 +47,15 @@ function createService () {
           default:
             var codeStr = code + ''
             if (codeStr[0] === '4') {
-              errorCreate(`client error [ code: ${dataAxios.code} ] ${dataAxios.msg}: ${response.config.url}`)
+              if (dataAxios.data) {
+                console.error(dataAxios.data)
+                return dataAxios.data
+              }
+              errorCreate(`客户端错误 code:${dataAxios.code} ${dataAxios.msg}: ${response.config.url}`)
               break
             }
             // 不是正确的 code
-            errorCreate(`[ uncorrected code: ${dataAxios.code}  ]${dataAxios.msg}: ${response.config.url}`)
+            errorCreate(`[ 未知错误 code: ${dataAxios.code}  ]${dataAxios.msg}: ${response.config.url}`)
             break
         }
       }
