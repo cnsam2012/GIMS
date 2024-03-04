@@ -10,16 +10,6 @@
         <el-descriptions-item label="用户名">{{ username }}</el-descriptions-item>
       </el-descriptions>
     </div>
-
-<!--    <div style="margin-top: 1rem">-->
-<!--      <el-input placeholder="请输入原密码" v-model="originPassword" show-password></el-input>-->
-<!--      <el-input placeholder="请输入新密码" v-model="newPassword" show-password></el-input>-->
-<!--      <el-input placeholder="请再次输入新密码" v-model="newPasswordConfirm" show-password></el-input>-->
-<!--    </div>-->
-<!--    <div>-->
-<!--      <el-button @click="submit" type="success">修改</el-button>-->
-<!--    </div>-->
-
     <div style="width: 40%">
       <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="auto" label-position="left" class="demo-ruleForm">
         <el-form-item label="原密码" prop="oldPass">
