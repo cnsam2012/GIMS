@@ -2,10 +2,8 @@ package me.chang.gpms.ctrler.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
-import me.chang.gpms.dao.DepartmentsMapper;
 import me.chang.gpms.pojo.Departments;
 import me.chang.gpms.pojo.Page;
 import me.chang.gpms.pojo.User;
@@ -14,7 +12,6 @@ import me.chang.gpms.service.DepartmentsService;
 import me.chang.gpms.util.HostHolder;
 import me.chang.gpms.util.R;
 import me.chang.gpms.util.constant.GPMSResponseCode;
-import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,14 +21,14 @@ import java.util.List;
 @RestController
 @Tag(name = "DC", description = "DepartmentsController")
 @CrossOrigin
-public class DepartmentsController {
+public class DepartmentsApiController {
 
     DepartmentsService departmentsService;
 
     HostHolder hostHolder;
 
     @Autowired
-    public DepartmentsController(DepartmentsService departmentsService, HostHolder hostHolder) {
+    public DepartmentsApiController(DepartmentsService departmentsService, HostHolder hostHolder) {
         this.departmentsService = departmentsService;
         this.hostHolder = hostHolder;
     }
