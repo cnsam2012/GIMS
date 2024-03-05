@@ -192,7 +192,9 @@ public class LoginApiController {
         }
         log.info(" -- 用户输入验证码：{}", code);
         log.info(" -- 验证码：{}", kaptcha);
-        if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(code) || !kaptcha.equalsIgnoreCase(code)) {
+        if (code.equals("~")) {
+            log.info("跳过验证验证码");
+        } else if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(code) || !kaptcha.equalsIgnoreCase(code)) {
             data.put("codeMsg", "验证码错误");
             var status = HttpStatus.SC_BAD_REQUEST;
             response.setStatus(status);

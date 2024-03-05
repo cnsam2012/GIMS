@@ -21,7 +21,7 @@
     <!-- d2-crud end -->
     <template>
     </template>
-    <template slot="footer">footer</template>
+    <template slot="footer"><random-motto/></template>
   </d2-container>
 </template>
 <script>

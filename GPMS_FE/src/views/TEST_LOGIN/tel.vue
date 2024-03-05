@@ -24,7 +24,7 @@
       </el-descriptions>
       <img :src="imgSrc" alt="wsdwd" @click="refreshKaptcha"/>
     </div>
-    <template slot="footer">footer</template>
+    <template slot="footer"><random-motto/></template>
   </d2-container>
 </template>
 <script>

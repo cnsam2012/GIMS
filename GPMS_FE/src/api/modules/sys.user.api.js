@@ -56,6 +56,7 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
   },
   /**
    * 修改密码
+   * @param data
    * @returns {*}
    * @constructor
    */
@@ -63,6 +64,20 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
     // 接口请求
     return request({
       url: '/user/password',
+      method: 'PUT',
+      data
+    })
+  },
+  /**
+   * 修改用户名
+   * @param data
+   * @returns {*}
+   * @constructor
+   */
+  SYS_USER_ALTER_USERNAME (data = {}) {
+    // 接口请求
+    return request({
+      url: '/user/username',
       method: 'PUT',
       data
     })

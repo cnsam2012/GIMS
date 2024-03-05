@@ -83,7 +83,16 @@ const frameIn = [
           title: '修改密码',
           auth: true
         },
-        component: _import('userSettings/password/password')
+        component: _import('userSettings/password')
+      },
+      {
+        path: 'alterUsername',
+        name: 'alterUsername',
+        meta: {
+          title: '修改用户名',
+          auth: true
+        },
+        component: _import('userSettings/username')
       },
       // 系统 前端日志
       {

@@ -1,7 +1,7 @@
 <template>
   <d2-container>
     <template slot="header">
-      <h1>
+      <h1 @click="see">
         您正在修改密码
       </h1>
     </template>
@@ -39,7 +39,7 @@
       </el-form>
     </div>
 
-    <template slot="footer">footer</template>
+    <template slot="footer" > <random-motto/> </template>
   </d2-container>
 </template>
 <script>
@@ -53,34 +53,15 @@ export default {
       'info'
     ]),
     ...mapState('d2admin/page', [
-      'opened',
-      'current'
+      'current',
+      'opened'
     ])
   },
   data () {
-    // var checkAge = (rule, value, callback) => {
-    //   if (!value) {
-    //     return callback(new Error('年龄不能为空'))
-    //   }
-    //   setTimeout(() => {
-    //     if (!Number.isInteger(value)) {
-    //       callback(new Error('请输入数字值'))
-    //     } else {
-    //       if (value < 18) {
-    //         callback(new Error('必须年满18岁'))
-    //       } else {
-    //         callback()
-    //       }
-    //     }
-    //   }, 1000)
-    // }
     var validateOldPass = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入原密码'))
       } else {
-        // if (this.ruleForm.oldPass !== '') {
-        //   this.$refs.ruleForm.validateField('pass')
-        // }
         callback()
       }
     }
@@ -140,11 +121,15 @@ export default {
     }
   },
   async mounted () {
-    this.refreshData()
+    await this.refreshData()
   },
   // beforeDestroy () {
   // },
   methods: {
+    async see () {
+      console.log(this.current)
+      console.log(this.opened)
+    },
     ...mapActions('d2admin/page', [
       'close'
     ]),
@@ -152,7 +137,7 @@ export default {
       return Loading.service({
         lock: true,
         text: '加载中……',
-        background: 'rgba(0, 0, 0, 0.7)'
+        background: 'rgba(0,0,0,0.6)'
       })
     },
     /**
@@ -167,19 +152,6 @@ export default {
         console.error(error)
       }
     },
-    async refreshKaptcha () {
-      this.$api.GET_KAPTCHA().then(res => {
-        if (res.type === 'application/json') {
-          console.error(res)
-          console.error('kaptcha got faild')
-        } else if (res) {
-          this.imgSrc = window.URL.createObjectURL(res)
-        } else {
-          console.error(res)
-          console.error('kaptcha got faild')
-        }
-      })
-    },
     async submitValidate (valid) {
       const ld = this.startLoading()
       if (valid) {
@@ -193,29 +165,32 @@ export default {
         try {
           oldPasswordError = alterRes.oldPasswordError
         } catch (e) {
-          console.info(e)
+          // console.info('{"NO_PASSWORD_ERROR"}')
         }
         try {
           newPasswordError = alterRes.newPasswordError
         } catch (e) {
-          console.info(e)
+          // console.info('{"NO_NEW_PASSWORD_ERROR"}')
         }
         if (oldPasswordError) {
           this.formError.oldPass = oldPasswordError
+          ld.close()
         } else if (newPasswordError) {
           this.formError.pass = newPasswordError
+          ld.close()
         } else {
-          this.$alert('修改成功', '提示', {
+          await this.$alert('修改成功', '提示', {
             type: 'success',
-            confirmButtonClass: 'el-button el-button--default el-button--small el-button--success'
+            confirmButtonClass: 'el-button el-button--default el-button--small el-button--success',
+            showClose: false
           })
           ld.close()
-          // await this.close({ tagname: this.$route.fullPath }) // TODO 未能正常关闭标签页
-          await this.close({ tagname: '/alterPassword' }) // TODO 未能正常关闭标签页
+          await this.close({ tagName: '/alterPassword' }) // TODO 未能正常关闭标签页
         }
         ld.close()
       } else {
-        console.log('error submit!!')
+        console.log('{"RECEIVE_DATA_VALID_ERROR"}')
+        ld.close()
         return false
       }
     },

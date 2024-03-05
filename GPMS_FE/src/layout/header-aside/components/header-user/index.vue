@@ -39,13 +39,14 @@ export default {
      * @description 修改密码
      */
     alterPassword () {
-      console.log('alterPassword')
       this.$router.push({
         path: 'alterPassword'
       })
     },
     alterUsername () {
-      console.log('alterUsername')
+      this.$router.push({
+        path: 'alterUsername'
+      })
     }
   }
 }

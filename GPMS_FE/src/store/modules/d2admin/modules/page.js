@@ -183,7 +183,6 @@ export default {
      * @param {Object} payload { tagName: 要关闭的标签名字 }
      */
     async close ({ state, commit, dispatch }, { tagName }) {
-      console.warn(tagName)
       // 预定下个新页面
       let newPage = {}
       const isCurrent = state.current === tagName

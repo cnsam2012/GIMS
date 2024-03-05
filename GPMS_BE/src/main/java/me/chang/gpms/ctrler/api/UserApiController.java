@@ -246,21 +246,21 @@ public class UserApiController {
         // 验证新旧用户名
         if (StringUtils.equals(oldName, newName)) {
             data.put("newUsernameError", "新旧用户名相同");
-//            return R.error(resp, "非法用户名", data);
             return R.error(
                     GPMSResponseCode.CLIENT_ERROR.value(),
-                    "新旧用户名相同"
+                    "新旧用户名相同",
+                    data
             );
         }
 
         // 验证新用户名是否存在
         var checkUser = userService.findUserByName(newName);
         if (ObjectUtil.isNotEmpty(checkUser)) {
-//            data.put("newUsernameError", "用户名已存在，请重新设置新用户名");
-//            return R.error(resp, "非法用户名", data);
+            data.put("newUsernameError", "用户名已存在，请重新设置新用户名");
             return R.error(
                     GPMSResponseCode.CLIENT_ERROR.value(),
-                    "非法用户名：用户名已存在，请重新设置新用户名"
+                    "非法用户名：用户名已存在，请重新设置新用户名",
+                    data
             );
         }
 

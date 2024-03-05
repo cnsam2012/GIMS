@@ -18,7 +18,7 @@
     <template>
       <el-button @click="submit" type="success">TEST</el-button>
     </template>
-    <template slot="footer">footer</template>
+    <template slot="footer"><random-motto/></template>
   </d2-container>
 </template>
 <script>
