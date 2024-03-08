@@ -15,28 +15,27 @@
         class="page-login--content"
         flex="dir:top main:justify cross:stretch box:justify">
         <div class="page-login--content-header">
-          <p class="page-login--content-header-motto">
-            数科院毕业实习管理系统
-          </p>
+
         </div>
         <div
           class="page-login--content-main"
           flex="dir:top main:center cross:center">
           <!-- logo -->
-          <img class="page-login--logo" src="./image/logo@2x.png">
+          <!--          <img class="page-login&#45;&#45;logo" src="./image/logo@2x.png">-->
+          <h1 style="color: #717277">注&nbsp;册</h1>
           <!-- form -->
           <div class="page-login--form">
             <el-card shadow="never">
               <el-form
-                ref="loginForm"
+                ref="signUpForm"
                 label-position="top"
                 :rules="rules"
-                :model="formLogin"
+                :model="formSignup"
                 size="default">
                 <el-form-item prop="username">
                   <el-input
                     type="text"
-                    v-model="formLogin.username"
+                    v-model="formSignup.username"
                     placeholder="用户名">
                     <i slot="prepend" class="fa fa-user-circle-o"></i>
                   </el-input>
@@ -44,20 +43,59 @@
                 <el-form-item prop="password">
                   <el-input
                     type="password"
-                    v-model="formLogin.password"
-                    placeholder="密码">
+                    v-model="formSignup.password"
+                    placeholder="密码"
+                    auto-complete="off"
+                  >
                     <i slot="prepend" class="fa fa-keyboard-o"></i>
+                  </el-input>
+                </el-form-item>
+                <el-form-item prop="confirmPassword">
+                  <el-input
+                    type="password"
+                    v-model="formSignup.confirmPassword"
+                    placeholder="确认密码"
+                    auto-complete="off"
+                  >
+                    <i slot="prepend" class="fa fa-key"></i>
+                  </el-input>
+                </el-form-item>
+                <el-form-item prop="email">
+                  <el-input
+                    type="text"
+                    v-model="formSignup.email"
+                    placeholder="电子邮箱">
+                    <i slot="prepend" class="fa fa-envelope-o"></i>
                   </el-input>
                 </el-form-item>
                 <el-form-item prop="code">
                   <el-input
                     type="text"
-                    v-model="formLogin.code"
+                    v-model="formSignup.code"
                     placeholder="验证码">
                     <template slot="append">
-                      <img class="login-code" :src="imgSrc" alt="kaptcha_pic" @click="refreshKaptcha">
-                      <!--                      <img class="login-code" src="./image/login-code.png" alt="kaptcha_pic" @click="refreshKaptcha">-->
+                      <el-button size="default" @click="sendEmailCode">发送邮箱验证码</el-button>
                     </template>
+                  </el-input>
+                </el-form-item>
+                <el-form-item prop="roleType">
+                  <el-select
+                    v-model="formSignup.roleType"
+                    placeholder="您是..."
+                    class="el-input-group"
+                    @change="roleTypeChanged"
+                  >
+                    <el-option label="实习学生" value="1"></el-option>
+                    <el-option label="实习指导老师" value="2"></el-option>
+                    <el-option label="实习单位" value="3"></el-option>
+                    <el-option label="院系管理人员" value="9" disabled></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item prop="roleName" v-show="isRoleNameShow">
+                  <el-input
+                    type="text"
+                    v-model="formSignup.roleName"
+                    v-bind:placeholder="roleNamePlaceHolder">
                   </el-input>
                 </el-form-item>
                 <el-button
@@ -66,20 +104,14 @@
                   type="success"
                   class="button-login"
                 >
-                  登录
+                  注册
                 </el-button>
               </el-form>
             </el-card>
             <p
               class="page-login--options"
               flex="main:justify cross:center">
-              <span @click="forgetPassword"><d2-icon name="question-circle"/> 忘记密码</span>
-              <span @click="signup">注册用户</span>
             </p>
-            <!-- quick login -->
-            <!--            <el-button class="page-login&#45;&#45;quick" size="default" type="info" @click="dialogVisible = true">-->
-            <!--              快速选择用户（测试功能）-->
-            <!--            </el-button>-->
           </div>
         </div>
         <div class="page-login--content-footer">
@@ -141,6 +173,32 @@ export default {
     localeMixin
   ],
   data () {
+    const validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'))
+      } else {
+        if (this.formSignup.confirmPassword !== '') {
+          this.$refs.signUpForm.validateField('confirmPassword')
+        }
+        callback()
+      }
+    }
+    const validatePass2 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'))
+      } else if (value !== this.formSignup.password) {
+        callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
+    /**
+     * 验证是否为邮箱
+     * @param {*} s
+     */
+    var isEmail = (s) => {
+      return /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((.[a-zA-Z0-9_-]{2,3}){1,2})$/.test(s)
+    }
     return {
       timeInterval: null,
       time: dayjs().format('HH:mm:ss'),
@@ -164,10 +222,14 @@ export default {
         }
       ],
       // 表单
-      formLogin: {
+      formSignup: {
         username: '',
         password: '',
-        code: ''
+        confirmPassword: '',
+        email: '',
+        code: '',
+        roleType: '',
+        roleName: ''
       },
       // 表单校验
       rules: {
@@ -180,8 +242,7 @@ export default {
         ],
         password: [
           {
-            required: true,
-            message: '请输入密码',
+            validator: validatePass,
             trigger: 'blur'
           }
         ],
@@ -191,16 +252,49 @@ export default {
             message: '请输入验证码',
             trigger: 'blur'
           }
+        ],
+        confirmPassword: [
+          {
+            validator: validatePass2,
+            trigger: 'blur'
+          }
+        ],
+        email: [
+          {
+            required: true,
+            message: '请输入电子邮箱',
+            trigger: 'blur'
+          }
+        ],
+        roleType: [
+          {
+            required: true,
+            message: '请选择角色类型',
+            trigger: 'blur'
+          }
+        ],
+        roleName: [
+          {
+            required: true,
+            message: '该项不能为空',
+            trigger: 'blur'
+          }
         ]
       },
-      imgSrc: kaptchaFaild
+      imgSrc: kaptchaFaild,
+      roleNameId: '',
+      roleNamePlaceHolder: '1',
+      isRoleNameShow: false
     }
+  },
+  beforeMount () {
   },
   mounted () {
     // this.timeInterval = setInterval(() => {
     //   this.refreshTime()
     // }, 1000)
-    this.refreshKaptcha()
+    // this.refreshKaptcha()
+    this.refreshPlaceHolder()
   },
   beforeDestroy () {
     clearInterval(this.timeInterval)
@@ -209,68 +303,62 @@ export default {
     ...mapActions('d2admin/account', [
       'login'
     ]),
-    refreshTime () {
-      this.time = dayjs().format('HH:mm:ss')
+    refreshPlaceHolder () {
+      this.roleNamePlaceHolder = '请输入' + (this.roleNameId ? this.roleNameId : '名称')
+      this.rules.roleName = [{
+        required: true,
+        message: this.roleNamePlaceHolder,
+        trigger: 'blur'
+      }]
     },
     /**
      * @description 接收选择一个用户快速登录的事件
      * @param {Object} user 用户信息
      */
     handleUserBtnClick (user) {
-      this.formLogin.username = user.username
-      this.formLogin.password = user.password
+      this.formSignup.username = user.username
+      this.formSignup.password = user.password
       this.submit()
-    },
-    /**
-     * 刷新验证码
-     * @returns {Promise<void>}
-     */
-    async refreshKaptcha () {
-      this.$api.GET_KAPTCHA().then(res => {
-        if (res.type === 'application/json') {
-          console.error(res)
-          console.error('kaptcha got faild')
-        } else if (res) {
-          this.imgSrc = window.URL.createObjectURL(res)
-        } else {
-          console.error(res)
-          console.error('kaptcha got faild')
-        }
-      })
     },
     /**
      * @description 提交表单
      */
     // 提交登录信息
-    submit () {
-      this.$refs.loginForm.validate((valid) => {
+    async submit () {
+      await this.$refs.signUpForm.validate(async (valid) => {
         if (valid) {
-          // 登录
-          this.login({
-            username: this.formLogin.username,
-            password: this.formLogin.password,
-            code: this.formLogin.code,
-            // 记住我 设置为true
-            rememberMe: true
-          })
-            .then(() => {
-              // 重定向对象不存在则返回顶层路径
-              this.$router.replace(this.$route.query.redirect || '/')
-            })
+          await this.$message.info('提交')
+          console.info(this.formSignup)
         } else {
           // 登录表单校验失败
           this.$message.error('表单校验失败，请检查')
         }
       })
     },
-    signup () {
-      console.log('signup')
-      this.$router.push({
-        path: 'signup'
-      })
+    sendEmailCode () {
+      this.$message.info('发送邮箱验证码')
     },
-    forgetPassword () {
-      console.log('forgetPassword')
+    roleTypeChanged () {
+      this.$message.info(this.formSignup.roleType)
+      switch (this.formSignup.roleType) {
+        case '1':
+          this.roleNameId = '学生真实姓名'
+          this.refreshPlaceHolder()
+          break
+        case '2':
+          this.roleNameId = '指导老师真实姓名'
+          this.refreshPlaceHolder()
+          break
+        case '3':
+          this.roleNameId = '企业 (公司) 名'
+          this.refreshPlaceHolder()
+          break
+        default:
+          break
+      }
+      if (!this.isRoleNameShow) {
+        this.isRoleNameShow = true
+      }
     }
   }
 }
@@ -330,10 +418,10 @@ export default {
 
   // 登录表单
   .page-login--form {
-    width: 280px;
+    width: 370px;
     // 卡片
     .el-card {
-      margin-bottom: 15px;
+      margin-bottom: 80px;
     }
 
     // 登录按钮
@@ -342,10 +430,15 @@ export default {
       //background-color: $color-primary;
     }
 
-    .el-button:hover {
+    .button-login:hover {
       width: 100%;
       background-color: rgba(63, 179, 85, 0.16);
     }
+
+    //.el-button:hover {
+    //  width: 100%;
+    //  background-color: rgba(63, 179, 85, 0.16);
+    //}
 
     // 输入框左边的图表区域缩窄
     .el-input-group__prepend {

@@ -1,6 +1,7 @@
 <template>
   <div class="page">
-    <p class="page_title">404 page not found</p>
+    <h1 style="color: white;">GPMS 提示</h1>
+    <p class="page_title">404 page not found / 找不到页面</p>
     <el-button class="d2-mt" @click="$router.replace({ path: '/' })">
       返回首页
     </el-button>
