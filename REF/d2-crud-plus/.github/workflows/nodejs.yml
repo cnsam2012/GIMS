@@ -1,0 +1,46 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: deploy
+
+on:
+  push:
+    paths:
+      - 'packages/d2-crud-plus-example/.github.action.trigger'
+    branches: [ master ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: setup node
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Setup qiniu qshell environment
+      uses: foxundermoon/setup-qshell@v1.0
+      with:
+        # version to use.  Examples: 2.4.0
+        qshell-version: 2.4.0 # optional, default is
+    - name: test qshell
+      run: qshell version
+    - name: install
+      working-directory: ./packages/d2-crud-plus-example/
+      run: npm install
+    - name: build
+      working-directory: ./packages/d2-crud-plus-example/
+      run: npm run build:travis
+    - name: deploy
+      working-directory: ./packages/d2-crud-plus-example/
+      run: |
+        qshell account ${{secrets.AK}} ${{secrets.SK}} 252959493@qq.com
+        qshell qupload qiniu-config
+    - name: refresh
+      working-directory: ./packages/d2-crud-plus-example/
+      run: |
+        qshell cdnrefresh -i qiniu-cdnrefresh-dirs.txt
+
+
