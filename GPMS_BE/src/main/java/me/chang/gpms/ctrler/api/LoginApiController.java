@@ -75,25 +75,26 @@ public class LoginApiController {
     @PostMapping("api/register")
     public R register(
             @RequestBody
-            RegisterRo rr,
-            HttpServletResponse resp
+            RegisterRo rr
     ) {
         var user = User.getUserByRr(rr);
+        System.out.println(user);
         Map<String, Object> map = userService.register(user);
         Map<String, Object> data = new HashMap<>();
         if (map == null || map.isEmpty()) {
             data.put("msg", "注册成功, 我们已经向您的邮箱发送了一封激活邮件，请尽快激活!");
             var status = HttpStatus.SC_OK; //200
-            return R.ok(resp, status, "registry_done", data);
+            return R.ok(GPMSResponseCode.OK.value(), "registry_done");
         } else {
             data.put("usernameMsg", map.get("usernameMsg"));
             data.put("passwordMsg", map.get("passwordMsg"));
             data.put("emailMsg", map.get("emailMsg"));
+            data.put("depMsg", map.get("depMsg"));
+            data.put("typeMsg", map.get("typeMsg"));
 
             var status = HttpStatus.SC_BAD_REQUEST; //400
-            resp.setStatus(status);
 
-            return R.error(resp, status, "registry_failed", data);
+            return R.error(GPMSResponseCode.CLIENT_ERROR.value(), "registry_failed", data);
         }
     }
 

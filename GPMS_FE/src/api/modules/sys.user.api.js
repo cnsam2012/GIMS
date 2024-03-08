@@ -43,6 +43,20 @@ export default ({ service, request, serviceForMock, requestForMock, mock, faker,
     })
   },
   /**
+   * 登录
+   * @param data
+   * @returns {*}
+   * @constructor
+   */
+  SYS_USER_SIGNUP (data = {}) {
+    // 接口请求
+    return request({
+      url: '/register',
+      method: 'post',
+      data
+    })
+  },
+  /**
    * 注销
    * @returns {*}
    * @constructor

@@ -6,7 +6,7 @@
 
     <sql id="insertFields">
         username
-        , password, salt, email, type, status, activation_code, header_url, create_time
+        , password, salt, email, type, status, activation_code, header_url, create_time, department_id, role_name
     </sql>
 
     <sql id="insertWechatUserFields">
@@ -70,7 +70,7 @@
     <insert id="insertUser" parameterType="me.chang.gpms.pojo.User" keyProperty="id">
         insert into user (<include refid="insertFields"></include>)
         values(#{username}, #{password}, #{salt}, #{email}, #{type}, #{status}, #{activationCode}, #{headerUrl},
-        #{createTime})
+        #{createTime}, #{departmentId}, #{roleName})
     </insert>
 
     <!--插入Wechat用户信息（注册）-->

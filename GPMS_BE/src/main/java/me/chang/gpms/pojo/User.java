@@ -20,6 +20,7 @@ public class User {
     private java.util.Date createTime;
     private String wechatOpenId;
     private Integer departmentId;
+    private String roleName;
 
     public static User getUserByRr(RegisterRo rr) {
         var user = new User();
@@ -27,6 +28,8 @@ public class User {
         user.setPassword(rr.getPassword());
         user.setUsername(rr.getUsername());
         user.setEmail(rr.getEmail());
+        user.setRoleName(rr.getRoleName());
+        user.setType(rr.getType());
         return user;
     }
 

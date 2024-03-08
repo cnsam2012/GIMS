@@ -128,8 +128,9 @@ public class UserService {
         if (user == null) {
             throw new IllegalArgumentException("参数不能为空");
         }
+
         if (StringUtils.isBlank(user.getUsername())) {
-            map.put("usernameMsg", "账号不能为空");
+            map.put("usernameMsg", "用户名不能为空");
             return map;
         }
 
@@ -144,7 +145,18 @@ public class UserService {
         }
 
         if (StringUtils.isBlank(String.valueOf(user.getDepartmentId()))) {
-            map.put("depMsg", "部门不能为空");
+            // TODO 暂时不设置部门
+            // TODO 当账户类型为3，即实习单位时，此处将根据roleName来查询部门，否则置为-1
+            user.setDepartmentId(-1);
+        }
+
+        if (StringUtils.isBlank(String.valueOf(user.getRoleName()))) {
+            map.put("depMsg", "姓名 / 企业名称不能为空");
+            return map;
+        }
+
+        if (!(user.getType() == 1 || user.getType() == 2 || user.getType() == 3)) {
+            map.put("typeMsg", "账户类型非法，仅为1-students-学生、2-instructors-指导老师、3-companies-实习单位开放注册");
             return map;
         }
 
@@ -165,7 +177,6 @@ public class UserService {
         // 注册用户
         user.setSalt(GPMSUtil.generateUUID().substring(0, 5)); // salt
         user.setPassword(GPMSUtil.md5(user.getPassword() + user.getSalt())); // 加盐加密
-        user.setType(0); // 默认普通用户
         user.setStatus(0); // 默认未激活
         user.setActivationCode(GPMSUtil.generateUUID()); // 激活码
 
@@ -173,11 +184,7 @@ public class UserService {
         user.setHeaderUrl(String.format("http://images.nowcoder.com/head/%dt.png", new Random().nextInt(1000)));
         user.setCreateTime(new Date()); // 注册时间
 
-        // 设置部门
-        user.setDepartmentId(user.getDepartmentId());
-
         userMapper.insertUser(user);
-
 
         // 给注册用户发送激活邮件
         Context context = new Context();
@@ -186,7 +193,7 @@ public class UserService {
         String url = domain + (contextPath.equals("/") ? "" : contextPath) + "/activation/" + user.getId() + "/" + user.getActivationCode();
         context.setVariable("url", url);
         String content = templateEngine.process("mail/activation", context);
-        mailClient.sendMail(user.getEmail(), "激活 班帮(Banbang) 账号", content);
+        mailClient.sendMail(user.getEmail(), "激活 GPMS(数科院毕业设计管理系统) 账号", content);
 
         return map;
     }
@@ -295,7 +302,7 @@ public class UserService {
 
         String redisKey = RedisKeyUtil.getTicketKey(ticket);
         // TODO
-        var gfr =  (LoginTicket) redisTemplate.opsForValue().get(redisKey);
+        var gfr = (LoginTicket) redisTemplate.opsForValue().get(redisKey);
         log.info("get from redis -- {}", gfr);
         return gfr;
     }

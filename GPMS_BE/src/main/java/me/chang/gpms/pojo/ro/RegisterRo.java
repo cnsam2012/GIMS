@@ -17,4 +17,10 @@ public class RegisterRo {
 
     @Schema(description = "部门", name = "departmentId")
     private Integer departmentId;
+
+    @Schema(description = "名（姓名、企业名）", name = "roleName")
+    private String roleName;
+
+    @Schema(description = "账户类型", name = "type")
+    private int type;
 }

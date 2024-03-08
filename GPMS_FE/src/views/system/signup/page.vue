@@ -68,16 +68,6 @@
                     <i slot="prepend" class="fa fa-envelope-o"></i>
                   </el-input>
                 </el-form-item>
-                <el-form-item prop="code">
-                  <el-input
-                    type="text"
-                    v-model="formSignup.code"
-                    placeholder="验证码">
-                    <template slot="append">
-                      <el-button size="default" @click="sendEmailCode">发送邮箱验证码</el-button>
-                    </template>
-                  </el-input>
-                </el-form-item>
                 <el-form-item prop="roleType">
                   <el-select
                     v-model="formSignup.roleType"
@@ -167,6 +157,7 @@ import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
 import localeMixin from '@/locales/mixin.js'
 import kaptchaFaild from './image/login-code.png'
+import api from '@/api'
 
 export default {
   mixins: [
@@ -196,8 +187,17 @@ export default {
      * 验证是否为邮箱
      * @param {*} s
      */
-    var isEmail = (s) => {
+    const isEmail = (s) => {
       return /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((.[a-zA-Z0-9_-]{2,3}){1,2})$/.test(s)
+    }
+    const validateEmail = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入邮箱'))
+      } else if (!isEmail(value)) {
+        callback(new Error('请输入正确的邮箱地址如：mymail@example.com'))
+      } else {
+        callback()
+      }
     }
     return {
       timeInterval: null,
@@ -227,7 +227,6 @@ export default {
         password: '',
         confirmPassword: '',
         email: '',
-        code: '',
         roleType: '',
         roleName: ''
       },
@@ -246,13 +245,6 @@ export default {
             trigger: 'blur'
           }
         ],
-        code: [
-          {
-            required: true,
-            message: '请输入验证码',
-            trigger: 'blur'
-          }
-        ],
         confirmPassword: [
           {
             validator: validatePass2,
@@ -261,8 +253,7 @@ export default {
         ],
         email: [
           {
-            required: true,
-            message: '请输入电子邮箱',
+            validator: validateEmail,
             trigger: 'blur'
           }
         ],
@@ -329,6 +320,16 @@ export default {
         if (valid) {
           await this.$message.info('提交')
           console.info(this.formSignup)
+          const data = {
+            username: this.formSignup.username,
+            password: this.formSignup.password,
+            email: this.formSignup.email,
+            departmentId: -1,
+            roleName: this.formSignup.roleName,
+            type: this.formSignup.roleType
+          }
+          const res = await api.SYS_USER_SIGNUP(data)
+          console.log(res)
         } else {
           // 登录表单校验失败
           this.$message.error('表单校验失败，请检查')
@@ -421,7 +422,7 @@ export default {
     width: 370px;
     // 卡片
     .el-card {
-      margin-bottom: 80px;
+      margin-bottom: 2rem;
     }
 
     // 登录按钮
