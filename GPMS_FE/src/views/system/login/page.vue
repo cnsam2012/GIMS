@@ -264,7 +264,6 @@ export default {
       })
     },
     signup () {
-      console.log('signup')
       this.$router.push({
         path: 'signup'
       })

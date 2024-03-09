@@ -3,7 +3,7 @@
     <span class="btn-text">{{ info.name ? `你好 ${info.name}` : '未登录' }}</span>
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item @click.native="alterUsername">
-        <d2-icon name="pencil" class="d2-mr-5"/>修改用户名
+        <d2-icon name="pencil" class="d2-mr-5"/>修改用户名 / 姓名
       </el-dropdown-item>
       <el-dropdown-item @click.native="alterPassword">
         <d2-icon name="key" class="d2-mr-5"/>修改密码

@@ -2,7 +2,7 @@
   <d2-container>
     <template slot="header">
       <h1 @click="see">
-        您正在修改用户名
+        您正在修改用户名 / 姓名
       </h1>
     </template>
     <div style="padding-bottom: 20px">
@@ -10,6 +10,7 @@
         <el-descriptions-item label="用户名">{{ username }}</el-descriptions-item>
       </el-descriptions>
     </div>
+    <!--    TODO 后端添加验证：用户名不可以包含中文或者中文符号，查看是否能加入在服务层       -->
     <div style="width: 40%">
       <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="auto" label-position="left"
                class="demo-ruleForm">

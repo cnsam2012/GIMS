@@ -32,7 +32,7 @@
                 :rules="rules"
                 :model="formSignup"
                 size="default">
-                <el-form-item prop="username">
+                <el-form-item prop="username" v-bind:error="formError.username">
                   <el-input
                     type="text"
                     v-model="formSignup.username"
@@ -40,7 +40,7 @@
                     <i slot="prepend" class="fa fa-user-circle-o"></i>
                   </el-input>
                 </el-form-item>
-                <el-form-item prop="password">
+                <el-form-item prop="password" v-bind:error="formError.password">
                   <el-input
                     type="password"
                     v-model="formSignup.password"
@@ -50,7 +50,7 @@
                     <i slot="prepend" class="fa fa-keyboard-o"></i>
                   </el-input>
                 </el-form-item>
-                <el-form-item prop="confirmPassword">
+                <el-form-item prop="confirmPassword" v-bind:error="formError.confirmPassword">
                   <el-input
                     type="password"
                     v-model="formSignup.confirmPassword"
@@ -60,7 +60,7 @@
                     <i slot="prepend" class="fa fa-key"></i>
                   </el-input>
                 </el-form-item>
-                <el-form-item prop="email">
+                <el-form-item prop="email" v-bind:error="formError.email">
                   <el-input
                     type="text"
                     v-model="formSignup.email"
@@ -68,7 +68,7 @@
                     <i slot="prepend" class="fa fa-envelope-o"></i>
                   </el-input>
                 </el-form-item>
-                <el-form-item prop="roleType">
+                <el-form-item prop="roleType" v-bind:error="formError.roleType">
                   <el-select
                     v-model="formSignup.roleType"
                     placeholder="您是..."
@@ -81,7 +81,8 @@
                     <el-option label="院系管理人员" value="9" disabled></el-option>
                   </el-select>
                 </el-form-item>
-                <el-form-item prop="roleName" v-show="isRoleNameShow">
+                <!--                TODO 后端添加姓名查重：当且仅当账户类别为1或者2时候需要查重             -->
+                <el-form-item prop="roleName" v-show="isRoleNameShow" v-bind:error="formError.roleName">
                   <el-input
                     type="text"
                     v-model="formSignup.roleName"
@@ -158,6 +159,7 @@ import { mapActions } from 'vuex'
 import localeMixin from '@/locales/mixin.js'
 import kaptchaFaild from './image/login-code.png'
 import api from '@/api'
+import { Loading } from 'element-ui'
 
 export default {
   mixins: [
@@ -230,6 +232,14 @@ export default {
         roleType: '',
         roleName: ''
       },
+      formError: {
+        username: '',
+        password: '',
+        confirmPassword: '',
+        email: '',
+        roleType: '',
+        roleName: ''
+      },
       // 表单校验
       rules: {
         username: [
@@ -294,6 +304,13 @@ export default {
     ...mapActions('d2admin/account', [
       'login'
     ]),
+    startLoading () { // 使用Element loading-start 方法
+      return Loading.service({
+        lock: true,
+        text: '加载中……',
+        background: 'rgba(0,0,0,0.6)'
+      })
+    },
     refreshPlaceHolder () {
       this.roleNamePlaceHolder = '请输入' + (this.roleNameId ? this.roleNameId : '名称')
       this.rules.roleName = [{
@@ -311,36 +328,112 @@ export default {
       this.formSignup.password = user.password
       this.submit()
     },
+    async submitValidate (valid) {
+      const ld = this.startLoading()
+      if (valid) {
+        const data = {
+          username: this.formSignup.username,
+          password: this.formSignup.password,
+          email: this.formSignup.email,
+          departmentId: -1,
+          roleName: this.formSignup.roleName,
+          type: this.formSignup.roleType
+        }
+        const res = await api.SYS_USER_SIGNUP(data)
+        try {
+          this.formError.username = res.usernameMsg
+        } catch (e) {
+        }
+        try {
+          this.formError.roleName = res.depMsg
+        } catch (e) {
+        }
+        try {
+          this.formError.email = res.emailMsg
+        } catch (e) {
+        }
+        try {
+          this.formError.password = res.passwordMsg
+        } catch (e) {
+        }
+        try {
+          this.formError.roleType = res.typeMsg
+        } catch (e) {
+        }
+        if (
+          this.formError.username ||
+          this.formError.roleName ||
+          this.formError.email ||
+          this.formError.password ||
+          this.formError.roleType
+        ) {
+          ld.close()
+        } else {
+          await this.$alert('注册成功，请查看邮箱并及时激活账户，将跳转至登录页面...', '提示', {
+            type: 'success',
+            confirmButtonClass: 'el-button el-button--default el-button--small el-button--success',
+            showClose: false
+          })
+          ld.close()
+          this.$router.push({
+            path: 'login'
+          })
+        }
+        ld.close()
+      } else {
+        console.log('{"RECEIVE_DATA_VALID_ERROR"}')
+        ld.close()
+        return false
+      }
+    },
     /**
      * @description 提交表单
      */
     // 提交登录信息
     async submit () {
-      await this.$refs.signUpForm.validate(async (valid) => {
-        if (valid) {
-          await this.$message.info('提交')
-          console.info(this.formSignup)
-          const data = {
-            username: this.formSignup.username,
-            password: this.formSignup.password,
-            email: this.formSignup.email,
-            departmentId: -1,
-            roleName: this.formSignup.roleName,
-            type: this.formSignup.roleType
-          }
-          const res = await api.SYS_USER_SIGNUP(data)
-          console.log(res)
-        } else {
-          // 登录表单校验失败
-          this.$message.error('表单校验失败，请检查')
+      this.formError = {
+        username: '',
+        password: '',
+        confirmPassword: '',
+        email: '',
+        roleType: '',
+        roleName: ''
+      }
+      if (this.formSignup.email) {
+        var message = '注册时，将向您的邮箱<br/><span style="font-size: 1.2rem"><b>' + this.formSignup.email + '</b></span><br/>发送一封激活邮件, 是否继续?'
+
+        if (this.formSignup.roleType === '1' || this.formSignup.roleType === '2') {
+          message = '<br/><span style="font-size: 1rem"><b>' +
+            this.formSignup.roleName +
+            '</b></span><br/>' +
+            '您好！注册时，将向您的邮箱<br/><span style="font-size: 1.2rem"><b>' + this.formSignup.email + '</b></span><br/>发送一封激活邮件，请检查您的姓名与邮箱并继续。'
         }
-      })
-    },
-    sendEmailCode () {
-      this.$message.info('发送邮箱验证码')
+
+        await this.$confirm(message, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          confirmButtonClass: 'el-button el-button--default el-button--small el-button--success',
+          showClose: false,
+          dangerouslyUseHTMLString: true
+        }).then(async () => {
+          await this.$refs.signUpForm.validate((valid) => this.submitValidate(valid))
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消注册'
+          })
+        })
+      } else {
+        // this.formError.email = '请输入邮箱'
+        await this.$refs.signUpForm.validate((valid) => {
+          if (!valid) {
+            this.$message.error('表单校验失败，请检查')
+          }
+        })
+      }
     },
     roleTypeChanged () {
-      this.$message.info(this.formSignup.roleType)
       switch (this.formSignup.roleType) {
         case '1':
           this.roleNameId = '学生真实姓名'

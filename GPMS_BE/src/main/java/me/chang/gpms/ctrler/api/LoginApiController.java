@@ -67,9 +67,7 @@ public class LoginApiController {
 
     /**
      * 注册用户
-     *
      * @param rr
-     * @param resp
      * @return
      */
     @PostMapping("api/register")
@@ -197,10 +195,7 @@ public class LoginApiController {
             log.info("跳过验证验证码");
         } else if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(code) || !kaptcha.equalsIgnoreCase(code)) {
             data.put("codeMsg", "验证码错误");
-            var status = HttpStatus.SC_BAD_REQUEST;
-            response.setStatus(status);
-//            return BbUtil.getJSONString(status, "login_failed", data);
-            return R.error(status, "登录失败", data);
+            return R.error(GPMSResponseCode.CLIENT_ERROR.value(), "登录失败", data);
         }
 
         // 凭证过期时间（是否记住我）: 7天 & 12小时

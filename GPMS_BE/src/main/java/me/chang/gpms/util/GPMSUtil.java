@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 public class GPMSUtil {
@@ -101,6 +103,21 @@ public class GPMSUtil {
         int floor = (int) Math.pow(10, length - 1);
         int codeNum = RandomUtils.nextInt(floor, floor * 10);
         return Integer.toString(codeNum);
+    }
+
+    /**
+     * 字符串是否包含中文
+     * @param str 待校验字符串
+     * @return true 包含中文字符 false 不包含中文字符
+     */
+    public static boolean isContainChinese(String str) {
+
+        Pattern p = Pattern.compile("[\u4E00-\u9FA5|\\！|\\，|\\。|\\（|\\）|\\《|\\》|\\“|\\”|\\？|\\：|\\；|\\【|\\】]");
+        Matcher m = p.matcher(str);
+        if (m.find()) {
+            return true;
+        }
+        return false;
     }
 
     public static void setContext(String ticket, UserService userService, HostHolder hostHolder) {

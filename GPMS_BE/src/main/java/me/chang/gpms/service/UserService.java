@@ -26,6 +26,8 @@ import org.thymeleaf.context.Context;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -43,6 +45,9 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private DepartmentsService departmentsService;
 
     @Autowired
     private MailClient mailClient;
@@ -111,6 +116,7 @@ public class UserService {
         if (ObjectUtil.isNotEmpty(user)) {
             user.setPassword("");
             user.setSalt("");
+            user.setActivationCode("");
         }
         return user;
     }
@@ -134,6 +140,23 @@ public class UserService {
             return map;
         }
 
+        if (
+                StringUtils.contains(user.getUsername(), "\n") ||
+                        StringUtils.contains(user.getUsername(), "\\n") ||
+                        StringUtils.contains(user.getUsername(), "\t") ||
+                        StringUtils.contains(user.getUsername(), "\\t") ||
+                        StringUtils.contains(user.getUsername(), "\\ ") ||
+                        StringUtils.contains(user.getUsername(), " ")
+        ) {
+            map.put("usernameMsg", "用户名不能包含空格、换行符 \\n、或制表符 \\t");
+            return map;
+        }
+
+        if (GPMSUtil.isContainChinese(user.getUsername())) {
+            map.put("usernameMsg", "用户名不能包含全角标点、或中文字符");
+            return map;
+        }
+
         if (StringUtils.isBlank(user.getPassword())) {
             map.put("passwordMsg", "密码不能为空");
             return map;
@@ -146,13 +169,23 @@ public class UserService {
 
         if (StringUtils.isBlank(String.valueOf(user.getDepartmentId()))) {
             // TODO 暂时不设置部门
-            // TODO 当账户类型为3，即实习单位时，此处将根据roleName来查询部门，否则置为-1
+            // User.roleName
             user.setDepartmentId(-1);
         }
 
         if (StringUtils.isBlank(String.valueOf(user.getRoleName()))) {
             map.put("depMsg", "姓名 / 企业名称不能为空");
             return map;
+        } else {
+            // TODO 当账户类型为3，即实习单位时，此处将根据roleName来查询部门，否则仍置为-1
+            if (user.getType() == 3) {
+                var dep = departmentsService.getDepartmentByName(
+                        user.getRoleName()
+                );
+                if (ObjectUtil.isNotEmpty(dep)) {
+                    user.setDepartmentId(dep.getId());
+                }
+            }
         }
 
         if (!(user.getType() == 1 || user.getType() == 2 || user.getType() == 3)) {
