@@ -19,4 +19,8 @@ public interface DepartmentsMapper {
     int updateType(Integer id, Integer type);
 
     int updateContent(Integer id, String content);
+
+    int deleteDepartmentsById(Integer id);
+
+    boolean updateDepartments(int departmentId, Departments departments);
 }

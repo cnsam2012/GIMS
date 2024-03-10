@@ -15,6 +15,10 @@
         , type, name, content, belong_to
     </sql>
 
+    <delete id="deleteDepartmentsById">
+        DELETE FROM departments WHERE id = #{id};
+    </delete>
+
     <!--根据 Id 查询部门信息-->
     <select id="selectById" resultType="me.chang.gpms.pojo.Departments">
         select
@@ -58,6 +62,12 @@
         update departments
         set content = #{content}
         where id = #{id}
+    </update>
+
+    <update id="updateDepartments">
+        update departments
+        set type = #{departments.type}, name = #{departments.name}, content = #{departments.content}
+        where id = #{departmentId}
     </update>
 
 </mapper>

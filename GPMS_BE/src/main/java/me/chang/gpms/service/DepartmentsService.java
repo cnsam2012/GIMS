@@ -26,10 +26,6 @@ public class DepartmentsService {
 
     public int insertDepartment(Departments departments) {
         return departmentsMapper.insertDepartment(
-//                departments.getType(),
-//                departments.getName(),
-//                departments.getContent(),
-//                departments.getBelongTo()
                 departments
         );
     }
@@ -50,5 +46,13 @@ public class DepartmentsService {
 
     public List<Departments> getAllDepartments(int offset, int limit) {
         return departmentsMapper.selectDepartments(offset, limit);
+    }
+
+    public int deleteDepartmentsById(int id) {
+        return departmentsMapper.deleteDepartmentsById(id);
+    }
+
+    public boolean updateDepartment(int departmentId, Departments departments) {
+        return departmentsMapper.updateDepartments(departmentId, departments);
     }
 }
