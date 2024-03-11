@@ -11,7 +11,8 @@ export const crudOptions = (vm) => { // vm即this
         },
         form: { // form表单的配置
           disabled: true // 禁止添加输入与修改输入【可选】默认false
-        }
+        },
+        resizeable: false
       },
       {
         title: '状态',
@@ -28,7 +29,8 @@ export const crudOptions = (vm) => { // vm即this
         },
         dict: { // 数据字典配置
           url: '/api/dicts/StatusEnum' // 远程获取数据字典
-        }
+        },
+        resizeable: false
       },
       {
         title: '地区',
@@ -46,7 +48,8 @@ export const crudOptions = (vm) => { // vm即this
               multiple: true, // 支持多选
               clearable: true // 可清除
             }
-          }
+          },
+          resizeable: false
         },
         dict: { // 本地数据字典
           data: [
