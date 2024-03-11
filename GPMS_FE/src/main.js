@@ -48,6 +48,10 @@ Vue.use(d2CrudPlus, {
             total: 'total', // 总记录数 ret.data.total
             records: 'records' // 列表数组 ret.data.records
           }
+          // response (ret) {
+          //   // 这里默认配置是  return ret.data
+          //   return ret
+          // }
         }
       },
       formOptions: {
@@ -57,7 +61,7 @@ Vue.use(d2CrudPlus, {
         height: '100%' // 表格高度100%，此时d2-crud-x外部容器必须有高度, 使用toolbar必须设置
       },
       pageOptions: {
-        compact: true // 是否紧凑型页面
+        compact: false // 是否紧凑型页面
       },
       viewOptions: {
         disabled: false // 开启查看按钮

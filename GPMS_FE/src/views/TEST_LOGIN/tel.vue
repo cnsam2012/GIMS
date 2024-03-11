@@ -58,7 +58,7 @@ export default {
           code: 'string',
           rememberMe: true
         }
-        const res = await this.$api.SYS_USER_LOGIN(data)
+        const res = await this.$api.SYS_USER_LOGIN(data).data
         console.log(res)
         this.msg = res.userinfo.username
       } catch (error) {

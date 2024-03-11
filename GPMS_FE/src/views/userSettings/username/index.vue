@@ -2,7 +2,7 @@
   <d2-container>
     <template slot="header">
       <h1 @click="see">
-        您正在修改用户名 / 姓名
+        您正在修改用户名
       </h1>
     </template>
     <div style="padding-bottom: 20px">
@@ -111,7 +111,8 @@ export default {
         const data = {
           username: this.ruleForm.newUsername
         }
-        const alterRes = await api.SYS_USER_ALTER_USERNAME(data)
+        let alterRes = await api.SYS_USER_ALTER_USERNAME(data)
+        alterRes = alterRes.data
         let newUsernameError = ''
         try {
           newUsernameError = alterRes.newUsernameError

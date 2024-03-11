@@ -45,7 +45,7 @@ export default {
       console.log('manual refresh')
       console.log('refreshing data')
       try {
-        const res = await this.$api.DEMO_FETCH()
+        const res = await this.$api.DEMO_FETCH().data
         console.log(res)
         console.log(util.cookies.getAll())
         this.msg = res.reMsg
@@ -60,7 +60,7 @@ export default {
     async refreshData () {
       console.log('refreshing data')
       try {
-        const res = await this.$api.DEMO_FETCH()
+        const res = await this.$api.DEMO_FETCH().data
         console.log('data got')
         console.log(res)
       } catch (error) {

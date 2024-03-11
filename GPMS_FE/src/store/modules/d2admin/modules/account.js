@@ -20,7 +20,8 @@ export default {
       rememberMe = ''
     } = {}) {
       // const res = await api.FAKE_SYS_USER_LOGIN({ username, password })
-      const res = await api.SYS_USER_LOGIN({ username, password, code, rememberMe })
+      let res = await api.SYS_USER_LOGIN({ username, password, code, rememberMe })
+      res = res.data // 增加这一句
       // 设置 cookie 一定要存 uuid 和 token 两个 cookie
       // 整个系统依赖这两个数据进行校验和存储
       // uuid 是用户身份唯一标识 用户注册的时候确定 并且不可改变 不可重复
@@ -32,7 +33,10 @@ export default {
       util.cookies.set('ticket', res.ticket)
       console.log(uinfo)
       // 设置 vuex 用户信息
-      const usernameDisplay = uinfo.username + ' (' + uinfo.roleName + ')'
+      let usernameDisplay = uinfo.username + ' (' + uinfo.roleName + ')'
+      if (!uinfo.roleName) {
+        usernameDisplay = uinfo.username
+      }
       await dispatch('d2admin/user/set', { name: usernameDisplay }, { root: true })
       // 用户登录后从持久化数据加载一系列的设置
       await dispatch('load')
@@ -52,7 +56,8 @@ export default {
         util.cookies.remove('uuid')
         // 清空 vuex 用户信息
         await dispatch('d2admin/user/set', {}, { root: true })
-        const logoutRes = await api.SYS_USER_LOGOUT()
+        let logoutRes = await api.SYS_USER_LOGOUT()
+        logoutRes = logoutRes.data
         console.log(logoutRes)
         // 跳转路由
         router.push({ name: 'login' })

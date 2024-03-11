@@ -1,8 +1,6 @@
 export const crudOptions = {
   columns: [
-
     {
-
       title: 'id',
       key: 'id',
       width: '90',

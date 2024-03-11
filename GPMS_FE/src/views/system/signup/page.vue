@@ -339,7 +339,7 @@ export default {
           roleName: this.formSignup.roleName,
           type: this.formSignup.roleType
         }
-        const res = await api.SYS_USER_SIGNUP(data)
+        const res = await api.SYS_USER_SIGNUP(data).data
         try {
           this.formError.username = res.usernameMsg
         } catch (e) {
@@ -406,7 +406,7 @@ export default {
           message = '<br/><span style="font-size: 1rem"><b>' +
             this.formSignup.roleName +
             '</b></span><br/>' +
-            '您好！注册时，将向您的邮箱<br/><span style="font-size: 1.2rem"><b>' + this.formSignup.email + '</b></span><br/>发送一封激活邮件，请检查您的姓名与邮箱并继续。'
+            '您好！注册时，将向您的邮箱<br/><span style="font-size: 1.2rem"><b>' + this.formSignup.email + '</b></span><br/>发送一封激活邮件，请检查您的姓名与邮箱并继续。<br/>请注意，您的姓名将不能再被自行更改'
         }
 
         await this.$confirm(message, '提示', {

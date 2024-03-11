@@ -36,10 +36,10 @@ function createService () {
         switch (code) {
           case 0:
             // [ 示例 ] code === 0 代表没有错误
-            return dataAxios.data
+            return dataAxios
           case 200:
             // [ 示例 ] code === 200 代表没有错误
-            return dataAxios.data
+            return dataAxios
           case -1:
             // [ 示例 ] 其它和后台约定的 code
             errorCreate(`FATAL! [ code: -1 ] ${dataAxios.msg}: ${response.config.url}`)
@@ -49,7 +49,7 @@ function createService () {
             if (codeStr[0] === '4') {
               if (dataAxios.data) {
                 console.error(dataAxios.data)
-                return dataAxios.data
+                return dataAxios
               }
               errorCreate(`客户端错误 code:${dataAxios.code} ${dataAxios.msg}: ${response.config.url}`)
               break

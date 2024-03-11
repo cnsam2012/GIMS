@@ -159,7 +159,8 @@ export default {
           oldPwd: this.ruleForm.oldPass,
           newPwd: this.ruleForm.pass
         }
-        const alterRes = await api.SYS_USER_ALTER_PASSWORD(data)
+        let alterRes = await api.SYS_USER_ALTER_PASSWORD(data)
+        alterRes = alterRes.data
         let oldPasswordError = ''
         let newPasswordError = ''
         try {
