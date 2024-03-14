@@ -77,6 +77,15 @@ const frameIn = [
         component: _import('admin/departments_management')
       },
       {
+        path: 'edit_data',
+        name: 'edit_data',
+        meta: {
+          title: '更新数据',
+          auth: true
+        },
+        component: _import('admin/edit_data')
+      },
+      {
         path: 'alterPassword',
         name: 'alterPassword',
         meta: {
