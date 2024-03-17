@@ -10,6 +10,7 @@ import me.chang.gpms.pojo.Page;
 import me.chang.gpms.pojo.User;
 import me.chang.gpms.pojo.ro.DepartmentRo;
 import me.chang.gpms.pojo.ro.DepartmentUpdateRo;
+import me.chang.gpms.pojo.ro.PageWithFuzzyRo;
 import me.chang.gpms.service.DepartmentsService;
 import me.chang.gpms.util.HostHolder;
 import me.chang.gpms.util.R;
@@ -21,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @RestController
-@Tag(name = "DC", description = "DepartmentsController")
+@Tag(name = "DAC", description = "DepartmentsApiController")
 @CrossOrigin
 public class DepartmentsApiController {
 
@@ -42,19 +43,46 @@ public class DepartmentsApiController {
      * @param page
      * @return
      */
-    @RequestMapping(value = "api/departments", method = {RequestMethod.GET})
+    @RequestMapping(value = "api/departments", method = {RequestMethod.GET, RequestMethod.POST})
     @Operation(summary = "Get all departments information.")
     public R departments(
             HttpServletResponse resp,
             @Parameter(required = false)
+            @RequestBody
             Page page
     ) {
         var data = new HashMap<String, Object>();
         var offset = page.getOffset();
         var limit = page.getLimit();
+
         List<Departments> departmentsList = departmentsService.getAllDepartments(offset, limit);
-        page.setRows(departmentsList.size());
+        page.setRows(departmentsService.selectDepartmentsRows(0));
+        System.out.println(page);
         data.put("page", page);
+        data.put("departments", departmentsList);
+        return R.ok(
+                GPMSResponseCode.OK.value(),
+                "success",
+                data
+        );
+    }
+
+    @RequestMapping(value = "api/fuzzySearchDepartments", method = {RequestMethod.POST})
+    @Operation(summary = "Get all departments by keywords.")
+    public R fuzzySearchDepartments(
+            @Parameter(name = "page", required = true)
+            @RequestBody(required = true)
+            PageWithFuzzyRo pageWithFuzzyRo
+    ) {
+        var data = new HashMap<String, Object>();
+        var offset = pageWithFuzzyRo.getOffset();
+        var limit = pageWithFuzzyRo.getLimit();
+        var keywords = pageWithFuzzyRo.getKeywords();
+
+        List<Departments> departmentsList = departmentsService.getAllDepartmentsByFuzzyKeywords(keywords, offset, limit);
+        pageWithFuzzyRo.setRows(departmentsService.selectAllDepartmentsByFuzzyKeywordsRows(keywords));
+        System.out.println(pageWithFuzzyRo);
+        data.put("page", pageWithFuzzyRo);
         data.put("departments", departmentsList);
         return R.ok(
                 GPMSResponseCode.OK.value(),
@@ -167,4 +195,21 @@ public class DepartmentsApiController {
                 data
         );
     }
+
+//    @RequestMapping(value = "api/fuzzySearchDepartments", method = {RequestMethod.POST})
+//    @Operation(description = "搜索部门")
+//    public R fuzzySearchDepartments(
+//            @Parameter(required = true)
+//            @RequestBody
+//            String keywords) {
+//        var data = new HashMap<String, Object>();
+//
+//        departmentsService.getDepartmentByFuzzyKeywords(keywords);
+//
+//        return R.ok(
+//                GPMSResponseCode.CLIENT_ERROR.value(),
+//                "delete_fail",
+//                data
+//        );
+//    }
 }

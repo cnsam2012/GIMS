@@ -23,4 +23,10 @@ public interface DepartmentsMapper {
     int deleteDepartmentsById(Integer id);
 
     boolean updateDepartments(int departmentId, Departments departments);
+
+    int selectDepartmentsRows(int userId);
+
+    List<Departments> selectDepartmentsByFuzzyKeywords(String keywords, int offset, int limit);
+
+    int selectDepartmentsByFuzzyKeywordsRows(String keywords);
 }

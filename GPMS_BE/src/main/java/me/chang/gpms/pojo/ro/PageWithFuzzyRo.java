@@ -1,16 +1,13 @@
-package me.chang.gpms.pojo;
-
+package me.chang.gpms.pojo.ro;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.extern.slf4j.Slf4j;
+import me.chang.gpms.pojo.Page;
 import org.junit.jupiter.api.Test;
 
-/**
- * 封装分页相关的信息
- */
-@Slf4j
-@Schema(description = "分页相关信息", name = "Page")
-public class Page {
+public class PageWithFuzzyRo {
+
+    @Schema(description = "搜索关键词", example = "广东", name = "keywords")
+    private String keywords;
 
     @Schema(description = "当前页码", example = "1", name = "current")
     private int current = 1;
@@ -132,6 +129,14 @@ public class Page {
 
     public void setTo(int to) {
         this.to = to;
+    }
+
+    public String getKeywords() {
+        return keywords;
+    }
+
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
     }
 
     @Override

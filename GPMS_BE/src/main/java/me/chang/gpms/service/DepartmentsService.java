@@ -55,4 +55,17 @@ public class DepartmentsService {
     public boolean updateDepartment(int departmentId, Departments departments) {
         return departmentsMapper.updateDepartments(departmentId, departments);
     }
+
+    public int selectDepartmentsRows(int userId) {
+        return departmentsMapper.selectDepartmentsRows(userId);
+    }
+
+    public List<Departments> getAllDepartmentsByFuzzyKeywords(String keywords, int offset, int limit) {
+        return departmentsMapper.selectDepartmentsByFuzzyKeywords(keywords, offset, limit);
+    }
+
+    public int selectAllDepartmentsByFuzzyKeywordsRows(String keywords) {
+        return departmentsMapper.selectDepartmentsByFuzzyKeywordsRows(keywords);
+//        return 0;
+    }
 }

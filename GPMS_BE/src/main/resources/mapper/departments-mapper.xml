@@ -16,7 +16,9 @@
     </sql>
 
     <delete id="deleteDepartmentsById">
-        DELETE FROM departments WHERE id = #{id};
+        DELETE
+        FROM departments
+        WHERE id = #{id};
     </delete>
 
     <!--根据 Id 查询部门信息-->
@@ -43,6 +45,36 @@
         limit #{offset}, #{limit}
     </select>
 
+    <select id="selectDepartmentsRows" resultType="java.lang.Integer">
+        select count(id)
+        from departments
+        <if test="userId != 0">
+            and belong_to = #{userId}
+        </if>
+    </select>
+
+    <select id="selectDepartmentsByFuzzyKeywords" resultType="me.chang.gpms.pojo.Departments">
+        SELECT
+        <include refid="selectFields"></include>
+        FROM departments
+        WHERE
+        id LIKE CONCAT('%',#{keywords},'%')
+        OR type LIKE CONCAT('%',#{keywords},'%')
+        OR name LIKE CONCAT('%',#{keywords},'%')
+        OR content LIKE CONCAT('%',#{keywords},'%')
+        limit #{offset}, #{limit}
+    </select>
+
+
+    <select id="selectDepartmentsByFuzzyKeywordsRows" resultType="java.lang.Integer">
+        SELECT count(id)
+        FROM departments
+        WHERE id LIKE CONCAT('%', #{keywords}, '%')
+           OR type LIKE CONCAT('%', #{keywords}, '%')
+           OR name LIKE CONCAT('%', #{keywords}, '%')
+           OR content LIKE CONCAT('%', #{keywords}, '%')
+    </select>
+
 
     <!--插入部门信息-->
     <insert id="insertDepartment" parameterType="me.chang.gpms.pojo.Departments" keyProperty="id">
@@ -66,7 +98,9 @@
 
     <update id="updateDepartments">
         update departments
-        set type = #{departments.type}, name = #{departments.name}, content = #{departments.content}
+        set type    = #{departments.type},
+            name    = #{departments.name},
+            content = #{departments.content}
         where id = #{departmentId}
     </update>
 
