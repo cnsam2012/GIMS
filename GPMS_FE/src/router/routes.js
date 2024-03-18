@@ -77,6 +77,15 @@ const frameIn = [
         component: _import('admin/departments_management')
       },
       {
+        path: 'reports_management',
+        name: 'reports_management',
+        meta: {
+          title: '报告管理',
+          auth: true
+        },
+        component: _import('admin/reports_management')
+      },
+      {
         path: 'edit_data',
         name: 'edit_data',
         meta: {

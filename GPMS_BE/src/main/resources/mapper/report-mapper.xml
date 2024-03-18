@@ -6,7 +6,7 @@
 
     <sql id="selectFields">
         id
-        , user_id, title, content, type, status, create_time, score
+        , user_id, title, content, type, status, create_time, score, is_read, is_pass, lasted_edit_user_id
 -- id
 -- user_id
 -- title
