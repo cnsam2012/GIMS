@@ -172,7 +172,8 @@ public class ReportService {
      * @return
      */
     public int updateCommentCount(int id, int commentCount) {
-        return reportMapper.updateCommentCount(id, commentCount);
+//        return reportMapper.updateCommentCount(id, commentCount);
+        return -1;
     }
 
     /**
@@ -195,6 +196,26 @@ public class ReportService {
      */
     public int updateStatus(int id, int status) {
         return reportMapper.updateStatus(id, status);
+    }
+
+    /**
+     * 修改报告阅读状态 1-read; 0-unread
+     * @param id
+     * @param isRead
+     * @return
+     */
+    public int updateRead(int id, int isRead) {
+        return reportMapper.updateRead(id, isRead);
+    }
+
+    /**
+     * 修改报告通过状态 1-pass; 0-none; -1-fail
+     * @param id
+     * @param isPass
+     * @return
+     */
+    public int updatePass(int id, int isPass) {
+        return reportMapper.updatePass(id, isPass);
     }
 
     /**

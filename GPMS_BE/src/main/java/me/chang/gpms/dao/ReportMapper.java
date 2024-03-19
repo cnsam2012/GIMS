@@ -50,7 +50,7 @@ public interface ReportMapper extends BaseMapper<Report> {
      * @param commentCount
      * @return
      */
-    int updateCommentCount(int id, int commentCount);
+//    int updateCommentCount(int id, int commentCount);
 
     /**
      * 修改帖子类型：0-普通; 1-置顶;
@@ -75,4 +75,20 @@ public interface ReportMapper extends BaseMapper<Report> {
      * @return
      */
     int updateScore(int id, double score);
+
+    /**
+     * 修改报告阅读状态
+     * @param id
+     * @param isPass
+     * @return
+     */
+    int updateRead(int id, int isPass);
+
+    /**
+     * 修改报告通过状态
+     * @param id
+     * @param idRead
+     * @return
+     */
+    int updatePass(int id, int idRead);
 }

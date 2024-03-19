@@ -93,15 +93,15 @@ public class Report {
     @Schema(description = "逻辑删除", example = "0", name = "")
     private Integer isDeleted;
 
-    @TableLogic
+    @Field(type = FieldType.Integer)
     @Schema(description = "批阅情况", example = "0", name = "")
     private Integer isRead;
 
-    @TableLogic
+    @Field(type = FieldType.Integer)
     @Schema(description = "通过", example = "0", name = "")
     private Integer isPassed;
 
-    @TableLogic
+    @Field(type = FieldType.Integer)
     @Schema(description = "最后编辑", example = "0", name = "")
     private Integer lastedEditUserId;
 

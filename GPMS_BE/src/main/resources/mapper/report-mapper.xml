@@ -21,7 +21,7 @@
 
     <sql id="insertFields">
         user_id
-        , title, content, type, status, create_time, score
+        , title, content, type, status, create_time, score, is_read, is_pass, lasted_edit_user_id
     </sql>
 
     <sql id="logicDelete">
@@ -79,7 +79,10 @@
         #{type},
         #{status},
         #{createTime},
-        #{score}
+        #{score},
+        #{is_read},
+        #{is_pass},
+        #{lasted_edit_user_id}
         )
     </insert>
 
@@ -91,12 +94,12 @@
         <include refid="logicDelete"></include>
     </select>
 
-<!--    <update id="updateCommentCount">-->
-<!--        update report-->
-<!--        set comment_count = #{commentCount}-->
-<!--        where id = #{id}-->
-<!--        <include refid="logicDelete"></include>-->
-<!--    </update>-->
+    <!--    <update id="updateCommentCount">-->
+    <!--        update report-->
+    <!--        set comment_count = #{commentCount}-->
+    <!--        where id = #{id}-->
+    <!--        <include refid="logicDelete"></include>-->
+    <!--    </update>-->
 
     <!--修改报告类型：1-周记; 2-月记; 3-总结-->
     <update id="updateType">
@@ -110,6 +113,22 @@
     <update id="updateStatus">
         update report
         set status = #{status}
+        where id = #{id}
+        <include refid="logicDelete"></include>
+    </update>
+
+    <!--修改报告阅读状态：1-read; 0-unread-->
+    <update id="updateRead">
+        update report
+        set is_read = #{isRead}
+        where id = #{id}
+        <include refid="logicDelete"></include>
+    </update>
+
+    <!--修改报告通过状态：1-pass; 0-none; -1-fail-->
+    <update id="updatePass">
+        update report
+        set is_pass = #{isPass}
         where id = #{id}
         <include refid="logicDelete"></include>
     </update>

@@ -6,8 +6,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import me.chang.gpms.pojo.ro.ReportIdPassRo;
 import me.chang.gpms.pojo.ro.ReportIdTypeRo;
 import me.chang.gpms.pojo.ro.ReportTitleContentRo;
+import me.chang.gpms.util.constant.GPMSResponseCode;
 import org.apache.http.HttpStatus;
 import me.chang.gpms.event.EventProducer;
 import me.chang.gpms.pojo.*;
@@ -413,6 +415,34 @@ public class ReportApiController {
 //        return BbUtil.getJSONString(status, "加精成功");
         return R.ok(status, "加精成功");
     }
+
+//    @PutMapping("setPass")
+//    @Operation(description = "设置通过")
+//    public R setPass(@Parameter(required = true)
+//                          @RequestBody
+//                         ReportIdPassRo dpId) {
+//        if (dpId == null) {
+//            var status = GPMSResponseCode.CLIENT_ERROR.value();
+//            return R.error(status, "参数不齐");
+//
+//        }
+//        var id = dpId.getId();
+//        discussPostService.updatePass(id, dpId.getIsPassed());
+//        // 触发发帖事件，通过消息队列将其存入 Elasticsearch 服务器
+////        Event event = new Event()
+////                .setTopic(BbKafkaTopic.TOPIC_PUBLISH.value())
+////                .setUserId(hostHolder.getUser().getId())
+////                .setEntityType(BbEntityType.ENTITY_TYPE_POST.value())
+////                .setEntityId(id);
+////        eventProducer.fireEvent(event);
+//        // 计算帖子分数
+////        String redisKey = RedisKeyUtil.getPostScoreKey();
+////        redisTemplate.opsForSet().add(redisKey, id);
+//        var status = HttpStatus.SC_OK;
+//        resp.setStatus(status);
+////        return BbUtil.getJSONString(status, "加精成功");
+//        return R.ok(status, "加精成功");
+//    }
 
 
     /**
