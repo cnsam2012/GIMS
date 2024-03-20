@@ -179,7 +179,7 @@ export default {
       },
       pagination: {
         currentPage: 1,
-        pageSize: 7,
+        pageSize: 2,
         total: 15
       },
       formOptions: {
@@ -189,11 +189,25 @@ export default {
       typeDict: [
         {
           value: '1',
-          label: '院系部门 - AD'
+          label: '周记'
         },
         {
           value: '2',
-          label: '实习单位 - COM'
+          label: '月记'
+        },
+        {
+          value: '3',
+          label: '总结'
+        }
+      ],
+      readDict: [
+        {
+          value: '0',
+          label: '未读'
+        },
+        {
+          value: '1',
+          label: '已读'
         }
       ],
       editingType: ''
@@ -211,10 +225,9 @@ export default {
         limit: this.pagination.pageSize,
         orderMode: 0
       }
-      const res = await this.$api.FETCH_ALL_REPORTS(pageAndMode)
-      console.log(res)
-      // res = res.data
-      // this.updateData(res)
+      let res = await this.$api.FETCH_ALL_REPORTS(pageAndMode)
+      res = res.data
+      this.updateData(res)
     },
     showDetail ({
       index,
@@ -277,14 +290,21 @@ export default {
       this.pagination.currentPage = pageRec.current
       this.pagination.total = pageRec.rows
       this.pagination.pageSize = pageRec.limit
-      this.data = res.reports
-      // this.data = this.data.map(item => {
-      //   const updatedType = this.typeDict[item.type] || item.type
-      //   return {
-      //     ...item,
-      //     type: updatedType
-      //   }
-      // })
+      // this.data = res.reports.map(item => item.reports)
+      // var reports = res.reports.map(item => item.reports)
+      // var users = res.reports.map(item => item.user)
+      // console.log(reports)
+      // console.log(users)
+
+      var dataToThis = []
+      res.reports.map(item => {
+        var dataPushed = item.reports
+        dataPushed._id = item.user.roleName + ' (' + item.user.username + ')'
+        dataPushed._type = this.typeNumToStr(item.reports.type + '')
+        dataPushed._isRead = this.readNumToStr(item.reports.isRead + '')
+        dataToThis.push(dataPushed)
+      })
+      this.data = dataToThis
     },
     async onSearch () {
       if (this.searchKeywords) {
@@ -399,6 +419,10 @@ export default {
     },
     typeNumToStr (value) {
       const result = this.typeDict.find(item => item.value === value)
+      return result ? result.label : ''
+    },
+    readNumToStr (value) {
+      const result = this.readDict.find(item => item.value === value)
       return result ? result.label : ''
     },
     handleSelectionChange (selection) {
