@@ -160,7 +160,9 @@ export default {
           size: 'small',
           confirm: true,
           order: 9
-        }
+        },
+        fixed: 'right',
+        width: '210'
       },
       pagination: {
         currentPage: 1,

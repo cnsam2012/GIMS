@@ -9,6 +9,7 @@
       :rowHandle="rowHandle"
       :pagination="pagination"
       :form-options="formOptions"
+      selection-row
       @show-detail="showDetail"
       @on-edit-click="onEditClick"
       @on-delete="onDelete"
@@ -17,14 +18,15 @@
       @dialog-open="handleDialogOpen"
       @row-edit="handleRowEdit"
       @row-remove="handleRowRemove"
+      @selection-change="handleSelectionChange"
     >
-<!--      <el-button-->
-<!--        slot="header"-->
-<!--        type="success"-->
-<!--        style="margin: 7px"-->
-<!--        @click="onAdd"-->
-<!--      >新增部门-->
-<!--      </el-button>-->
+      <!--      <el-button-->
+      <!--        slot="header"-->
+      <!--        type="success"-->
+      <!--        style="margin: 7px"-->
+      <!--        @click="onAdd"-->
+      <!--      >新增部门-->
+      <!--      </el-button>-->
       <el-input
         slot="header"
         type="text"
@@ -93,6 +95,15 @@ export default {
       },
       columns: [
         {
+          title: '提交人',
+          key: '_id',
+          fixed: true
+        },
+        {
+          title: '报告类型',
+          key: '_type'
+        },
+        {
           title: '标题',
           key: 'title',
           showOverflowTooltip: true
@@ -108,7 +119,7 @@ export default {
         },
         {
           title: '阅读状态',
-          key: 'isRead'
+          key: '_isRead'
         },
         {
           title: '最后操作',
@@ -122,8 +133,12 @@ export default {
           key: 'title',
           content: '通知内容1',
           createTime: '2021-01-01 10:00:00',
-          isRead: '已读',
-          lastedEditUserId: 'UserA'
+          isRead: '1',
+          lastedEditUserId: 'UserA',
+          type: '1',
+          _id: 'username1',
+          _type: 'type1',
+          _isRead: '已读'
         },
         {
           id: '2',
@@ -131,8 +146,12 @@ export default {
           key: 'title',
           content: '通知内容2',
           createTime: '2021-02-01 14:30:00',
-          isRead: '未读',
-          lastedEditUserId: 'UserB'
+          isRead: '0',
+          lastedEditUserId: 'UserB',
+          type: '2',
+          _id: 'username2',
+          _type: 'type2',
+          _isRead: '未读'
         }
       ],
       rowHandle: {
@@ -154,7 +173,9 @@ export default {
           size: 'small',
           confirm: true,
           order: 9
-        }
+        },
+        fixed: 'right',
+        width: '210'
       },
       pagination: {
         currentPage: 1,
@@ -181,15 +202,17 @@ export default {
   mounted () {
     this.fetchData()
     document.addEventListener('keypress', this.handleWatchEnter)
-    console.log(this.typeNumToStr('1'))
+    // console.log(this.typeNumToStr('1'))
   },
   methods: {
     async fetchData () {
-      // const page = {
-      //   current: this.pagination.currentPage,
-      //   limit: this.pagination.pageSize
-      // }
-      // let res = await this.$api.FETCH_ALL_DEPARTMENTS(page)
+      const pageAndMode = {
+        current: this.pagination.currentPage,
+        limit: this.pagination.pageSize,
+        orderMode: 0
+      }
+      const res = await this.$api.FETCH_ALL_REPORTS(pageAndMode)
+      console.log(res)
       // res = res.data
       // this.updateData(res)
     },
@@ -377,6 +400,9 @@ export default {
     typeNumToStr (value) {
       const result = this.typeDict.find(item => item.value === value)
       return result ? result.label : ''
+    },
+    handleSelectionChange (selection) {
+      console.log(selection)
     }
   }
 }

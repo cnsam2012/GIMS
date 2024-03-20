@@ -6,14 +6,12 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import me.chang.gpms.pojo.ro.ReportIdPassRo;
-import me.chang.gpms.pojo.ro.ReportIdTypeRo;
-import me.chang.gpms.pojo.ro.ReportTitleContentRo;
+import lombok.val;
+import me.chang.gpms.pojo.ro.*;
 import me.chang.gpms.util.constant.GPMSResponseCode;
 import org.apache.http.HttpStatus;
 import me.chang.gpms.event.EventProducer;
 import me.chang.gpms.pojo.*;
-import me.chang.gpms.pojo.ro.ReportIdRo;
 import me.chang.gpms.service.CommentService;
 import me.chang.gpms.service.ReportService;
 import me.chang.gpms.service.LikeService;
@@ -180,22 +178,27 @@ public class ReportApiController {
     }
 
     /**
-     * 获取所有讨论
-     * @param orderMode
+     * 获取所有报告
      * @param page
      * @return
      */
-    @GetMapping("detail/all")
+    @PostMapping("detail/all")
     @Operation(description = "获取所有讨论")
+    // TODO
     public R getAllReport(
-            @RequestParam(name = "orderMode", defaultValue = "0")
-            @Parameter(name = "orderMode", description = "默认是 0--按时间排序，可选 1--按分值排序", example = "0")
-            int orderMode,
-            @Parameter(required = false)
-            Page page
+//            @RequestParam(name = "orderMode", defaultValue = "0")
+//            @Parameter(name = "orderMode", description = "默认是 0--按时间排序，可选 1--按分值排序", example = "0")
+//            int orderMode,
+//            @Parameter(required = false)
+//            Page page,
+            @RequestBody
+            @Parameter(required = true)
+            PageAndOrderModeRo page
     ) {
 
         Map<String, Object> data = new HashMap<>();
+
+        var orderMode = page.getOrderMode();
 
         // 获取总页数
         page.setRows(discussPostService.findReportRows(0));
@@ -209,19 +212,19 @@ public class ReportApiController {
         if (list != null) {
             for (Report post : list) {
                 Map<String, Object> map = new HashMap<>();
-                map.put("post", post);
+                map.put("reports", post);
 
                 User user = userService.findUserById(post.getUserId());
                 map.put("user", user);
 
-                long likeCount = likeService.findEntityLikeCount(BbEntityType.ENTITY_TYPE_POST.value(), post.getId());
-                map.put("likeCount", likeCount);
+//                long likeCount = likeService.findEntityLikeCount(BbEntityType.ENTITY_TYPE_POST.value(), post.getId());
+//                map.put("likeCount", likeCount);
 
                 discussPosts.add(map);
             }
         }
 
-        data.put("discussPosts", discussPosts);
+        data.put("reports", discussPosts);
         data.put("orderMode", orderMode);
         data.put("page", page);
 
@@ -229,7 +232,8 @@ public class ReportApiController {
 
 
 //        return BbUtil.getJSONString(status, "success", data);
-        return R.ok("所有讨论", data);
+        val ok = GPMSResponseCode.OK.value();
+        return R.ok(ok, "所有报告", data);
     }
 
     /**
@@ -335,14 +339,15 @@ public class ReportApiController {
 
 
     /**
-     * 置顶讨论
+     * 修改报告类型
      *
      * @param idAndType
+     * @param resp
      * @return
      */
-    @PutMapping("top")
-    @Schema(description = "置顶讨论 (auth master-2 only)", name = "updateTop")
-    public R updateTop(
+    @PutMapping("type")
+    @Schema(description = "修改报告类型：1-周记; 2-月记; 3-总结", name = "updateTop")
+    public R updateType(
             @Parameter(required = true)
             @RequestBody
             ReportIdTypeRo idAndType,
@@ -360,20 +365,25 @@ public class ReportApiController {
         var id = idAndType.getId();
         var type = idAndType.getType();
 
-        discussPostService.updateType(id, type);
+        var res = discussPostService.updateType(id, type);
+        if (res == -1) {
+            return R.error(
+                    GPMSResponseCode.CLIENT_ERROR.value(), "非法报告类型：1-周记; 2-月记; 3-总结"
+            );
+        }
 
         // 触发发帖事件，通过消息队列将其存入 Elasticsearch 服务器
-        Event event = new Event()
-                .setTopic(BbKafkaTopic.TOPIC_PUBLISH.value())
-                .setUserId(hostHolder.getUser().getId())
-                .setEntityType(BbEntityType.ENTITY_TYPE_POST.value())
-                .setEntityId(id);
-        eventProducer.fireEvent(event);
+//        Event event = new Event()
+//                .setTopic(BbKafkaTopic.TOPIC_PUBLISH.value())
+//                .setUserId(hostHolder.getUser().getId())
+//                .setEntityType(BbEntityType.ENTITY_TYPE_POST.value())
+//                .setEntityId(id);
+//        eventProducer.fireEvent(event);
 
         var status = HttpStatus.SC_OK;
         resp.setStatus(status);
 //        return BbUtil.getJSONString(status, "状态设置成功");
-        return R.ok(status, "讨论置顶成功/讨论状态设置成功");
+        return R.ok(status, "类型设置成功");
     }
 
 
@@ -396,14 +406,17 @@ public class ReportApiController {
             return R.error(status, "参数不齐");
         }
         var id = dpId.getId();
+
         discussPostService.updateStatus(id, 1);
+
+
         // 触发发帖事件，通过消息队列将其存入 Elasticsearch 服务器
-        Event event = new Event()
-                .setTopic(BbKafkaTopic.TOPIC_PUBLISH.value())
-                .setUserId(hostHolder.getUser().getId())
-                .setEntityType(BbEntityType.ENTITY_TYPE_POST.value())
-                .setEntityId(id);
-        eventProducer.fireEvent(event);
+//        Event event = new Event()
+//                .setTopic(BbKafkaTopic.TOPIC_PUBLISH.value())
+//                .setUserId(hostHolder.getUser().getId())
+//                .setEntityType(BbEntityType.ENTITY_TYPE_POST.value())
+//                .setEntityId(id);
+//        eventProducer.fireEvent(event);
 
 
         // 计算帖子分数
@@ -416,33 +429,69 @@ public class ReportApiController {
         return R.ok(status, "加精成功");
     }
 
-//    @PutMapping("setPass")
-//    @Operation(description = "设置通过")
-//    public R setPass(@Parameter(required = true)
-//                          @RequestBody
-//                         ReportIdPassRo dpId) {
-//        if (dpId == null) {
-//            var status = GPMSResponseCode.CLIENT_ERROR.value();
-//            return R.error(status, "参数不齐");
-//
-//        }
-//        var id = dpId.getId();
-//        discussPostService.updatePass(id, dpId.getIsPassed());
-//        // 触发发帖事件，通过消息队列将其存入 Elasticsearch 服务器
-////        Event event = new Event()
-////                .setTopic(BbKafkaTopic.TOPIC_PUBLISH.value())
-////                .setUserId(hostHolder.getUser().getId())
-////                .setEntityType(BbEntityType.ENTITY_TYPE_POST.value())
-////                .setEntityId(id);
-////        eventProducer.fireEvent(event);
-//        // 计算帖子分数
-////        String redisKey = RedisKeyUtil.getPostScoreKey();
-////        redisTemplate.opsForSet().add(redisKey, id);
-//        var status = HttpStatus.SC_OK;
-//        resp.setStatus(status);
-////        return BbUtil.getJSONString(status, "加精成功");
-//        return R.ok(status, "加精成功");
-//    }
+    @PutMapping("pass")
+    @Operation(description = "设置通过")
+    public R setPass(@Parameter(required = true)
+                     @RequestBody
+                     ReportIdPassRo dpId) {
+        if (dpId == null) {
+            var status = GPMSResponseCode.CLIENT_ERROR.value();
+            return R.error(status, "参数不齐");
+
+        }
+        var id = dpId.getId();
+        var res = discussPostService.updatePass(id, dpId.getIsPassed());
+        if (res == -1) {
+            return R.error(
+                    GPMSResponseCode.CLIENT_ERROR.value(), "非法通过状态：状态仅为-1、0、1"
+            );
+        }
+        // 触发发帖事件，通过消息队列将其存入 Elasticsearch 服务器
+//        Event event = new Event()
+//                .setTopic(BbKafkaTopic.TOPIC_PUBLISH.value())
+//                .setUserId(hostHolder.getUser().getId())
+//                .setEntityType(BbEntityType.ENTITY_TYPE_POST.value())
+//                .setEntityId(id);
+//        eventProducer.fireEvent(event);
+        // 计算帖子分数
+//        String redisKey = RedisKeyUtil.getPostScoreKey();
+//        redisTemplate.opsForSet().add(redisKey, id);
+        var status = GPMSResponseCode.OK.value();
+//        return BbUtil.getJSONString(status, "加精成功");
+        return R.ok(status, "设置通过状态成功");
+    }
+
+    @PutMapping("read")
+    @Operation(description = "设置已读状态")
+    public R setRead(@Parameter(required = true)
+                     @RequestBody
+                     ReportIdReadRo rIr) {
+        if (rIr == null) {
+            var status = GPMSResponseCode.CLIENT_ERROR.value();
+            return R.error(status, "参数不齐");
+
+        }
+        var id = rIr.getId();
+        var res = discussPostService.updateRead(id, rIr.getIsRead());
+        if (res == -1) {
+            return R.error(
+                    GPMSResponseCode.CLIENT_ERROR.value(), "非法已读状态：状态仅为 1-read; 0-unread"
+            );
+        }
+        // 触发发帖事件，通过消息队列将其存入 Elasticsearch 服务器
+//        Event event = new Event()
+//                .setTopic(BbKafkaTopic.TOPIC_PUBLISH.value())
+//                .setUserId(hostHolder.getUser().getId())
+//                .setEntityType(BbEntityType.ENTITY_TYPE_POST.value())
+//                .setEntityId(id);
+//        eventProducer.fireEvent(event);
+        // 计算帖子分数
+//        String redisKey = RedisKeyUtil.getPostScoreKey();
+//        redisTemplate.opsForSet().add(redisKey, id);
+        var status = GPMSResponseCode.OK.value();
+//        return BbUtil.getJSONString(status, "加精成功");
+        return R.ok(status, "设置通过状态成功");
+    }
 
 
     /**

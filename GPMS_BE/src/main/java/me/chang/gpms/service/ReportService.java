@@ -167,7 +167,7 @@ public class ReportService {
     /**
      * 修改报告的评论数量
      *
-     * @param id 报告 id
+     * @param id           报告 id
      * @param commentCount
      * @return
      */
@@ -184,6 +184,10 @@ public class ReportService {
      * @return
      */
     public int updateType(int id, int type) {
+        if (type < 1 || type > 3) {
+            int i = -1;
+            return i;
+        }
         return reportMapper.updateType(id, type);
     }
 
@@ -195,26 +199,40 @@ public class ReportService {
      * @return
      */
     public int updateStatus(int id, int status) {
+        if (status < 0 || status > 2) {
+            int i = -1;
+            return i;
+        }
         return reportMapper.updateStatus(id, status);
     }
 
     /**
      * 修改报告阅读状态 1-read; 0-unread
+     *
      * @param id
      * @param isRead
      * @return
      */
     public int updateRead(int id, int isRead) {
+        if (isRead < 0 || isRead > 1) {
+            int i = -1;
+            return i;
+        }
         return reportMapper.updateRead(id, isRead);
     }
 
     /**
      * 修改报告通过状态 1-pass; 0-none; -1-fail
+     *
      * @param id
      * @param isPass
      * @return
      */
     public int updatePass(int id, int isPass) {
+        if (isPass < -1 || isPass > 1) {
+            int i = -1;
+            return i;
+        }
         return reportMapper.updatePass(id, isPass);
     }
 

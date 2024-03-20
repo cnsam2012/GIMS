@@ -4,10 +4,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "讨论ID、状态请求对象", name = "DiscussPostIdTypeRo")
+@Schema(description = "ID、报告类型请求对象", name = "DiscussPostIdTypeRo")
 public class ReportIdTypeRo {
-    @Schema(description = "帖子的id", example = "20", name = "id")
+    @Schema(description = "报告的id", example = "20", name = "id")
     private int id;
-    @Schema(description = "状态：0-普通，1-置顶", example = "0", name = "type")
+    @Schema(description = "修改报告类型：1-周记; 2-月记; 3-总结", example = "0", name = "type")
     private int type;
 }

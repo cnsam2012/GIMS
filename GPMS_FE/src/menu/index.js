@@ -104,6 +104,11 @@ export const menuAside = supplementPath([
     path: '/departments_management',
     title: '部门管理',
     icon: 'building-o'
+  },
+  {
+    path: '/reports_management',
+    title: '报告管理',
+    icon: 'file-text-o'
   }
 ])
 
