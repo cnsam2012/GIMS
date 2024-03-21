@@ -31,7 +31,7 @@
         slot="header"
         type="text"
         v-model="searchKeywords"
-        placeholder="搜索部门..."
+        placeholder="搜索提交人..."
         style="width: 20%; margin: 7px"
       >
         <template slot="append">
@@ -101,7 +101,8 @@ export default {
         },
         {
           title: '报告类型',
-          key: '_type'
+          key: 'type',
+          formatter: this.typeNumToStrFormatter
         },
         {
           title: '标题',
@@ -115,11 +116,13 @@ export default {
         },
         {
           title: '提交时间',
-          key: 'createTime'
+          key: 'createTime',
+          formatter: this.colCreateTimeFormatter
         },
         {
           title: '阅读状态',
-          key: '_isRead'
+          key: 'isRead',
+          formatter: this.readNumToStrFormatter
         },
         {
           title: '最后操作',
@@ -179,7 +182,7 @@ export default {
       },
       pagination: {
         currentPage: 1,
-        pageSize: 2,
+        pageSize: 7,
         total: 15
       },
       formOptions: {
@@ -233,11 +236,46 @@ export default {
       index,
       row
     }) {
+      console.log(row)
       this.$refs.reports.showDialog({
         mode: 'view',
         rowIndex: index,
         template: {
-          // TODO
+          id: {
+            title: '提交人',
+            value: '_id',
+            formatter: this.generalFormatter
+          },
+          type: {
+            title: '报告类型',
+            value: 'type',
+            formatter: this.typeNumToStrFormatter
+          },
+          title: {
+            title: '标题',
+            value: 'title',
+            formatter: this.generalFormatter
+          },
+          content: {
+            title: '内容',
+            value: 'content',
+            formatter: this.generalFormatter
+          },
+          createTime: {
+            title: '提交时间',
+            value: 'createTime',
+            formatter: this.colCreateTimeFormatter
+          },
+          isRead: {
+            title: '阅读状态',
+            value: 'isRead',
+            formatter: this.readNumToStrFormatter
+          },
+          lastedEditUserId: {
+            title: '最后操作',
+            value: 'lastedEditUserId',
+            formatter: this.generalFormatter
+          }
         }
       })
     },
@@ -300,8 +338,8 @@ export default {
       res.reports.map(item => {
         var dataPushed = item.reports
         dataPushed._id = item.user.roleName + ' (' + item.user.username + ')'
-        dataPushed._type = this.typeNumToStr(item.reports.type + '')
-        dataPushed._isRead = this.readNumToStr(item.reports.isRead + '')
+        // dataPushed._type = this.typeNumToStr(item.reports.type + '')
+        // dataPushed._isRead = this.readNumToStr(item.reports.isRead + '')
         dataToThis.push(dataPushed)
       })
       this.data = dataToThis
@@ -417,13 +455,25 @@ export default {
         this.onSearch()
       }
     },
-    typeNumToStr (value) {
-      const result = this.typeDict.find(item => item.value === value)
+    generalFormatter (row, column, cellValue, index) {
+      return cellValue
+    },
+    typeNumToStrFormatter (row, column, cellValue, index) {
+      const result = this.typeDict.find(item => item.value === cellValue + '')
       return result ? result.label : ''
     },
-    readNumToStr (value) {
-      const result = this.readDict.find(item => item.value === value)
+    readNumToStrFormatter (row, column, cellValue, index) {
+      const result = this.readDict.find(item => item.value === cellValue + '')
       return result ? result.label : ''
+    },
+    colCreateTimeFormatter (row, column, cellValue, index) {
+      var dateRegex = /^\d{4}-\d{2}-\d{2}/
+      var match = cellValue.match(dateRegex)
+      if (match) {
+        return match[0] // 返回匹配到的日期部分
+      } else {
+        return 'NULL' // 如果没有匹配到日期部分，则返回空字符串
+      }
     },
     handleSelectionChange (selection) {
       console.log(selection)

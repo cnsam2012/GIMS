@@ -105,4 +105,7 @@ public class Report {
     @Schema(description = "最后编辑", example = "0", name = "")
     private Integer lastedEditUserId;
 
+    @Field(type = FieldType.Integer)
+    @Schema(description = "附件id", example = "0", name = "")
+    private String att_id;
 }

@@ -179,6 +179,7 @@ public class ReportApiController {
 
     /**
      * 获取所有报告
+     *
      * @param page
      * @return
      */
@@ -197,40 +198,29 @@ public class ReportApiController {
     ) {
 
         Map<String, Object> data = new HashMap<>();
-
         var orderMode = page.getOrderMode();
-
         // 获取总页数
         page.setRows(discussPostService.findReportRows(0));
         page.setPath("/index?orderMode=" + orderMode);
-
         // 分页查询
         List<Report> list = discussPostService.findReports(0, page.getOffset(), page.getLimit(), orderMode);
-
         // 封装帖子和该帖子对应的用户信息
         List<Map<String, Object>> discussPosts = new ArrayList<>();
         if (list != null) {
             for (Report post : list) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("reports", post);
-
                 User user = userService.findUserById(post.getUserId());
                 map.put("user", user);
-
 //                long likeCount = likeService.findEntityLikeCount(BbEntityType.ENTITY_TYPE_POST.value(), post.getId());
 //                map.put("likeCount", likeCount);
-
                 discussPosts.add(map);
             }
         }
-
         data.put("reports", discussPosts);
         data.put("orderMode", orderMode);
         data.put("page", page);
-
         var status = HttpStatus.SC_OK;
-
-
 //        return BbUtil.getJSONString(status, "success", data);
         val ok = GPMSResponseCode.OK.value();
         return R.ok(ok, "所有报告", data);

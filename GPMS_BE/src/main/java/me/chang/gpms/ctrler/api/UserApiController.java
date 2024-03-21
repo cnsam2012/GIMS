@@ -290,7 +290,6 @@ public class UserApiController {
         if (user == null) {
             throw new RuntimeException("该用户不存在");
         }
-
         // 用户
         data.put("user", user);
         // 获赞数量
