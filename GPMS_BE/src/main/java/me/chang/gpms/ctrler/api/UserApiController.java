@@ -317,6 +317,26 @@ public class UserApiController {
         );
     }
 
+    @GetMapping("profile/username/{userId}")
+    @Operation(summary = "由ID获取用户名")
+    public R getUsernameById(
+            @PathVariable("userId") int userId
+    ) {
+        var data = new HashMap<String, Object>();
+        User user = userService.findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("该用户不存在");
+        }
+        // 用户
+        data.put("username", user.getUsername());
+        data.put("roleName", user.getRoleName());
+        return R.ok(
+                GPMSResponseCode.OK.value(),
+                "用户名",
+                data
+        );
+    }
+
     /**
      * 进入我的帖子（查询某个用户的帖子列表）
      *

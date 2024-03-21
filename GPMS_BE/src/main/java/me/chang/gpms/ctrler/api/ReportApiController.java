@@ -214,6 +214,10 @@ public class ReportApiController {
                 map.put("user", user);
 //                long likeCount = likeService.findEntityLikeCount(BbEntityType.ENTITY_TYPE_POST.value(), post.getId());
 //                map.put("likeCount", likeCount);
+                var userId = post.getLastedEditUserId();
+                User lEuser = userService.findUserById(userId);
+                map.put("latestEditUserName", lEuser.getUsername());
+                map.put("latestEditRoleName", lEuser.getRoleName());
                 discussPosts.add(map);
             }
         }
