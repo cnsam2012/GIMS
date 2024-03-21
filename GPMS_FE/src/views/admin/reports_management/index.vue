@@ -61,38 +61,7 @@
 export default {
   data () {
     return {
-      addTemplate: {
-        type: {
-          title: '部门类型',
-          value: '1',
-          component: {
-            name: 'dict-select',
-            props: {
-              dict: {
-                data: [
-                  {
-                    value: '1',
-                    label: '院系部门 - AD'
-                  },
-                  {
-                    value: '2',
-                    label: '实习单位 - COM'
-                  }
-                ]
-              }
-            },
-            span: 12
-          }
-        },
-        name: {
-          title: '部门名称',
-          value: 'name'
-        },
-        content: {
-          title: '备注',
-          value: 'content'
-        }
-      },
+      addTemplate: {},
       columns: [
         {
           title: '提交人',
@@ -126,7 +95,7 @@ export default {
         },
         {
           title: '最后操作',
-          key: 'lastedEditUserId'
+          key: '_lastedEditUserId'
         }
       ],
       data: [
@@ -137,7 +106,7 @@ export default {
           content: '通知内容1',
           createTime: '2021-01-01 10:00:00',
           isRead: '1',
-          lastedEditUserId: 'UserA',
+          lastedEditUserId: '910018',
           type: '1',
           _id: 'username1',
           _type: 'type1',
@@ -150,7 +119,7 @@ export default {
           content: '通知内容2',
           createTime: '2021-02-01 14:30:00',
           isRead: '0',
-          lastedEditUserId: 'UserB',
+          lastedEditUserId: '910018',
           type: '2',
           _id: 'username2',
           _type: 'type2',
@@ -288,28 +257,14 @@ export default {
         mode: 'edit',
         rowIndex: index,
         template: {
-          // type: {
-          //   title: '部门类型',
-          //   value: row.type,
-          //   component: {
-          //     name: 'dict-select',
-          //     props: {
-          //       dict: {
-          //         data: this.typeDict
-          //       }
-          //     },
-          //     span: 12
-          //   }
-          // },
-          // name: {
-          //   title: '部门名称',
-          //   value: row.name
-          // },
-          // content: {
-          //   title: '备注',
-          //   value: row.content
-          // }
-          // TODO
+          isRead: {
+            title: '阅读状态',
+            value: '_isRead'
+          },
+          type: {
+            title: '报告类型',
+            value: '_type'
+          }
         }
       })
     },
@@ -338,6 +293,7 @@ export default {
       res.reports.map(item => {
         var dataPushed = item.reports
         dataPushed._id = item.user.roleName + ' (' + item.user.username + ')'
+        dataPushed._lastedEditUserId = item.latestEditRoleName + ' (' + item.latestEditUserName + ')'
         // dataPushed._type = this.typeNumToStr(item.reports.type + '')
         // dataPushed._isRead = this.readNumToStr(item.reports.isRead + '')
         dataToThis.push(dataPushed)
@@ -465,6 +421,10 @@ export default {
     readNumToStrFormatter (row, column, cellValue, index) {
       const result = this.readDict.find(item => item.value === cellValue + '')
       return result ? result.label : ''
+    },
+    userIdToUsernameFormatter (row, column, cellValue, index) {
+      var res = this.$api.SYS_USER_GET_USERNAME(cellValue)
+      return res.username + '(' + res.roleName + ')'
     },
     colCreateTimeFormatter (row, column, cellValue, index) {
       var dateRegex = /^\d{4}-\d{2}-\d{2}/
