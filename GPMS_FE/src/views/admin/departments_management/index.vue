@@ -19,6 +19,7 @@
       :rowHandle="rowHandle"
       :pagination="pagination"
       :form-options="formOptions"
+      :loading="loading"
       @show-detail="showDetail"
       @on-edit-click="onEditClick"
       @on-delete="onDelete"
@@ -70,6 +71,7 @@
 export default {
   data () {
     return {
+      loading: false,
       addTemplate: {
         type: {
           title: '部门类型',
@@ -197,9 +199,11 @@ export default {
         current: this.pagination.currentPage,
         limit: this.pagination.pageSize
       }
+      this.loading = true
       let res = await this.$api.FETCH_ALL_DEPARTMENTS(page)
       res = res.data
       this.updateData(res)
+      this.loading = false
     },
     showDetail ({
       index,

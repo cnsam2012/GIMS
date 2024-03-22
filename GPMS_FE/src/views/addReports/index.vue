@@ -1,19 +1,32 @@
 <template>
   <d2-container>
-    <template slot="header">
+    <template slot="header" style="padding: 0">
       <h1>
         新建报告
       </h1>
     </template>
-    <template slot="footer" > <random-motto/> </template>
+    <v-md-editor
+      v-model="text"
+      height="400px"
+      ref="editor"
+      default-show-toc="true"
+      autofocus="true"
+      left-toolbar="undo redo clear | h bold italic strikethrough quote | ul ol table hr | link code | save"
+    ></v-md-editor>
+    <div style="margin-top: 30px">
+      <el-button type="success">确认无误，提交报告</el-button>
+      <el-button type="info">保存为草稿</el-button>
+    </div>
+    <template slot="footer">
+      <random-motto/>
+    </template>
   </d2-container>
 </template>
 <script>
 import { mapActions, mapState } from 'vuex'
-import api from '@/api'
-import { Loading } from 'element-ui'
 
 export default {
+  // TODO 新建报告未接入
   computed: {
     ...mapState('d2admin/user', [
       'info'
@@ -24,70 +37,37 @@ export default {
     ])
   },
   data () {
-    var validateOldPass = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入原密码'))
-      } else {
-        callback()
-      }
-    }
-    var validatePass = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入密码'))
-      } else {
-        if (this.ruleForm.checkPass !== '') {
-          this.$refs.ruleForm.validateField('checkPass')
-        }
-        callback()
-      }
-    }
-    var validatePass2 = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请再次输入密码'))
-      } else if (value !== this.ruleForm.pass) {
-        callback(new Error('两次输入密码不一致!'))
-      } else {
-        callback()
-      }
-    }
     return {
-      msg: '正在加载...',
-      username: '正在加载...',
-      imgSrc: './image/login-code.png',
-      ruleForm: {
-        pass: '',
-        checkPass: '',
-        oldPass: ''
-      },
-      formError: {
-        pass: '',
-        checkPass: '',
-        oldPass: ''
-      },
-      rules: {
-        oldPass: [
-          {
-            validator: validateOldPass,
-            trigger: 'blur'
-          }
-        ],
-        pass: [
-          {
-            validator: validatePass,
-            trigger: 'blur'
-          }
-        ],
-        checkPass: [
-          {
-            validator: validatePass2,
-            trigger: 'blur'
-          }
-        ]
-      }
+      text: '## 实习月记大纲\n' +
+        '\n' +
+        '**日期**：\n' +
+        '**工作内容**：\n' +
+        '**学习收获**：\n' +
+        '**困难与解决**：\n' +
+        '**感想与建议**：\n' +
+        '\n' +
+        '## 周记大纲\n' +
+        '\n' +
+        '**周数**：\n' +
+        '**工作内容**：\n' +
+        '**学习收获**：\n' +
+        '**困难与解决**：\n' +
+        '**工作反思**：\n' +
+        '**下周计划**：\n' +
+        '\n' +
+        '## 总结大纲\n' +
+        '\n' +
+        '**实习概述**：\n' +
+        '**工作内容**：\n' +
+        '**学习收获**：\n' +
+        '**成果展示**：\n' +
+        '**挑战与成长**：\n' +
+        '**感谢和反馈**：\n' +
+        '**职业规划**：'
     }
   },
   async mounted () {
-    await this.refreshData()
+    // this.$refs.editor.focus()
   },
   // beforeDestroy () {
   // },
@@ -95,78 +75,14 @@ export default {
     ...mapActions('d2admin/page', [
       'close'
     ]),
-    startLoading () { // 使用Element loading-start 方法
-      return Loading.service({
-        lock: true,
-        text: '加载中……',
-        background: 'rgba(0,0,0,0.6)'
-      })
-    },
-    /**
-     * 刷新数据
-     * @returns {Promise<void>}
-     */
-    async refreshData () {
-      // console.log('refreshing data')
-      try {
-        this.username = this.info.name
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    async submitValidate (valid) {
-      const ld = this.startLoading()
-      if (valid) {
-        var data = {
-          oldPwd: this.ruleForm.oldPass,
-          newPwd: this.ruleForm.pass
-        }
-        let alterRes = await api.SYS_USER_ALTER_PASSWORD(data)
-        alterRes = alterRes.data
-        let oldPasswordError = ''
-        let newPasswordError = ''
-        try {
-          oldPasswordError = alterRes.oldPasswordError
-        } catch (e) {
-          // console.info('{"NO_PASSWORD_ERROR"}')
-        }
-        try {
-          newPasswordError = alterRes.newPasswordError
-        } catch (e) {
-          // console.info('{"NO_NEW_PASSWORD_ERROR"}')
-        }
-        if (oldPasswordError) {
-          this.formError.oldPass = oldPasswordError
-          ld.close()
-        } else if (newPasswordError) {
-          this.formError.pass = newPasswordError
-          ld.close()
-        } else {
-          await this.$alert('修改成功', '提示', {
-            type: 'success',
-            confirmButtonClass: 'el-button el-button--default el-button--small el-button--success',
-            showClose: false
-          })
-          ld.close()
-          await this.close({ tagName: '/alterPassword' }) // TODO 未能正常关闭标签页
-        }
-        ld.close()
-      } else {
-        console.log('{"RECEIVE_DATA_VALID_ERROR"}')
-        ld.close()
-        return false
-      }
-    },
-    submitForm (formName) {
-      this.formError.oldPass = ''
-      this.formError.pass = ''
-      this.$refs[formName].validate((valid) => this.submitValidate(valid))
-    },
-    resetForm (formName) {
-      this.$refs[formName].resetFields()
+    closeThisTag () {
+      this.close({ tagName: '/addReports' })
     }
   }
 }
 </script>
 <style>
+.d2-layout-header-aside-group .d2-layout-header-aside-content .d2-theme-container .d2-theme-container-main .d2-theme-container-main-body .container-component .d2-container-full .d2-container-full__header {
+  padding: 0px 20px 0px 20px;
+}
 </style>
