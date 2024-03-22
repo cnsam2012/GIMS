@@ -9,6 +9,7 @@
       :rowHandle="rowHandle"
       :pagination="pagination"
       :form-options="formOptions"
+      :loading="loading"
       selection-row
       @show-detail="showDetail"
       @on-edit-click="onEditClick"
@@ -20,28 +21,53 @@
       @row-remove="handleRowRemove"
       @selection-change="handleSelectionChange"
     >
-      <!--      <el-button-->
-      <!--        slot="header"-->
-      <!--        type="success"-->
-      <!--        style="margin: 7px"-->
-      <!--        @click="onAdd"-->
-      <!--      >新增部门-->
-      <!--      </el-button>-->
-      <el-input
+      <el-button
         slot="header"
-        type="text"
-        v-model="searchKeywords"
-        placeholder="搜索提交人..."
-        style="width: 20%; margin: 7px"
+        type="success"
+        style="margin: 7px"
+        @click="onAdd"
+        v-if="info.userType === 1"
+      >新建报告
+      </el-button>
+
+      <template
+        v-if="info.userType === 1"
       >
-        <template slot="append">
-          <el-button
-            slot="header"
-            @click="onSearch"
-          >搜索
-          </el-button>
-        </template>
-      </el-input>
+        <el-input
+          slot="header"
+          type="text"
+          v-model="searchKeywords"
+          placeholder="搜索我的报告..."
+          style="width: 20%; margin: 7px"
+        >
+          <template slot="append">
+            <el-button
+              slot="header"
+              @click="onSearch"
+            >搜索
+            </el-button>
+          </template>
+        </el-input>
+      </template>
+      <template
+        v-else
+      >
+        <el-input
+          slot="header"
+          type="text"
+          v-model="searchKeywords"
+          placeholder="搜索提交人..."
+          style="width: 20%; margin: 7px"
+        >
+          <template slot="append">
+            <el-button
+              slot="header"
+              @click="onSearch"
+            >搜索
+            </el-button>
+          </template>
+        </el-input>
+      </template>
       <el-input-number
         slot="header"
         v-model="pagination.pageSize"
@@ -58,9 +84,17 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
+  computed: {
+    ...mapState('d2admin/user', [
+      'info'
+    ])
+  },
   data () {
     return {
+      loading: false,
       addTemplate: {},
       columns: [
         {
@@ -182,13 +216,39 @@ export default {
           label: '已读'
         }
       ],
-      editingType: ''
+      editingType: '',
+      editingTemplate: {
+        isRead: {
+          title: '阅读状态',
+          value: '_isRead'
+        },
+        type: {
+          title: '报告类型',
+          value: '_type'
+        }
+      }
     }
   },
-  mounted () {
+  async mounted () {
     this.fetchData()
     document.addEventListener('keypress', this.handleWatchEnter)
-    // console.log(this.typeNumToStr('1'))
+    if (this.info.userType === 1) {
+      this.editingTemplate = {
+        // TODO 报告类型应为多选框，内容应为长文本框
+        type: {
+          title: '报告类型',
+          value: 'type'
+        },
+        title: {
+          title: '标题',
+          value: 'title'
+        },
+        content: {
+          title: '内容',
+          value: 'content'
+        }
+      }
+    }
   },
   methods: {
     async fetchData () {
@@ -197,15 +257,26 @@ export default {
         limit: this.pagination.pageSize,
         orderMode: 0
       }
-      let res = await this.$api.FETCH_ALL_REPORTS(pageAndMode)
+      this.loading = true
+      let res = null
+      // AUTH START
+      // TODO 教师2 实习单位3 查看其所属单位、所管理学生的报告
+      // 仅管理员可拉取所有报告，其他用户根据特定情况拉取
+      if (this.info.userType === 9) {
+        res = await this.$api.FETCH_ALL_REPORTS(pageAndMode)
+      } else {
+        pageAndMode.id = this.info.userId
+        res = await this.$api.FETCH_SPEC_USER_REPORTS(pageAndMode)
+      }
+      // AUTH END
       res = res.data
       this.updateData(res)
+      this.loading = false
     },
     showDetail ({
       index,
       row
     }) {
-      console.log(row)
       this.$refs.reports.showDialog({
         mode: 'view',
         rowIndex: index,
@@ -213,7 +284,7 @@ export default {
           id: {
             title: '提交人',
             value: '_id',
-            formatter: this.generalFormatter
+            formatter: this.id2NameFormatter
           },
           type: {
             title: '报告类型',
@@ -243,7 +314,7 @@ export default {
           lastedEditUserId: {
             title: '最后操作',
             value: 'lastedEditUserId',
-            formatter: this.generalFormatter
+            formatter: this.latestIdToUsernameFormatter
           }
         }
       })
@@ -252,27 +323,16 @@ export default {
       index,
       row
     }) {
-      console.log(row)
       this.$refs.reports.showDialog({
         mode: 'edit',
         rowIndex: index,
-        template: {
-          isRead: {
-            title: '阅读状态',
-            value: '_isRead'
-          },
-          type: {
-            title: '报告类型',
-            value: '_type'
-          }
-        }
+        template: this.editingTemplate
       })
     },
     async onDelete ({
       index,
       row
     }) {
-
     },
     paginationCurrentChange (currentPage) {
       this.pagination.currentPage = currentPage
@@ -326,33 +386,36 @@ export default {
       })
       done()
     },
-    async handleRowAdd (row, done) {
-      this.formOptions.saveLoading = true
-      await this.$message({
-        message: '保存成功',
-        type: 'success'
-      })
-      // // done可以传入一个对象来修改提交的某个字段
-      // done({
-      //   address: '我是通过done事件传入的数据！'
-      // })
-      this.formOptions.saveLoading = false
-      const data = {
-        type: row.type,
-        name: row.name,
-        content: row.content
-      }
-      // const res = await this.$api.ADD_DEPARTMENTS(data)
-      // console.log(res)
-      done()
-      this.fetchData()
-    },
+    // async handleRowAdd (row, done) {
+    //   this.formOptions.saveLoading = true
+    //   await this.$message({
+    //     message: '保存成功',
+    //     type: 'success'
+    //   })
+    //   // // done可以传入一个对象来修改提交的某个字段
+    //   // done({
+    //   //   address: '我是通过done事件传入的数据！'
+    //   // })
+    //   this.formOptions.saveLoading = false
+    //   const data = {
+    //     type: row.type,
+    //     name: row.name,
+    //     content: row.content
+    //   }
+    //   // const res = await this.$api.ADD_DEPARTMENTS(data)
+    //   // console.log(res)
+    //   done()
+    //   this.fetchData()
+    // },
     async handleRowRemove ({
       index,
       row
     }, done) {
       setTimeout(async () => {
-        await this.$api.DROP_DEPARTMENTS(row.id)
+        var data = {
+          id: row.id
+        }
+        await this.$api.DROP_REPORTS(data)
         this.$message({
           message: '删除成功',
           type: 'success'
@@ -411,6 +474,11 @@ export default {
         this.onSearch()
       }
     },
+    id2NameFormatter (row, column, cellValue, index) {
+      // console.log(row)
+      var res = this.data.find(item => item.id === row.id)
+      return res._id
+    },
     generalFormatter (row, column, cellValue, index) {
       return cellValue
     },
@@ -422,9 +490,9 @@ export default {
       const result = this.readDict.find(item => item.value === cellValue + '')
       return result ? result.label : ''
     },
-    userIdToUsernameFormatter (row, column, cellValue, index) {
-      var res = this.$api.SYS_USER_GET_USERNAME(cellValue)
-      return res.username + '(' + res.roleName + ')'
+    latestIdToUsernameFormatter (row, column, cellValue, index) {
+      var res = this.data.find(item => item.id === row.id)
+      return res._lastedEditUserId
     },
     colCreateTimeFormatter (row, column, cellValue, index) {
       var dateRegex = /^\d{4}-\d{2}-\d{2}/

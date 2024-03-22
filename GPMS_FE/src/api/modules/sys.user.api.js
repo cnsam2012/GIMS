@@ -123,7 +123,7 @@ export default ({
   SYS_USER_GET_USERNAME (id) {
     return request(
       {
-        url: 'user/profile/username/' + id,
+        url: '/user/profile/username/' + id,
         method: 'GET'
       }
     )

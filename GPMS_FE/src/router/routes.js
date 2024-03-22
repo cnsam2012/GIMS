@@ -86,15 +86,6 @@ const frameIn = [
         component: _import('admin/reports_management')
       },
       {
-        path: 'edit_data',
-        name: 'edit_data',
-        meta: {
-          title: '更新数据',
-          auth: true
-        },
-        component: _import('admin/edit_data')
-      },
-      {
         path: 'alterPassword',
         name: 'alterPassword',
         meta: {
@@ -111,6 +102,15 @@ const frameIn = [
           auth: true
         },
         component: _import('userSettings/username')
+      },
+      {
+        path: 'addReports',
+        name: 'addReports',
+        meta: {
+          title: '新建报告',
+          auth: true
+        },
+        component: _import('addReports')
       },
       // 系统 前端日志
       {

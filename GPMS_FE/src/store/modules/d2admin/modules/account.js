@@ -31,13 +31,14 @@ export default {
       util.cookies.set('uuid', uinfo.id)
       util.cookies.set('token', res.ticket)
       util.cookies.set('ticket', res.ticket)
-      console.log(uinfo)
       // 设置 vuex 用户信息
       let usernameDisplay = uinfo.username + ' (' + uinfo.roleName + ')'
       if (!uinfo.roleName) {
         usernameDisplay = uinfo.username
       }
-      await dispatch('d2admin/user/set', { name: usernameDisplay }, { root: true })
+      const userType = uinfo.type
+      const userId = uinfo.id
+      await dispatch('d2admin/user/set', { name: usernameDisplay, userType: userType, userId: userId }, { root: true })
       // 用户登录后从持久化数据加载一系列的设置
       await dispatch('load')
     },

@@ -17,7 +17,18 @@ import { d2CrudPlus } from 'd2-crud-plus'
 // import d2Crud from '@d2-projects/d2-crud' 【d2-crud官方已停止维护，推荐使用增强版d2-crud-x】
 // 推荐将d2-crud替换为d2-crud-x【使用方式基本与d2-crud一致】
 import d2CrudX from 'd2-crud-x'
-import { request } from '@/api/service' // 你项目http请求用的什么就引入什么
+import { request } from '@/api/service'
+
+// import VMdEditor from '@kangc/v-md-editor'
+// import '@kangc/v-md-editor/lib/style/base-editor.css'
+// import githubTheme from '@kangc/v-md-editor/lib/theme/github.js'
+// import '@kangc/v-md-editor/lib/theme/style/github.css'
+// // highlightjs
+// import hljs from 'highlight.js'
+// VMdEditor.use(githubTheme, {
+//   Hljs: hljs
+// })
+// Vue.use(VMdEditor) // 你项目http请求用的什么就引入什么
 
 // 核心插件
 Vue.use(d2Admin)

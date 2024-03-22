@@ -8,20 +8,20 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import me.chang.gpms.pojo.Report;
+import me.chang.gpms.pojo.ro.*;
 import me.chang.gpms.util.constant.GPMSResponseCode;
 import org.apache.commons.lang3.StringUtils;
 import me.chang.gpms.pojo.Comment;
 import me.chang.gpms.pojo.Page;
 import me.chang.gpms.pojo.User;
-import me.chang.gpms.pojo.ro.FileNameRo;
-import me.chang.gpms.pojo.ro.OldNewPasswordRo;
-import me.chang.gpms.pojo.ro.UsernameRo;
 import me.chang.gpms.service.*;
 import me.chang.gpms.util.GPMSUtil;
 import me.chang.gpms.util.HostHolder;
 import me.chang.gpms.util.R;
 import me.chang.gpms.util.constant.BbEntityType;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +40,10 @@ import java.util.Map;
 @Slf4j
 @Tag(name = "UAC", description = "UserApiController")
 public class UserApiController {
+
+    @Autowired
+    private ReportService discussPostService;
+
     @Autowired
     private UserService userService;
 
@@ -338,58 +342,50 @@ public class UserApiController {
     }
 
     /**
-     * 进入我的帖子（查询某个用户的帖子列表）
-     *
-     * @param userId
+     * 单个用户的报告列表
      * @param page
      * @return
      */
-    @GetMapping("discuss/{userId}")
-    @Operation(summary = "进入我的帖子（查询某个用户的帖子列表）")
-    public R getMyDiscussPosts(
-            @PathVariable("userId") int userId,
-            Page page
+    @PostMapping("reports")
+    @Operation(summary = "单个用户的报告列表")
+    public R getMyReports(
+            @RequestBody
+            @Parameter(required = true)
+            PageAndOrderModeAndUserIdRo page
     ) {
-        var data = new HashMap<String, Object>();
-        User user = userService.findUserById(userId);
-        if (user == null) {
-            throw new RuntimeException("该用户不存在");
-        }
-        data.put("user", user);
 
-        // 该用户的帖子总数
-//        int rows = reportService.findDiscussPostRows(userId);
-        int rows = reportService.findReportRows(userId);
-        data.put("rows", rows);
-
-        if (page.getLimit() == 0 || ObjectUtil.isEmpty(page.getLimit())) {
-            page.setLimit(5);
-        }
-        page.setPath("/user/discuss/" + userId);
-        page.setRows(rows);
-
-        // 分页查询(按照最新查询)
-        List<Report> list = reportService.findReports(userId, page.getOffset(), page.getLimit(), 0);
+        Map<String, Object> data = new HashMap<>();
+        var orderMode = page.getOrderMode();
+        var userIdFind = page.getId();
+        // 获取总页数
+        page.setRows(discussPostService.findReportRows(userIdFind));
+//        page.setPath("/index?orderMode=" + orderMode);
+        // 分页查询
+        List<Report> list = discussPostService.findReports(userIdFind, page.getOffset(), page.getLimit(), orderMode);
         // 封装帖子和该帖子对应的用户信息
         List<Map<String, Object>> discussPosts = new ArrayList<>();
         if (list != null) {
             for (Report post : list) {
                 Map<String, Object> map = new HashMap<>();
-                map.put("post", post);
-                long likeCount = likeService.findEntityLikeCount(BbEntityType.ENTITY_TYPE_POST.value(), post.getId());
-                map.put("likeCount", likeCount);
+                map.put("reports", post);
+                User user = userService.findUserById(post.getUserId());
+                map.put("user", user);
+//                long likeCount = likeService.findEntityLikeCount(BbEntityType.ENTITY_TYPE_POST.value(), post.getId());
+//                map.put("likeCount", likeCount);
+                var userId = post.getLastedEditUserId();
+                User lEuser = userService.findUserById(userId);
+                map.put("latestEditUserName", lEuser.getUsername());
+                map.put("latestEditRoleName", lEuser.getRoleName());
                 discussPosts.add(map);
             }
         }
-        data.put("discussPosts", discussPosts);
-        data.put("tab", "mypost"); // 该字段用于指示标签栏高亮
-
-//        return R.ok(resp, "个人帖子列表", data);
-        return R.ok(
-                GPMSResponseCode.OK.value(),
-                "个人帖子列表",
-                data
-        );
+        data.put("reports", discussPosts);
+        data.put("orderMode", orderMode);
+        data.put("page", page);
+        var status = HttpStatus.SC_OK;
+//        return BbUtil.getJSONString(status, "success", data);
+        val ok = GPMSResponseCode.OK.value();
+        return R.ok(ok, userIdFind + "的报告", data);
     }
 
     /**

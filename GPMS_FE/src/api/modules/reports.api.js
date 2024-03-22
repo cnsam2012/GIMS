@@ -19,6 +19,14 @@ export default ({
       data
     })
   },
+  FETCH_SPEC_USER_REPORTS (data = {}) {
+    return request({
+      contentType: 'application/json',
+      url: 'user/reports',
+      method: 'POST',
+      data
+    })
+  },
   // /**
   //  * 获取相关部门
   //  * @param data
@@ -55,12 +63,12 @@ export default ({
   //     data
   //   })
   // },
-  // DROP_DEPARTMENTS (data = {}) {
-  //   return request({
-  //     contentType: 'application/json',
-  //     url: 'deleteDepartment',
-  //     method: 'delete',
-  //     data
-  //   })
-  // }
+  DROP_REPORTS (data = {}) {
+    return request({
+      contentType: 'application/json',
+      url: 'report/delete',
+      method: 'delete',
+      data
+    })
+  }
 })

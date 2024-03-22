@@ -489,39 +489,36 @@ public class ReportApiController {
 
 
     /**
-     * 删除讨论
-     *
+     * 删除
      * @param discussPostId
-     * @param resp
      * @return
      */
     @DeleteMapping("delete")
     @Operation(description = "删除讨论 (auth admin-1 only)")
     public R setDelete(@Parameter(required = true)
                        @RequestBody
-                       ReportIdRo discussPostId, HttpServletResponse resp) {
+                       ReportIdRo discussPostId
+    ) {
         if (discussPostId == null) {
-            var status = HttpStatus.SC_EXPECTATION_FAILED;
-            resp.setStatus(status);
+            var status = GPMSResponseCode.CLIENT_ERROR.value();
 //            return BbUtil.getJSONString(status, "参数不齐");
             return R.error(status, "参数不齐");
         }
-
         var id = discussPostId.getId();
-
-        discussPostService.updateStatus(id, 2);
-        discussPostService.deleteReport(id);
-
+//        discussPostService.updateStatus(id, 2);
+        int i = discussPostService.deleteReport(id);
+        if (i <= 0) {
+            var status = GPMSResponseCode.CLIENT_ERROR.value();
+            return R.ok(status, "找不到帖子，没有帖子被删除");
+        }
         // 触发删帖事件，通过消息队列更新 Elasticsearch 服务器
-        Event event = new Event()
-                .setTopic(BbKafkaTopic.TOPIC_DELETE.value())
-                .setUserId(hostHolder.getUser().getId())
-                .setEntityType(BbEntityType.ENTITY_TYPE_POST.value())
-                .setEntityId(id);
-        eventProducer.fireEvent(event);
-
-        var status = HttpStatus.SC_OK;
-        resp.setStatus(status);
+//        Event event = new Event()
+//                .setTopic(BbKafkaTopic.TOPIC_DELETE.value())
+//                .setUserId(hostHolder.getUser().getId())
+//                .setEntityType(BbEntityType.ENTITY_TYPE_POST.value())
+//                .setEntityId(id);
+//        eventProducer.fireEvent(event);
+        var status = GPMSResponseCode.OK.value();
 //        return BbUtil.getJSONString(status, "删除成功！");
         return R.ok(status, "删除成功");
     }
