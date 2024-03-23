@@ -9,8 +9,7 @@
       v-model="text"
       height="400px"
       ref="editor"
-      default-show-toc="true"
-      autofocus="true"
+      :autofocus="true"
       left-toolbar="undo redo clear | h bold italic strikethrough quote | ul ol table hr | link code | save"
     ></v-md-editor>
     <div style="margin-top: 30px">
