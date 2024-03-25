@@ -1,0 +1,18 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor 实习单位
+
+rectangle 实习管理系统 {
+  usecase "修改用户名和单位名称" as UC1
+  usecase "修改用户密码" as UC2
+  usecase "发布实习岗位" as UC3
+  usecase "填写学生实习评价" as UC4
+}
+
+实习单位 --> UC1 : 执行
+实习单位 --> UC2 : 执行
+实习单位 --> UC3 : 执行
+实习单位 --> UC4 : 执行
+
+@enduml

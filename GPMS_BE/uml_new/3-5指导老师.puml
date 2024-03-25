@@ -1,0 +1,24 @@
+@startuml
+'!theme plain
+
+left to right direction
+skinparam packageStyle rectangle
+actor 指导老师
+
+rectangle 实习管理系统 {
+  usecase (修改登录密码) as UC1
+  usecase (批改学生实习周记\n月记) as UC2
+  usecase (批改实习总结) as UC3
+  usecase (查看实习通知) as UC4
+  usecase (填写评语) as UC5
+  usecase (给定评分) as UC6
+}
+
+指导老师 --> UC1
+指导老师 --> UC2
+指导老师 --> UC3
+指导老师 --> UC4
+指导老师 --> UC5
+指导老师 --> UC6
+
+@enduml

@@ -509,7 +509,7 @@ export default {
   }
 }
 </script>
-<style>
+<style >
 .el-button--primary {
   color: white;
   background-color: #3fb355;

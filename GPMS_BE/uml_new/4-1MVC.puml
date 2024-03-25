@@ -1,0 +1,19 @@
+@startuml
+actor 用户 as user
+participant "前端 D2-admin / 视图 View" as front
+participant "后端控制器 Controller" as controller
+participant 模型 as model
+participant 数据库 as db
+participant "模板引擎" as view
+
+user -> front : 发起操作
+front -> controller : API请求
+controller -> model : 调用数据处理
+model -> db : 查询/更新数据
+db -> model : 返回数据
+model -> controller : 处理结果
+controller -> front : 响应数据
+front -> view : 渲染视图
+view -> user : 显示结果
+
+@enduml

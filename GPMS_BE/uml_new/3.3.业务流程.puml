@@ -1,0 +1,34 @@
+@startuml
+!theme plain
+
+skinparam defaultTextAlignment center
+skinparam rectangle {
+  BorderColor black
+  BackgroundColor white
+  FontSize 20
+}
+
+rectangle "实习准备阶段" as stage1 {
+ rectangle  "制定实习计划"
+ rectangle "开设实习课程"
+ rectangle "指派指导老师"
+ rectangle "考察实习单位"
+ rectangle "学生选择实习"
+}
+
+rectangle "实习实施阶段" as stage2 {
+  rectangle "学生实习追踪"
+  rectangle "指导老师指导"
+  rectangle "学生填写实习报告"
+  rectangle "解决实习问题"
+}
+
+rectangle "实习总结阶段" as stage3 {
+  rectangle "学生撰写实习报告"
+  rectangle "指导老师评价"
+  rectangle "学生实习总结"
+  rectangle "举行经验交流"
+}
+
+
+@enduml
