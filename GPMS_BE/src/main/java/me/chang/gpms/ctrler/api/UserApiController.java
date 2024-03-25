@@ -9,13 +9,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import me.chang.gpms.pojo.Report;
+import me.chang.gpms.pojo.*;
 import me.chang.gpms.pojo.ro.*;
 import me.chang.gpms.util.constant.GPMSResponseCode;
 import org.apache.commons.lang3.StringUtils;
-import me.chang.gpms.pojo.Comment;
-import me.chang.gpms.pojo.Page;
-import me.chang.gpms.pojo.User;
 import me.chang.gpms.service.*;
 import me.chang.gpms.util.GPMSUtil;
 import me.chang.gpms.util.HostHolder;
@@ -278,6 +275,21 @@ public class UserApiController {
         );
     }
 
+    // TODO 用户信息修改
+    @PutMapping("alter/user")
+    @Operation(summary = "修改用户信息")
+    public R alterUser(
+//            @Parameter(required = false)
+//            @RequestBody
+//            AlterUserRo alterUserRo
+    ) {
+        return R.ok(
+                GPMSResponseCode.OK.value(),
+                "用户资料修改成功"
+//                ,data
+        );
+    }
+
     /**
      * 个人主页（个人数据）
      *
@@ -341,8 +353,31 @@ public class UserApiController {
         );
     }
 
+    @PostMapping("listAll")
+    @Operation(summary = "获取用户列表")
+    public R getAllUser(
+            @Parameter(required = false)
+            @RequestBody
+            Page page
+    ) {
+        var data = new HashMap<String, Object>();
+        var offset = page.getOffset();
+        var limit = page.getLimit();
+        List<User> departmentsList = userService.getAllUsers(offset, limit);
+        page.setRows(userService.selectUsersRows(0));
+        System.out.println(page);
+        data.put("page", page);
+        data.put("users", departmentsList);
+        return R.ok(
+                GPMSResponseCode.OK.value(),
+                "success",
+                data
+        );
+    }
+
     /**
      * 单个用户的报告列表
+     *
      * @param page
      * @return
      */

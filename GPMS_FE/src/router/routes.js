@@ -77,6 +77,15 @@ const frameIn = [
         component: _import('admin/departments_management')
       },
       {
+        path: 'users_management',
+        name: 'users_management',
+        meta: {
+          title: '用户管理',
+          auth: true
+        },
+        component: _import('admin/users_management')
+      },
+      {
         path: 'reports_management',
         name: 'reports_management',
         meta: {

@@ -1,7 +1,10 @@
 package me.chang.gpms.dao;
 
+import me.chang.gpms.pojo.Departments;
 import org.apache.ibatis.annotations.Mapper;
 import me.chang.gpms.pojo.User;
+
+import java.util.List;
 
 @Mapper
 public interface UserMapper {
@@ -80,4 +83,9 @@ public interface UserMapper {
      */
     int updatePassword(int id, String password);
 
+    List<User> getAllUsers(int offset, int limit);
+
+    int selectUsersRows(int i);
+
+    void alterUserById(User user);
 }

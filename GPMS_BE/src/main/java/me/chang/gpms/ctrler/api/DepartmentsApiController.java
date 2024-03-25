@@ -38,15 +38,12 @@ public class DepartmentsApiController {
 
     /**
      * 查看所有部门，包括分页信息
-     *
-     * @param resp
      * @param page
      * @return
      */
     @RequestMapping(value = "api/departments", method = {RequestMethod.GET, RequestMethod.POST})
     @Operation(summary = "Get all departments information.")
     public R departments(
-            HttpServletResponse resp,
             @Parameter(required = false)
             @RequestBody
             Page page

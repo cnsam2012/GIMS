@@ -3,6 +3,7 @@ package me.chang.gpms.service;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import lombok.extern.slf4j.Slf4j;
+import me.chang.gpms.pojo.Departments;
 import me.chang.gpms.util.constant.GPMSUserAuth;
 import org.apache.commons.lang3.StringUtils;
 import me.chang.gpms.dao.UserMapper;
@@ -369,6 +370,12 @@ public class UserService {
         return userMapper.updatePassword(userId, newPassword);
     }
 
+    public int alterUserById(User user) {
+        user = null;
+        userMapper.alterUserById(user);
+        return -1;
+    }
+
     /**
      * 修改用户名
      *
@@ -582,4 +589,17 @@ public class UserService {
         );
     }
 
+    public List<User> getAllUsers(int offset, int limit) {
+        var userList = userMapper.getAllUsers(offset, limit);
+        for (User user : userList) {
+            user.setActivationCode("");
+            user.setPassword("");
+            user.setSalt("");
+        }
+        return userList;
+    }
+
+    public int selectUsersRows(int i) {
+        return userMapper.selectUsersRows(i);
+    }
 }
