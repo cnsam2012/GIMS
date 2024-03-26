@@ -1,0 +1,19 @@
+@startuml
+start
+:用户提交报告;
+if (用户已登录?) then (是)
+  :验证用户权限;
+  if (权限有效?) then (是)
+    :应用敏感词过滤;
+    :存储报告到数据库;
+    :返回成功消息;
+    stop
+  else (否)
+    :返回权限错误消息;
+    stop
+  endif
+else (否)
+  :提示用户登录;
+  stop
+endif
+@enduml

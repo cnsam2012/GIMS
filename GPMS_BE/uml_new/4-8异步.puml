@@ -1,0 +1,16 @@
+@startuml
+actor 用户 as user
+participant "前端界面" as frontend
+participant "Axios\nHTTP请求" as axios
+database "后端服务" as backend
+participant "异步处理" as async
+
+user -> frontend : 触发操作
+frontend -> axios : 发起请求
+axios -> backend : 异步HTTP请求
+backend -> axios : 返回响应
+axios -> async : 处理响应
+async -> frontend : 更新界面
+frontend -> user : 显示结果
+
+@enduml

@@ -1,0 +1,21 @@
+@startuml
+actor 用户 as User
+participant "用户界面" as UI
+participant "后端 /letter/send" as Backend
+database "数据库" as DB
+
+User -> UI : 输入收信人用户名和私信内容
+UI -> Backend : 提交私信数据
+Backend -> DB : 检查收信人是否存在
+alt 收信人存在
+    Backend -> DB : 创建并保存私信记录
+    DB -> Backend : 私信记录保存成功
+    Backend -> UI : 返回成功响应\n显示私信发送成功
+else 收信人不存在
+    Backend -> UI : 返回错误响应\n显示用户不存在
+end
+UI -> Backend : 请求未读私信数量
+Backend -> DB : 执行SQL查询未读私信
+DB -> Backend : 返回未读私信数量
+Backend -> UI : 显示未读私信数量
+@enduml
