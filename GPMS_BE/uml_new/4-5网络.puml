@@ -1,0 +1,28 @@
+@startuml
+package "客户端" {
+  [移动端]
+  [PC客户端]
+}
+
+node "服务器环境" {
+  [裸金属服务器]
+  [云服务器]
+}
+
+node "数据库环境" {
+  database "云数据库" {
+    [MySQL]
+  }
+}
+
+cloud {
+  [Nginx反向代理]
+}
+
+[移动端] -down-> [Nginx反向代理] : HTTP/HTTPS请求
+[PC客户端] -down-> [Nginx反向代理] : HTTP/HTTPS请求
+[Nginx反向代理] -down-> [裸金属服务器] : 转发请求
+[Nginx反向代理] -down-> [云服务器] : 转发请求
+[裸金属服务器] -down-> [MySQL] : 数据库操作
+[云服务器] -down-> [MySQL] : 数据库操作
+@enduml

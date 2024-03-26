@@ -1,0 +1,33 @@
+@startuml
+hide circle
+skinparam rectangle {
+'    BackgroundColor LightGreen
+}
+skinparam defaultTextAlignment center
+
+rectangle "GPMS系统功能模块" as GPMS {
+  rectangle "用户注册" as Reg
+  rectangle "登录认证与授权" as Auth
+  rectangle "实习记录发布" as Pub
+  rectangle "实习情况管理" as Manage
+  rectangle "私信" as Msg
+  rectangle "系统通知" as Notify
+  rectangle "MarkDown支持" as MD
+}
+
+GPMS -[hidden]- Reg
+GPMS -[hidden]- Auth
+GPMS -[hidden]- Pub
+GPMS -[hidden]- Manage
+GPMS -[hidden]- Msg
+GPMS -[hidden]- Notify
+GPMS -[hidden]- MD
+
+GPMS -- Reg
+GPMS -- Auth
+GPMS -- Pub
+GPMS -- Manage
+GPMS -- Msg
+GPMS -- Notify
+GPMS -- MD
+@enduml

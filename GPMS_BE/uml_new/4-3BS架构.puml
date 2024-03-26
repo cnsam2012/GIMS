@@ -1,0 +1,24 @@
+@startuml
+
+package "视图层" {
+    [浏览器] as Browser
+    [移动应用] as MobileApp
+}
+
+package "业务层" {
+    [Web 服务器] as WebServer
+    [业务逻辑] as BusinessLogic
+}
+
+package "持久化层" {
+    [数据库] as DatabaseServer
+    [数据模型] as DataModel
+}
+
+Browser .down.> WebServer : HTTP / HTTPS 请求
+MobileApp .down.> WebServer
+WebServer -down-> BusinessLogic : 调用业务逻辑
+BusinessLogic -down-> DataModel : 数据请求
+DataModel -down-> DatabaseServer : 数据存取
+
+@enduml

@@ -1,0 +1,31 @@
+@startuml
+package "前端服务" {
+  [用户界面] as UI
+  [CDN]
+}
+
+package "反向代理" {
+  [Nginx]
+}
+
+package "后端服务" {
+  [GPMS Api Controller] as Backend
+  database "数据库" {
+    [关系型数据库] as SQLDB
+    [文档存储] as NoSQLDB
+  }
+  [Redis缓存] as Redis
+  [Kafka消息队列] as Kafka
+}
+
+[用户界面] -> [Nginx] : 发送请求
+[Nginx] -> Backend : 转发请求
+Backend --> [Redis] : 读写缓存
+[Redis] --> Backend
+Backend --> [Kafka] : 发送/接收消息
+[Kafka] --> Backend
+Backend --> SQLDB : CRUD操作
+Backend --> NoSQLDB : CRUD操作
+[CDN] --> [用户界面] : 加载静态资源
+
+@enduml

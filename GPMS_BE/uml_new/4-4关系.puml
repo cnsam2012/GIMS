@@ -1,0 +1,30 @@
+@startuml
+class MySQL <<(D,yellow)>> {
+  - 数据存储
+}
+class JDBC <<(F,green)>> {
+  - 数据库操作标准
+}
+class MybatisPlus <<(F,green)>> {
+  - 简化数据库操作
+}
+
+MybatisPlus --> JDBC : 使用
+JDBC --> MySQL : 连接
+
+note right of JDBC
+  JDBC 定义了 Java 应用程序和数据库
+  之间交互的标准方法。
+end note
+
+note right of MybatisPlus
+  Mybatis Plus 增强了 Mybatis，
+  提供简化的 CRUD 操作和
+  其他高级功能。
+end note
+
+note right of MySQL
+  MySQL 是存储数据的关系型数据库。
+end note
+
+@enduml
