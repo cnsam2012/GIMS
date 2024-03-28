@@ -1,7 +1,6 @@
 package me.chang.gpms.ctrler.advice;
 
 import me.chang.gpms.util.GPMSUtil;
-import org.banbang.be.util.BbUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
