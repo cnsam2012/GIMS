@@ -1,0 +1,28 @@
+@startuml
+!theme plain
+
+entity "Post" {
+  +id : int <<PK>>
+  +user_id : int <<FK>>
+  +title : varchar(100)
+  +content : text
+  +type : int
+  +status : int
+  +create_time : timestamp
+  +comment : text
+  +score : double
+  +is_deleted : int
+  +is_read : int
+  +is_pass : int
+  +lasted_edit_user_id : int
+  +att_id : varchar(255)
+  +is_draft : int
+}
+
+'note right of "Post"
+'  'is_deleted', 'is_read', 'is_pass', and 'is_draft' are likely boolean flags represented as integers (0 or 1).
+'  'lasted_edit_user_id' and 'user_id' may refer to users in a separate Users table.
+'  'att_id' might be associated with another table for attachments or media.
+'end note
+
+@enduml

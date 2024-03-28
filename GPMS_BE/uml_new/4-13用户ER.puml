@@ -1,0 +1,22 @@
+@startuml
+!theme plain
+
+entity "User" {
+    + id : int {auto_increment}
+    --
+    # username : varchar(50)
+    # password : varchar(50)
+    # salt : varchar(50)
+    # email : varchar(100)
+    # phone : varchar(100)
+    # type : int
+    # status : int
+    # activation_code : varchar(100)
+    # header_url : varchar(200)
+    # create_time : timestamp
+    # wechat_open_id : varchar(100)
+    - department_id : int
+    - role_name : varchar(100)
+}
+
+@enduml

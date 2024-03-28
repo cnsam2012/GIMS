@@ -135,8 +135,7 @@ public class ReportApiController {
     public R addReport(
             @Parameter(required = true)
             @RequestBody
-            ReportTitleContentRo dpReceive,
-            HttpServletResponse resp
+            ReportTitleContentRo dpReceive
     ) {
         var title = dpReceive.getTitle();
         var content = dpReceive.getContent();
@@ -144,8 +143,7 @@ public class ReportApiController {
 
         User user = hostHolder.getUser();
         if (user == null) {
-            var status = HttpStatus.SC_UNAUTHORIZED;
-            resp.setStatus(status);
+            var status = GPMSResponseCode.OK.value();
 //            return BbUtil.getJSONString(status, "您还未登录");
             return R.error(status, "您尚未登录");
         }
@@ -159,19 +157,18 @@ public class ReportApiController {
         discussPostService.addReport(discussPost);
 
         // 触发发帖事件，通过消息队列将其存入 Elasticsearch 服务器
-        Event event = new Event()
-                .setTopic(BbKafkaTopic.TOPIC_PUBLISH.value())
-                .setUserId(user.getId())
-                .setEntityType(BbEntityType.ENTITY_TYPE_POST.value())
-                .setEntityId(discussPost.getId());
-        eventProducer.fireEvent(event);
+//        Event event = new Event()
+//                .setTopic(BbKafkaTopic.TOPIC_PUBLISH.value())
+//                .setUserId(user.getId())
+//                .setEntityType(BbEntityType.ENTITY_TYPE_POST.value())
+//                .setEntityId(discussPost.getId());
+//        eventProducer.fireEvent(event);
 
         // 计算帖子分数
         String redisKey = RedisKeyUtil.getPostScoreKey();
         redisTemplate.opsForSet().add(redisKey, discussPost.getId());
 
-        var status = HttpStatus.SC_CREATED;
-        resp.setStatus(status);
+        var status = GPMSResponseCode.OK.value();
 //        return BbUtil.getJSONString(status, "discussPost_added");
         return R.ok(status, "讨论添加成功");
 

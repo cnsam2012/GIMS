@@ -1,0 +1,15 @@
+@startuml
+!theme plain
+
+entity "Messages" {
+    *id : int <<PK>>
+    from_id : int
+    to_id : int
+    *conversation_id : varchar(45)
+    content : text
+    status : int
+    create_time : timestamp
+}
+
+
+@enduml
