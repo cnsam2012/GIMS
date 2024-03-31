@@ -5,13 +5,13 @@
 <mapper namespace="me.chang.gpms.dao.PlanMapper">
 
     <sql id="insertFields">
-        NUMBER
-        , TYPE, NAME, MAJOR_ORIE_ID, GRADE, START_D, END_D, CLASS_HOUR, CREDIT, PERCENT_IN, PERCENT_EX, IS_DELETED, CONTENT, OBJECTIVE, DEMAND, SCORE_CAL_TYPE, PERCENT_IN_DAILY_REPORT, PERCENT_IN_WEEKLY_REPORT, PERCENT_IN_MONTHLY_REPORT, PERCENT_IN_SUMMARY, DEADLINE
+        TYPE
+        , NAME, MAJOR_ORIE_ID, GRADE, START_D, END_D, CLASS_HOUR, CREDIT, PERCENT_IN, PERCENT_EX, IS_DELETED, CONTENT, OBJECTIVE, DEMAND, SCORE_CAL_TYPE, PERCENT_IN_DAILY_REPORT, PERCENT_IN_WEEKLY_REPORT, PERCENT_IN_MONTHLY_REPORT, PERCENT_IN_SUMMARY, DEADLINE, CREATOR
     </sql>
 
     <sql id="selectFields">
         ID
-        , NUMBER, TYPE, NAME, MAJOR_ORIE_ID, GRADE, START_D, END_D, CLASS_HOUR, CREDIT, PERCENT_IN, PERCENT_EX, IS_DELETED, CONTENT, OBJECTIVE, DEMAND, SCORE_CAL_TYPE, PERCENT_IN_DAILY_REPORT, PERCENT_IN_WEEKLY_REPORT, PERCENT_IN_MONTHLY_REPORT, PERCENT_IN_SUMMARY, DEADLINE
+        , TYPE, NAME, MAJOR_ORIE_ID, GRADE, START_D, END_D, CLASS_HOUR, CREDIT, PERCENT_IN, PERCENT_EX, IS_DELETED, CONTENT, OBJECTIVE, DEMAND, SCORE_CAL_TYPE, PERCENT_IN_DAILY_REPORT, PERCENT_IN_WEEKLY_REPORT, PERCENT_IN_MONTHLY_REPORT, PERCENT_IN_SUMMARY, DEADLINE, CREATOR
     </sql>
 
     <delete id="deletePlanInternshipById">
@@ -32,12 +32,12 @@
     <select id="selectAllPlan" resultType="me.chang.gpms.pojo.Plan"></select>
 
     <!--插入信息-->
-    <insert id="insertPlanInternship" parameterType="me.chang.gpms.pojo.Plan" keyProperty="id">
+    <insert id="insertMyPlan" parameterType="me.chang.gpms.pojo.Plan" keyProperty="id">
         insert into plan (<include refid="insertFields"></include>)
-        values(#{number}, #{type}, #{name}, #{majorOrieId}, #{grade}, #{startD}, #{endD}, #{classHour}, #{credit},
+        values(#{type}, #{name}, #{majorOrieId}, #{grade}, #{startD}, #{endD}, #{classHour}, #{credit},
         #{percentIn}, #{percentEx}, #{isDeleted}, #{content}, #{objective}, #{demand}, #{scoreCalType},
         #{percentInDailyReport}, #{percentInWeeklyReport}, #{percentInMonthlyReport}, #{percentInSummary},
-        #{deadline})
+        #{deadline}, #{creator})
     </insert>
 
     <!--修改信息-->
@@ -46,8 +46,7 @@
 --         set NUMBER = #{NUMBER}, TYPE = #{TYPE}, NAME = #{NAME}, MAJOR_ORIE_ID = #{MAJOR_ORIE_ID}, GRADE = #{GRADE}, START_D = #{START_D}, END_D = #{END_D}, CLASS_HOUR = #{CLASS_HOUR}, CREDIT = #{CREDIT}, PERCENT_IN = #{PERCENT_IN}, PERCENT_EX = #{PERCENT_EX}, IS_DELETED = #{IS_DELETED}, CONTENT = #{CONTENT}, OBJECTIVE = #{OBJECTIVE}, DEMAND = #{DEMAND}, SCORE_CAL_TYPE = #{SCORE_CAL_TYPE}, PERCENT_IN_DAILY_REPORT = #{PERCENT_IN_DAILY_REPORT}, PERCENT_IN_WEEKLY_REPORT = #{PERCENT_IN_WEEKLY_REPORT}, PERCENT_IN_MONTHLY_REPORT = #{PERCENT_IN_MONTHLY_REPORT}, PERCENT_IN_SUMMARY = #{PERCENT_IN_SUMMARY}, DEADLINE = #{DEADLINE}
 --         where ID = #{id}
         update plan
-        set number                    = #{number},
-            type                      = #{type},
+        set type                      = #{type},
             name                      = #{name},
             major_orie_id             = #{major_orie_id},
             grade                     = #{grade},
@@ -66,7 +65,7 @@
             percent_in_weekly_report  = #{percentInWeeklyReport},
             percent_in_monthly_report = #{percentInMonthlyReport},
             percent_in_summary        = #{percentInSummary},
-            deadline                  = #{deadline}
+            deadline                  = #{deadline} creator                   = #{creator}
         where id = #{id}
     </update>
 

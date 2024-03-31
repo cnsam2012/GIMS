@@ -41,7 +41,7 @@
         slot="header"
         type="text"
         v-model="searchKeywords"
-        placeholder="搜索用户..."
+        placeholder="根据姓名搜索用户..."
         style="width: 20%; margin: 7px"
       >
         <template slot="append">
@@ -73,74 +73,92 @@ export default {
     return {
       loading: false,
       addTemplate: {
+        roleName: {
+          title: '姓名',
+          value: ''
+        },
+        username: {
+          title: '用户名',
+          value: ''
+        },
+        password: {
+          title: '密码',
+          value: '2012'
+        },
+        email: {
+          title: '邮箱',
+          value: ''
+        },
+        phone: {
+          title: '手机号',
+          value: ''
+        },
         type: {
-          title: '部门类型',
-          value: '1',
-          component: {
-            name: 'dict-select',
-            props: {
-              dict: {
-                data: [
-                  {
-                    value: '1',
-                    label: '院系部门 - AD'
-                  },
-                  {
-                    value: '2',
-                    label: '实习单位 - COM'
-                  }
-                ]
-              }
-            },
-            span: 12
-          }
+          title: '类型',
+          value: '',
+          placeHolder: 'hello'
         },
-        name: {
-          title: '部门名称',
-          value: 'name'
+        status: {
+          title: '状态',
+          value: ''
         },
-        content: {
-          title: '备注',
-          value: 'content'
+        createTime: {
+          title: '创建时间',
+          value: ''
+        },
+        departmentId: {
+          title: '部门',
+          value: ''
         }
       },
       columns: [
         {
-          title: '部门id',
-          key: 'id'
+          title: '角色名称',
+          key: 'roleName',
+          fixed: 'left'
         },
         {
-          title: '部门类型',
+          title: '用户名',
+          key: 'username'
+        },
+        {
+          title: '邮箱',
+          key: 'email'
+        },
+        {
+          title: '手机号',
+          key: 'phone'
+        },
+        {
+          title: '类型',
           key: 'type'
         },
         {
-          title: '部门名称',
-          key: 'name'
+          title: '状态',
+          key: 'status'
         },
         {
-          title: '备注',
-          key: 'content',
-          showOverflowTooltip: true
+          title: '创建时间',
+          key: 'createTime',
+          formatter: this.colCreateTimeFormatter
         },
         {
-          title: '创建者',
-          key: 'belongTo'
+          title: '部门',
+          key: 'departmentId'
         }
       ],
       data: [
         {
-          id: 'dep001',
-          type: '研发',
-          name: '技术部',
-          content: '负责公司的技术开发和创新',
-          belongTo: '张三'
-        },
-        {
-          id: 'dep002',
-          type: '市场',
-          name: '营销部',
-          content: '负责市场推广和销售策略',
-          belongTo: '李四'
+          id: 910018,
+          username: 'cc1',
+          email: '111@qq.com',
+          phone: null,
+          type: 1,
+          status: 1,
+          activationCode: '',
+          createTime: '2024-03-09T10:04:42.000+00:00',
+          departmentId: 810011,
+          roleName: '陈晶滑'
         }
       ],
       rowHandle: {
@@ -200,7 +218,8 @@ export default {
         limit: this.pagination.pageSize
       }
       this.loading = true
-      let res = await this.$api.FETCH_ALL_DEPARTMENTS(page)
+      let res = await this.$api.SYS_USER_GET_ALL_USERLIST(page)
+      console.log(res)
       res = res.data
       this.updateData(res)
       this.loading = false
@@ -213,25 +232,37 @@ export default {
         mode: 'view',
         rowIndex: index,
         template: {
-          id: {
-            title: '部门id',
-            value: 'id'
+          roleName: {
+            title: '角色名称',
+            value: 'roleName'
+          },
+          username: {
+            title: '用户名',
+            value: 'username'
+          },
+          email: {
+            title: '邮箱',
+            value: 'email'
+          },
+          phone: {
+            title: '手机号',
+            value: 'phone'
           },
           type: {
-            title: '部门类型',
+            title: '类型',
             value: 'type'
           },
-          name: {
-            title: '部门名称',
-            value: 'name'
+          status: {
+            title: '状态',
+            value: 'status'
           },
-          content: {
-            title: '备注',
-            value: 'content'
+          createTime: {
+            title: '创建时间',
+            value: 'createTime'
           },
-          belongTo: {
-            title: '创建者',
-            value: 'belongTo'
+          departmentId: {
+            title: '部门',
+            value: 'departmentId'
           }
         }
       })
@@ -244,26 +275,40 @@ export default {
         mode: 'edit',
         rowIndex: index,
         template: {
+          password: {
+            title: '用户密码'
+          },
+          roleName: {
+            title: '角色名称',
+            value: 'roleName'
+          },
+          username: {
+            title: '用户名',
+            value: 'username'
+          },
+          email: {
+            title: '邮箱',
+            value: 'email'
+          },
+          phone: {
+            title: '手机号',
+            value: 'phone'
+          },
           type: {
-            title: '部门类型',
-            value: row.type,
-            component: {
-              name: 'dict-select',
-              props: {
-                dict: {
-                  data: this.typeDict
-                }
-              },
-              span: 12
-            }
+            title: '类型',
+            value: 'type'
           },
-          name: {
-            title: '部门名称',
-            value: row.name
+          status: {
+            title: '状态',
+            value: 'status'
           },
-          content: {
-            title: '备注',
-            value: row.content
+          createTime: {
+            title: '创建时间',
+            value: 'createTime'
+          },
+          departmentId: {
+            title: '部门',
+            value: 'departmentId'
           }
         }
       })
@@ -283,28 +328,21 @@ export default {
       this.pagination.currentPage = pageRec.current
       this.pagination.total = pageRec.rows
       this.pagination.pageSize = pageRec.limit
-      this.data = res.departments
-      // this.data = this.data.map(item => {
-      //   const updatedType = this.typeDict[item.type] || item.type
-      //   return {
-      //     ...item,
-      //     type: updatedType
-      //   }
-      // })
+      this.data = res.users
     },
     async onSearch () {
-      if (this.searchKeywords) {
-        const pageWithKeywords = {
-          keywords: this.searchKeywords,
-          current: this.pagination.currentPage,
-          limit: this.pagination.pageSize
-        }
-        let res = await this.$api.FETCH_FUZZY_DEPARTMENTS(pageWithKeywords)
-        res = res.data
-        this.updateData(res)
-      } else {
-        await this.fetchData()
-      }
+      // if (this.searchKeywords) {
+      //   const pageWithKeywords = {
+      //     keywords: this.searchKeywords,
+      //     current: this.pagination.currentPage,
+      //     limit: this.pagination.pageSize
+      //   }
+      //   let res = await this.$api.FETCH_FUZZY_DEPARTMENTS(pageWithKeywords)
+      //   res = res.data
+      //   this.updateData(res)
+      // } else {
+      //   await this.fetchData()
+      // }
     },
     onAdd () {
       this.$refs.departments.showDialog({
@@ -328,16 +366,20 @@ export default {
       // done({
       //   address: '我是通过done事件传入的数据！'
       // })
-      this.formOptions.saveLoading = false
       const data = {
-        type: row.type,
-        name: row.name,
-        content: row.content
+        username: row.username,
+        password: row.password,
+        email: row.email,
+        phone: row.phone,
+        departmentId: -1,
+        roleName: row.roleName,
+        type: row.roleType
       }
-      const res = await this.$api.ADD_DEPARTMENTS(data)
+      const res = await this.$api.SYS_USER_SIGNUP(data)
       console.log(res)
       done()
       this.fetchData()
+      this.formOptions.saveLoading = false
     },
     async handleRowRemove ({
       index,
@@ -378,12 +420,18 @@ export default {
           type: 'success'
         })
         const data = {
-          departmentId: row.id,
+          id: row.id,
+          username: row.username,
+          password: row.password,
+          salt: row.salt,
+          email: row.email,
+          phone: row.phone,
           type: row.type,
-          name: row.name,
-          content: row.content
+          status: row.status,
+          departmentId: row.departmentId,
+          roleName: row.roleName
         }
-        const res = await this.$api.UPDATE_DEPARTMENTS(data)
+        const res = await this.$api.SYS_USER_ALTER_USER_BY_ID(data)
         console.log(res)
         // done可以传入一个对象来修改提交的某个字段
         done({
@@ -401,6 +449,15 @@ export default {
       if (key === 13) {
         // 这里执行相应的行为动作
         this.onSearch()
+      }
+    },
+    colCreateTimeFormatter (row, column, cellValue, index) {
+      var dateRegex = /^\d{4}-\d{2}-\d{2}/
+      var match = cellValue.match(dateRegex)
+      if (match) {
+        return match[0] // 返回匹配到的日期部分
+      } else {
+        return 'NULL' // 如果没有匹配到日期部分，则返回空字符串
       }
     },
     typeNumToStr (value) {

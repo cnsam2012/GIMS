@@ -41,7 +41,7 @@ public class DepartmentsApiController {
      * @param page
      * @return
      */
-    @RequestMapping(value = "api/departments", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "api/departments", method = {RequestMethod.POST})
     @Operation(summary = "Get all departments information.")
     public R departments(
             @Parameter(required = false)

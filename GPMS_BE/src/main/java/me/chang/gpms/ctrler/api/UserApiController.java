@@ -279,13 +279,16 @@ public class UserApiController {
     @PutMapping("alter/user")
     @Operation(summary = "修改用户信息")
     public R alterUser(
-//            @Parameter(required = false)
-//            @RequestBody
-//            AlterUserRo alterUserRo
+            @Parameter(required = false)
+            @RequestBody
+            AlterUserRo alterUserRo
     ) {
+
+        userService.updatePassword(alterUserRo.getId(), alterUserRo.getPassword());
+
         return R.ok(
                 GPMSResponseCode.OK.value(),
-                "用户资料修改成功"
+                "用户资料修改成功（仅成功修改用户密码）"
 //                ,data
         );
     }
@@ -368,6 +371,28 @@ public class UserApiController {
         System.out.println(page);
         data.put("page", page);
         data.put("users", departmentsList);
+        return R.ok(
+                GPMSResponseCode.OK.value(),
+                "success",
+                data
+        );
+    }
+    
+    @PostMapping("getUserByRoleName")
+    @Operation(summary = "根据角色姓名获取用户")
+    public R getUserByRoleName(
+            @Parameter(required = false)
+            @RequestBody
+            PageWithRoleNameRo page
+    ) {
+        // TODO 角色搜索未完成
+        var data = new HashMap<String, Object>();
+        var offset = page.getOffset();
+        var limit = page.getLimit();
+        List<User> users = userService.getUserByRoleName(page.getRoleName(), offset, limit);
+        page.setRows(users.size());
+        data.put("page", page);
+        data.put("users", users);
         return R.ok(
                 GPMSResponseCode.OK.value(),
                 "success",

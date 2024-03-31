@@ -127,5 +127,23 @@ export default ({
         method: 'GET'
       }
     )
+  },
+  SYS_USER_GET_ALL_USERLIST (data = {}) {
+    return request(
+      {
+        url: '/user/listAll',
+        method: 'POST',
+        data
+      }
+    )
+  },
+  SYS_USER_ALTER_USER_BY_ID (data={}) {
+    return request(
+      {
+        url: '/user/alter/user',
+        method: 'PUT',
+        data
+      }
+    )
   }
 })

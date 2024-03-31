@@ -1,5 +1,6 @@
 package me.chang.gpms.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import me.chang.gpms.pojo.Departments;
 import org.apache.ibatis.annotations.Mapper;
 import me.chang.gpms.pojo.User;
@@ -7,7 +8,7 @@ import me.chang.gpms.pojo.User;
 import java.util.List;
 
 @Mapper
-public interface UserMapper {
+public interface UserMapper extends BaseMapper<User> {
 
     /**
      * 根据 id 查询用户
