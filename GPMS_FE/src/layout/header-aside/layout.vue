@@ -21,6 +21,7 @@
         <!-- 顶栏右侧 -->
         <div class="d2-header-right" flex-box="0">
           <!-- 如果你只想在开发环境显示这个按钮请添加 v-if="$env === 'development'" -->
+          <d2-header-message/>
           <d2-header-search @click="handleSearchClick"/>
           <d2-header-log/>
           <d2-header-fullscreen/>
@@ -89,6 +90,7 @@ import mixinSearch from './mixins/search'
 // import d2HeaderColor from './components/header-color/index.vue'
 // import d2HeaderTheme from './components/header-theme'
 // import d2HeaderLocales from './components/header-locales'
+import d2HeaderMessage from './components/header-message'
 
 export default {
   name: 'd2-layout-header-aside',
@@ -96,6 +98,7 @@ export default {
     mixinSearch
   ],
   components: {
+    d2HeaderMessage,
     // d2HeaderColor,
     d2MenuSide,
     d2MenuHeader,

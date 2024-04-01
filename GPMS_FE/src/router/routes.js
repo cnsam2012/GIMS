@@ -121,6 +121,15 @@ const frameIn = [
         },
         component: _import('addReports')
       },
+      {
+        path: 'myMessage',
+        name: 'myMessage',
+        meta: {
+          title: '我的信息',
+          auth: true
+        },
+        component: _import('message')
+      },
       // 系统 前端日志
       {
         path: 'log',
