@@ -3,11 +3,8 @@ package me.chang.gpms.service;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
-import me.chang.gpms.pojo.Departments;
-import me.chang.gpms.pojo.Plan;
 import me.chang.gpms.util.constant.GPMSUserAuth;
 import org.apache.commons.lang3.StringUtils;
 import me.chang.gpms.dao.UserMapper;
@@ -31,8 +28,6 @@ import org.thymeleaf.context.Context;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 /**
@@ -124,6 +119,19 @@ public class UserService {
             user.setActivationCode("");
         }
         return user;
+    }
+
+    public List<User> searchUserByRoleName(String roleName, int offset, int limit) {
+        Page<User> page = new Page<>(offset, limit);
+        QueryWrapper<User> qw = new QueryWrapper<>();
+        qw.like(ObjectUtil.isNotNull(roleName), "role_name", "%" + roleName + "%");
+        return userMapper.selectPage(page, qw).getRecords();
+    }
+
+    public User findAUserByRoleName(String roleName) {
+        QueryWrapper<User> qw = new QueryWrapper<>();
+        qw.eq(ObjectUtil.isNotNull(roleName), "role_name", roleName);
+        return userMapper.selectOne(qw);
     }
 
 
@@ -607,10 +615,5 @@ public class UserService {
         return userMapper.selectUsersRows(i);
     }
 
-    public List<User> getUserByRoleName(String roleName, int offset, int limit) {
-        Page<User> page = new Page<>(offset, limit);
-        QueryWrapper<User> qw = new QueryWrapper<>();
-        qw.like(ObjectUtil.isNotNull(roleName), "role_name", "%" + roleName + "%");
-        return userMapper.selectPage(page, qw).getRecords();
-    }
+
 }

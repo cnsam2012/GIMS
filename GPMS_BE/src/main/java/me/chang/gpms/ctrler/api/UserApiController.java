@@ -377,7 +377,7 @@ public class UserApiController {
                 data
         );
     }
-    
+
     @PostMapping("getUserByRoleName")
     @Operation(summary = "根据角色姓名获取用户")
     public R getUserByRoleName(
@@ -389,7 +389,7 @@ public class UserApiController {
         var data = new HashMap<String, Object>();
         var offset = page.getOffset();
         var limit = page.getLimit();
-        List<User> users = userService.getUserByRoleName(page.getRoleName(), offset, limit);
+        List<User> users = userService.searchUserByRoleName(page.getRoleName(), offset, limit);
         page.setRows(users.size());
         data.put("page", page);
         data.put("users", users);

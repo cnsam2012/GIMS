@@ -5,18 +5,23 @@
         <d2-icon :name="logLengthError === 0 ? 'bell-o' : 'bug'" style="font-size: 20px"/>
       </el-badge>
       <d2-icon v-else name="bell-o" style="font-size: 20px"/>
+      消息{{unread}}
     </el-button>
   </el-tooltip>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
+
 export default {
   computed: {
     ...mapGetters('d2admin', {
-      logLength: 'log/length',
-      logLengthError: 'log/lengthError'
+      logLength: 'message/length',
+      logLengthError: 'message/lengthError'
     }),
+    ...mapState('d2admin/message', [
+      'unread'
+    ]),
     tooltipContent () {
       return this.logLength === 0
         ? '没有日志或异常(消息)'

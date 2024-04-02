@@ -48,8 +48,7 @@ public class MessageApiController {
     @Operation(description = "私信列表")
     public R getLetterList(
             @Parameter(required = false)
-            Page page,
-            HttpServletResponse resp
+            Page page
     ) {
         var data = new HashMap<String, Object>();
         // Integer.valueOf("abc"); // 测试统一异常处理（普通请求）
@@ -81,7 +80,6 @@ public class MessageApiController {
                 userPut.setSalt("");
                 userPut.setPassword("");
                 map.put("target", userPut); // 私信对方
-
                 conversations.add(map);
             }
         }
@@ -111,8 +109,7 @@ public class MessageApiController {
             @PathVariable("conversationId")
             @Parameter(name = "conversationId", example = "2_118")
             String conversationId,
-            Page page,
-            HttpServletResponse resp
+            Page page
     ) {
         var data = new HashMap<String, Object>();
 
@@ -194,6 +191,7 @@ public class MessageApiController {
 
     /**
      * 发送私信
+     *
      * @param slnc
      * @return
      */
@@ -209,11 +207,9 @@ public class MessageApiController {
         var content = slnc.getContent();
 
         // Integer.valueOf("abc"); // 测试统一异常处理（异步请求）
-        User target = userService.findUserByName(toName);
+        User target = userService.findAUserByRoleName(toName);
         if (target == null) {
-//            return BbUtil.getJSONString(1, "目标用户不存在");
-            return R.error(GPMSResponseCode.OK.value(), "目标用户不存在");
-
+            return R.error(GPMSResponseCode.CLIENT_ERROR.value(), "目标用户不存在");
         }
 
         Message message = new Message();
@@ -230,12 +226,12 @@ public class MessageApiController {
 
         messageService.addMessage(message);
 
-//        return BbUtil.getJSONString(0);
         return R.ok(GPMSResponseCode.OK.value(), "私信发送成功");
     }
 
     /**
      * 通知列表（只显示最新一条消息
+     *
      * @return
      */
     @GetMapping("api/notice/list")
@@ -336,6 +332,7 @@ public class MessageApiController {
 
     /**
      * 查询某个主题（关注follow/赞like/评论comment）所包含的通知列表
+     *
      * @param topic
      * @param page
      * @return

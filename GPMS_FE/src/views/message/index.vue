@@ -61,7 +61,7 @@
       type="primary"
       size="mini"
       :loading="uploading"
-      @click="handleUpload">
+      @click="handleUpload1">
       <d2-icon name="cloud-upload"/>
       Upload {{log.length}} log data
     </el-button>
@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import { get } from 'lodash'
 export default {
   data () {
@@ -84,6 +84,9 @@ export default {
   },
   methods: {
     get,
+    ...mapActions('d2admin/message', [
+      'set', 'load'
+    ]),
     handleShowMore (log) {
       // 打印一条日志的所有信息到控制台
       this.$notify({
@@ -114,6 +117,10 @@ export default {
           message: '上传成功'
         })
       }, 3000)
+    },
+    async handleUpload1 () {
+      console.log('hello')
+      this.set(23)
     }
   }
 }

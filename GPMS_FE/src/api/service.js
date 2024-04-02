@@ -3,6 +3,7 @@ import Adapter from 'axios-mock-adapter'
 import { get } from 'lodash'
 import util from '@/libs/util'
 import { errorLog, errorCreate } from './tools'
+import store from '@/store'
 
 /**
  * @description 创建请求实例
@@ -122,7 +123,8 @@ function createService () {
  * @param {Object} service axios 实例
  */
 function createRequestFunction (service) {
-  return function (config) {
+  refreshUnread()
+  return async function (config) {
     const token = util.cookies.get('token')
     const configDefault = {
       headers: {
@@ -135,6 +137,14 @@ function createRequestFunction (service) {
     }
     return service(Object.assign(configDefault, config))
   }
+}
+
+async function refreshUnread () {
+  // TODO DO REQUEST
+  // await this.$store.dispatch('d2admin/message/set', 233)
+  // await store.dispatch('d2admin/message/set', 232323)
+  // console.log(api.DEMO_FETCH())
+  // await message.actions.set(2333)
 }
 
 // 用于真实网络请求的实例和请求方法
