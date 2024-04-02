@@ -3,7 +3,18 @@ import Adapter from 'axios-mock-adapter'
 import { get } from 'lodash'
 import util from '@/libs/util'
 import { errorLog, errorCreate } from './tools'
-import store from '@/store'
+
+async function refreshUnread () {
+  console.log('========')
+  const myservice = axios.create({ withCredentials: true })
+  const res = await myservice({
+    method: 'GET',
+    url: 'api/notice/unread'
+  })
+  const auc = res.data.data.allUnreadCount
+  console.log(auc)
+  console.log('========')
+}
 
 /**
  * @description 创建请求实例
@@ -23,7 +34,8 @@ function createService () {
   )
   // 响应拦截
   service.interceptors.response.use(
-    response => {
+    async response => {
+      refreshUnread()
       // dataAxios 是 axios 返回数据中的 data
       const dataAxios = response.data
       // 这个状态码是和后端约定的
@@ -123,7 +135,6 @@ function createService () {
  * @param {Object} service axios 实例
  */
 function createRequestFunction (service) {
-  refreshUnread()
   return async function (config) {
     const token = util.cookies.get('token')
     const configDefault = {
@@ -137,14 +148,6 @@ function createRequestFunction (service) {
     }
     return service(Object.assign(configDefault, config))
   }
-}
-
-async function refreshUnread () {
-  // TODO DO REQUEST
-  // await this.$store.dispatch('d2admin/message/set', 233)
-  // await store.dispatch('d2admin/message/set', 232323)
-  // console.log(api.DEMO_FETCH())
-  // await message.actions.set(2333)
 }
 
 // 用于真实网络请求的实例和请求方法
