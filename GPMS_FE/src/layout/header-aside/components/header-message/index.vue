@@ -1,39 +1,32 @@
 <template>
   <el-tooltip effect="dark" :content="tooltipContent" placement="bottom">
     <el-button class="d2-ml-0 d2-mr btn-text can-hover" type="text" @click="handleClick">
-      <el-badge v-if="logLength > 0" :max="99" :value="logLengthError" :is-dot="logLengthError === 0">
-        <d2-icon :name="logLengthError === 0 ? 'bell-o' : 'bug'" style="font-size: 20px"/>
+      <el-badge v-if="messageUnread > 0" :max="99" :value="messageUnread">
+        <d2-icon :name="messageUnread === 0 ? 'bell-o' : 'bell'" style="font-size: 20px"/>
       </el-badge>
       <d2-icon v-else name="bell-o" style="font-size: 20px"/>
-      消息{{unread}}
     </el-button>
   </el-tooltip>
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
   computed: {
     ...mapGetters('d2admin', {
-      logLength: 'message/length',
-      logLengthError: 'message/lengthError'
+      messageUnread: 'message/unread'
     }),
     ...mapState('d2admin/message', [
       'unread'
     ]),
     tooltipContent () {
-      return this.logLength === 0
-        ? '没有日志或异常(消息)'
-        : `${this.logLength} 条日志(消息)${this.logLengthError > 0
-          ? ` | 包含 ${this.logLengthError} 个异常`
-          : ''}`
+      return this.messageUnread === 0
+        ? '没有新消息'
+        : `${this.messageUnread} 条新消息`
     }
   },
   methods: {
-    ...mapMutations('d2admin/log', [
-      'clean'
-    ]),
     handleClick () {
       this.$router.push({
         name: 'myMessage'

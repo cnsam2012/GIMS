@@ -120,7 +120,7 @@ export default ({
       data
     })
   },
-  SYS_USER_GET_USERNAME (id) {
+  SYS_USER_GET_USERNAME_BY_ID (id) {
     return request(
       {
         url: '/user/profile/username/' + id,

@@ -5,9 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import me.chang.gpms.pojo.Message;
 import me.chang.gpms.pojo.Page;
 import me.chang.gpms.pojo.User;
+import me.chang.gpms.pojo.ro.PageWithConversationIdRo;
 import me.chang.gpms.pojo.ro.SendLetter2NameContentRo;
 import me.chang.gpms.service.MessageService;
 import me.chang.gpms.service.UserService;
@@ -19,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.HtmlUtils;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
@@ -27,6 +28,7 @@ import java.util.*;
  */
 @RestController
 @Tag(name = "MAC", description = "MessageApiController")
+@Slf4j
 public class MessageApiController {
 
     @Autowired
@@ -44,10 +46,11 @@ public class MessageApiController {
      * @param page
      * @return
      */
-    @GetMapping("api/letter/list")
+    @RequestMapping(value = "api/letter/list", method = {RequestMethod.POST})
     @Operation(description = "私信列表")
     public R getLetterList(
             @Parameter(required = false)
+            @RequestBody
             Page page
     ) {
         var data = new HashMap<String, Object>();
@@ -60,16 +63,22 @@ public class MessageApiController {
         if (page.getLimit() == 0 || ObjectUtil.isEmpty(page.getLimit())) {
             page.setLimit(5);
         }
+
         page.setPath("/letter/list");
         page.setRows(messageService.findConversationCout(user.getId()));
         // 私信列表
         List<Message> conversationList = messageService.findConversations(
                 user.getId(), page.getOffset(), page.getLimit());
+        page.setRows(conversationList.size());
 
         List<Map<String, Object>> conversations = new ArrayList<>();
         if (conversationList != null) {
             for (Message message : conversationList) {
                 Map<String, Object> map = new HashMap<>();
+                var fromUserRoleName = userService.findUserById(message.getFromId()).getRoleName();
+                var toUserRoleName = userService.findUserById(message.getToId()).getRoleName();
+                message.set_fromId(fromUserRoleName);
+                message.set_toId(toUserRoleName);
                 map.put("conversation", message); // 私信
                 map.put("letterCount", messageService.findLetterCount(
                         message.getConversationId())); // 私信数量
@@ -91,6 +100,7 @@ public class MessageApiController {
         data.put("letterUnreadCount", letterUnreadCount);
         int noticeUnreadCount = messageService.findNoticeUnReadCount(user.getId(), null);
         data.put("noticeUnreadCount", noticeUnreadCount);
+        data.put("page", page);
 
 //        return "/site/letter";
         return R.ok(GPMSResponseCode.OK.value(), "私信列表", data);
@@ -98,30 +108,27 @@ public class MessageApiController {
 
     /**
      * 私信详情
-     *
-     * @param conversationId
-     * @param page
+     * @param pageWithConversationId
      * @return
      */
-    @GetMapping("api/letter/detail/{conversationId}")
+    @PostMapping("api/letter/detail")
     @Operation(description = "私信详情")
     public R getLetterDetail(
-            @PathVariable("conversationId")
-            @Parameter(name = "conversationId", example = "2_118")
-            String conversationId,
-            Page page
+            @RequestBody
+            PageWithConversationIdRo pageWithConversationId
     ) {
         var data = new HashMap<String, Object>();
+        var conversationId = pageWithConversationId.getConversationId();
 
         // 分页信息
-        if (page.getLimit() == 0 || ObjectUtil.isEmpty(page.getLimit())) {
-            page.setLimit(5);
+        if (pageWithConversationId.getLimit() == 0 || ObjectUtil.isEmpty(pageWithConversationId.getLimit())) {
+            pageWithConversationId.setLimit(5);
         }
-        page.setPath("/letter/detail/" + conversationId);
-        page.setRows(messageService.findLetterCount(conversationId));
+        pageWithConversationId.setPath("/letter/detail/" + conversationId);
+        pageWithConversationId.setRows(messageService.findLetterCount(conversationId));
 
         // 私信列表
-        List<Message> letterList = messageService.findLetters(conversationId, page.getOffset(), page.getLimit());
+        List<Message> letterList = messageService.findLetters(conversationId, pageWithConversationId.getOffset(), pageWithConversationId.getLimit());
 
         List<Map<String, Object>> letters = new ArrayList<>();
         if (letterList != null) {
@@ -236,6 +243,7 @@ public class MessageApiController {
      */
     @GetMapping("api/notice/list")
     @Operation(description = "通知列表（只显示最新一条消息）")
+    @Deprecated
     public R getNoticeList() {
         var rdata = new HashMap<String, Object>();
         User user = hostHolder.getUser();
@@ -339,6 +347,7 @@ public class MessageApiController {
      */
     @GetMapping("api/notice/detail/{topic}")
     @Operation(description = "查询某个主题（关注follow/赞like/评论comment）所包含的通知列表")
+    @Deprecated
     public R getNoticeDetail(@PathVariable("topic") String topic, Page page) {
         var rdata = new HashMap<String, Object>();
 

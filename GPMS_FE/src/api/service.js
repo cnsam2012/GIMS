@@ -3,17 +3,22 @@ import Adapter from 'axios-mock-adapter'
 import { get } from 'lodash'
 import util from '@/libs/util'
 import { errorLog, errorCreate } from './tools'
+import store from '@/store'
 
 async function refreshUnread () {
-  console.log('========')
-  const myservice = axios.create({ withCredentials: true })
-  const res = await myservice({
-    method: 'GET',
-    url: 'api/notice/unread'
-  })
-  const auc = res.data.data.allUnreadCount
-  console.log(auc)
-  console.log('========')
+  let auc = 0
+  try {
+    const myservice = axios.create({ withCredentials: true })
+    const res = await myservice({
+      method: 'GET',
+      url: process.env.VUE_APP_MESSAGE_API
+    })
+    auc = res.data.data.allUnreadCount
+  } catch (e) {
+    console.warn(e)
+  }
+  // console.log('=====' + auc + '=====')
+  await store.dispatch('d2admin/message/set', auc)
 }
 
 /**

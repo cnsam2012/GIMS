@@ -4,6 +4,7 @@ import me.chang.gpms.filter.LoginFilter;
 import me.chang.gpms.util.R;
 import me.chang.gpms.util.constant.BbUserAuth;
 import me.chang.gpms.util.constant.GPMSResponseCode;
+import me.chang.gpms.util.constant.GPMSUserAuth;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -47,7 +48,7 @@ public class SecurityConfig {
          * 详见 https://zhuanlan.zhihu.com/p/373292177
          */
         http.addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class);
-
+        // TODO 权限细分
         http.authorizeHttpRequests(
                         (authz) -> authz
                                 .requestMatchers(
@@ -74,9 +75,15 @@ public class SecurityConfig {
                                         "/api/unfollow"
                                 )
                                 .hasAnyAuthority(
-                                        BbUserAuth.AUTHORITY_USER.value(),
-                                        BbUserAuth.AUTHORITY_ADMIN.value(),
-                                        BbUserAuth.AUTHORITY_MODERATOR.value()
+//                                        BbUserAuth.AUTHORITY_USER.value(),
+//                                        BbUserAuth.AUTHORITY_ADMIN.value(),
+//                                        BbUserAuth.AUTHORITY_MODERATOR.value(),
+
+                                        GPMSUserAuth.AUTHORITY_INSTRUCTORS.value(),
+                                        GPMSUserAuth.AUTHORITY_COMPANIES.value(),
+                                        GPMSUserAuth.AUTHORITY_ADMIN.value(),
+                                        GPMSUserAuth.AUTHORITY_SU.value(),
+                                        GPMSUserAuth.AUTHORITY_STUDENT.value()
                                 )
                                 .requestMatchers(
                                         "/discuss/top",
@@ -86,8 +93,14 @@ public class SecurityConfig {
                                         "/api/discuss/wonderful"
                                 )
                                 .hasAnyAuthority(
-                                        BbUserAuth.AUTHORITY_ADMIN.value(),
-                                        BbUserAuth.AUTHORITY_MODERATOR.value()
+//                                        BbUserAuth.AUTHORITY_ADMIN.value(),
+//                                        BbUserAuth.AUTHORITY_MODERATOR.value(),
+
+                                        GPMSUserAuth.AUTHORITY_INSTRUCTORS.value(),
+                                        GPMSUserAuth.AUTHORITY_COMPANIES.value(),
+                                        GPMSUserAuth.AUTHORITY_ADMIN.value(),
+                                        GPMSUserAuth.AUTHORITY_SU.value(),
+                                        GPMSUserAuth.AUTHORITY_STUDENT.value()
                                 )
                                 .requestMatchers(
                                         "/discuss/delete",
@@ -99,7 +112,13 @@ public class SecurityConfig {
                                         "/api/data/**"
                                 )
                                 .hasAnyAuthority(
-                                        BbUserAuth.AUTHORITY_ADMIN.value()
+//                                        BbUserAuth.AUTHORITY_ADMIN.value(),
+
+                                        GPMSUserAuth.AUTHORITY_INSTRUCTORS.value(),
+                                        GPMSUserAuth.AUTHORITY_COMPANIES.value(),
+                                        GPMSUserAuth.AUTHORITY_ADMIN.value(),
+                                        GPMSUserAuth.AUTHORITY_SU.value(),
+                                        GPMSUserAuth.AUTHORITY_STUDENT.value()
                                 )
                                 .anyRequest().permitAll()
                 )
@@ -134,7 +153,7 @@ public class SecurityConfig {
                                 PrintWriter writer = response.getWriter();
                                 response.setStatus(HttpStatus.SC_FORBIDDEN);
 //                                writer.write(BbUtil.getJSONString(403, "你没有访问该功能的权限"));
-                                var r = R.error(GPMSResponseCode.CLIENT_NO_AUTHORITY.value(), "您还没有登录");
+                                var r = R.error(GPMSResponseCode.CLIENT_NO_AUTHORITY.value(), "您所有的权限不能完成此操作");
                                 writer.write(r.toJsonString());
 //                        } else {
 //                            // 普通请求
