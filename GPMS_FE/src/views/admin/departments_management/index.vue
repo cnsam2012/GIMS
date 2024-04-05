@@ -1,15 +1,6 @@
 <template>
   <d2-container>
     <template slot="header">
-      <!--      <el-input-->
-      <!--        type="text"-->
-      <!--        v-model="formLogin.code"-->
-      <!--        placeholder="验证码">-->
-      <!--        <template slot="append">-->
-      <!--          <img class="login-code" :src="imgSrc" alt="kaptcha_pic" @click="refreshKaptcha">-->
-      <!--          &lt;!&ndash;                      <img class="login-code" src="./image/login-code.png" alt="kaptcha_pic" @click="refreshKaptcha">&ndash;&gt;-->
-      <!--        </template>-->
-      <!--      </el-input>-->
     </template>
     <d2-crud-x
       ref="departments"
@@ -101,7 +92,12 @@ export default {
         },
         content: {
           title: '备注',
-          value: 'content'
+          value: 'content',
+          component: {
+            name: 'el-input',
+            type: 'textarea',
+            rows: '4'
+          }
         }
       },
       columns: [

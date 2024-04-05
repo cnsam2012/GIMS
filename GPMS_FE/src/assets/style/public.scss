@@ -42,3 +42,38 @@ $prefix: d2;
   font-size: 14px;
   position: relative;
 }
+
+// my scss start
+
+.el-button--primary {
+  color: white;
+  background-color: #3fb355;
+  border-color: #3fb355;
+}
+
+.el-button--primary:hover {
+  //color: #3fb355;
+  //background-color: rgba(63, 179, 85, 0.12);
+}
+
+.el-button:hover {
+  border-color: #3fb355;
+}
+
+.el-button:focus {
+  border-color: #FFFFFF;
+}
+
+.el-message-box {
+  .el-button--primary {
+    background-color: #3fb355;
+    color: #FFFFFF;
+  }
+
+  .el-button--primary:hover {
+    color: #3fb355;
+    background-color: rgba(63, 179, 85, 0.24);
+  }
+}
+
+// my scss end

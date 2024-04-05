@@ -1,14 +1,10 @@
 <template>
   <d2-container>
     <template slot="header">
-      <div style="display: flex;align-items: center;justify-content: flex-start">
-        <h1>消息与会话</h1>
-        <el-badge v-if="messageUnread > 0" :max="99" :value="messageUnread" style="padding-left: 10px">
-        </el-badge>
-      </div>
+      <h1>{{ this.myNameFormatter(name1) }} 与 {{ this.myNameFormatter(name2) }} 的会话</h1>
     </template>
     <d2-crud-x
-      ref="departments"
+      ref="messageDetail"
       :columns="columns"
       :addTemplate="addTemplate"
       :data="data"
@@ -27,6 +23,7 @@
       @row-remove="handleRowRemove"
       selection-row
       @selection-change="handleSelectionChange"
+      @reply-message="handleReplyAMessage"
     >
       <el-button
         slot="header"
@@ -66,19 +63,21 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   computed: {
-    ...mapGetters('d2admin', {
-      messageUnread: 'message/unread'
-    }),
-    ...mapState('d2admin/message', [
-      'unread'
+    ...mapState('d2admin/user', [
+      'info'
     ])
   },
   data () {
     return {
+      key: 0,
+      currentUserInfo: {},
+      cid: 0,
+      name1: '',
+      name2: '',
       loading: false,
       addTemplate: {
         toId: {
@@ -94,17 +93,33 @@ export default {
         }
       },
       columns: [
-        {
-          title: '状态',
-          key: 'status',
-          formatter: (row, column, cellValue, index) => {
-            return (cellValue > 0 ? '未读' : '已读')
-          },
-          sortable: true
-        },
+        // {
+        //   title: '状态',
+        //   key: 'status',
+        //   formatter: (row, column, cellValue, index) => {
+        //     return cellValue === 0 ? '未读' : '已读'
+        //   },
+        //   sortable: true
+        // },
         {
           title: '发送者',
-          key: '_fromId'
+          key: '_fromId',
+          formatter: (row, column, cellValue, index) => {
+            if (cellValue === this.info.rolename) {
+              return '我'
+            }
+            return cellValue
+          }
+        },
+        {
+          title: '收信者',
+          key: '_toId',
+          formatter: (row, column, cellValue, index) => {
+            if (cellValue === this.info.rolename) {
+              return '我'
+            }
+            return cellValue
+          }
         },
         {
           title: '内容',
@@ -126,8 +141,7 @@ export default {
           content: '这是一条发给用户admin的测试信息',
           status: 0,
           createTime: '2024-04-03T09:26:41.000+00:00',
-          _fromId: 'cc1',
-          _toId: 'hello'
+          _fromId: 'cc1'
         }
       ],
       rowHandle: {
@@ -137,6 +151,18 @@ export default {
             type: 'success',
             size: 'small',
             emit: 'show-detail'
+          },
+          {
+            text: '回复',
+            type: 'warn',
+            size: 'small',
+            emit: 'reply-message',
+            disabled: (index, row) => {
+              if (row._fromId === this.currentUserInfo.rolename) {
+                return true
+              }
+              return false
+            }
           }
         ],
         // remove: {
@@ -173,17 +199,25 @@ export default {
     }
   },
   async mounted () {
-    this.fetchData()
+    this.modifiedAddTemplate = this.addTemplate
+    this.cid = this.$route.params.cid
+    this.name1 = this.$route.params.name1
+    this.name2 = this.$route.params.name2
+    this.currentUserInfo = this.info
+    console.log(this.currentUserInfo)
+    await this.fetchData()
     document.addEventListener('keypress', this.handleWatchEnter)
+    console.log(this.typeNumToStr('1'))
   },
   methods: {
     async fetchData () {
       const page = {
         current: this.pagination.currentPage,
-        limit: this.pagination.pageSize
+        limit: this.pagination.pageSize,
+        conversationId: this.cid
       }
       this.loading = true
-      let res = await this.$api.FETCH_ALL_MESSAGES(page)
+      let res = await this.$api.CONVERSATION_DETAIL(page)
       res = res.data
       await this.updateData(res)
       this.loading = false
@@ -192,34 +226,33 @@ export default {
       index,
       row
     }) {
-      // this.$refs.departments.showDialog({
-      //   mode: 'view',
-      //   rowIndex: index,
-      //   template: {
-      //     fromId: {
-      //       title: '发送者',
-      //       value: 'fromId',
-      //       formatter: this.toOriginStrFormatter
-      //     },
-      //     content: {
-      //       title: '内容',
-      //       value: 'content',
-      //       formatter: this.toOriginStrFormatter
-      //     },
-      //     createTime: {
-      //       title: '创建时间',
-      //       value: 'createTime',
-      //       formatter: this.colCreateTimeFormatter
-      //     }
-      //   }
-      // })
-      this.goToMessageDetail(row.conversationId, row._fromId, row._toId)
+      this.$refs.messageDetail.showDialog({
+        mode: 'view',
+        rowIndex: index,
+        template: {
+          fromId: {
+            title: '发送者',
+            value: 'fromId',
+            formatter: this.toOriginStrFormatter
+          },
+          content: {
+            title: '内容',
+            value: 'content',
+            formatter: this.toOriginStrFormatter
+          },
+          createTime: {
+            title: '创建时间',
+            value: 'createTime',
+            formatter: this.colCreateTimeFormatter
+          }
+        }
+      })
     },
     onEditClick ({
       index,
       row
     }) {
-      this.$refs.departments.showDialog({
+      this.$refs.messageDetail.showDialog({
         mode: 'edit',
         rowIndex: index,
         template: {
@@ -262,12 +295,11 @@ export default {
       this.pagination.currentPage = pageRec.current
       this.pagination.total = pageRec.rows
       this.pagination.pageSize = pageRec.limit
-      // this.data = res.departments
-      console.info()
+      // this.data = res.messageDetail
+
       const dataPushed = []
-      res.conversations.map(item => {
-        item.conversation.status = item.unreadCount
-        dataPushed.push(item.conversation)
+      res.letters.map(item => {
+        dataPushed.push(item.letter)
       })
       this.data = dataPushed
     },
@@ -286,7 +318,8 @@ export default {
       }
     },
     onAdd () {
-      this.$refs.departments.showDialog({
+      this.addTemplate.toId.value = ''
+      this.$refs.messageDetail.showDialog({
         mode: 'add'
       })
     },
@@ -307,15 +340,14 @@ export default {
       // done({
       //   address: '我是通过done事件传入的数据！'
       // })
-      this.formOptions.saveLoading = false
       const data = {
         toName: row.toId,
         content: row.content
       }
-      const res = await this.$api.SEND_MESSAGE(data)
-      console.log(res)
+      await this.$api.SEND_MESSAGE(data)
       done()
       await this.fetchData()
+      this.formOptions.saveLoading = false
     },
     async handleRowRemove ({
       index,
@@ -334,6 +366,15 @@ export default {
       this.$message({
         message: mode,
         type: 'success'
+      })
+    },
+    async handleReplyAMessage ({
+      index,
+      row
+    }, done) {
+      this.addTemplate.toId.value = row._fromId
+      this.$refs.messageDetail.showDialog({
+        mode: 'add'
       })
     },
     async handleRowEdit ({
@@ -393,17 +434,22 @@ export default {
     },
     colCreateTimeFormatter (row, column, cellValue, index) {
       var dateRegex = /^\d{4}-\d{2}-\d{2}/
-      var match = cellValue.match(dateRegex)
-      if (match) {
-        return match[0] // 返回匹配到的日期部分
-      } else {
-        return 'NULL' // 如果没有匹配到日期部分，则返回空字符串
+      try {
+        var match = cellValue.match(dateRegex)
+        if (match) {
+          return match[0] // 返回匹配到的日期部分
+        } else {
+          return 'NULL' // 如果没有匹配到日期部分，则返回空字符串
+        }
+      } catch (e) {
+        return 'NULL'
       }
     },
-    goToMessageDetail (cid, name1, name2) {
-      this.$router.push({
-        path: 'myMessageDetail/' + cid + '/' + name1 + '/' + name2
-      })
+    myNameFormatter (cellValue) {
+      if (cellValue === this.info.rolename) {
+        return '我'
+      }
+      return cellValue
     }
   }
 }

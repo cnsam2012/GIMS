@@ -51,6 +51,9 @@ public class MessageService {
     public List<Message> findLetters(String conversationId, int offset, int limit) {
         return messageMapper.selectLetters(conversationId, offset, limit);
     }
+    public List<Message> findLetters(String conversationId) {
+        return messageMapper.selectAllLetters(conversationId);
+    }
 
     /**
      * 查询某个会话所包含的私信数量

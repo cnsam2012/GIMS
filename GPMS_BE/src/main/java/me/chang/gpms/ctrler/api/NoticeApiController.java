@@ -27,7 +27,6 @@ public class NoticeApiController {
     @Operation(summary = "获取未读私信/系统通知的数量")
     public R getAllUnreadNotice() {
         User user = hostHolder.getUser();
-
         var data = new HashMap<String, Object>();
         if (user != null) {
             int letterUnreadCount = messageService.findLetterUnreadCount(user.getId(), null);

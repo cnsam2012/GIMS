@@ -35,7 +35,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/user")
 @Slf4j
-@Tag(name = "UAC", description = "UserApiController")
+    @Tag(name = "UAC", description = "UserApiController")
 public class UserApiController {
 
     @Autowired

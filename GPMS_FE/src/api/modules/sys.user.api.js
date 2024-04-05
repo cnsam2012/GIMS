@@ -137,7 +137,7 @@ export default ({
       }
     )
   },
-  SYS_USER_ALTER_USER_BY_ID (data={}) {
+  SYS_USER_ALTER_USER_BY_ID (data = {}) {
     return request(
       {
         url: '/user/alter/user',

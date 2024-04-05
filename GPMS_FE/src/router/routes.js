@@ -130,6 +130,15 @@ const frameIn = [
         },
         component: _import('message')
       },
+      {
+        path: 'myMessageDetail/:cid/:name1/:name2',
+        name: 'myMessageDetail',
+        meta: {
+          title: '信息详情',
+          auth: true
+        },
+        component: _import('messageDetail')
+      },
       // 系统 前端日志
       {
         path: 'log',

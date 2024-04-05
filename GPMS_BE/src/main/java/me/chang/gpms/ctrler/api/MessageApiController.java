@@ -108,6 +108,7 @@ public class MessageApiController {
 
     /**
      * 私信详情
+     *
      * @param pageWithConversationId
      * @return
      */
@@ -133,6 +134,10 @@ public class MessageApiController {
         List<Map<String, Object>> letters = new ArrayList<>();
         if (letterList != null) {
             for (Message message : letterList) {
+                var fromUserRoleName = userService.findUserById(message.getFromId()).getRoleName();
+                var toUserRoleName = userService.findUserById(message.getToId()).getRoleName();
+                message.set_fromId(fromUserRoleName);
+                message.set_toId(toUserRoleName);
                 Map<String, Object> map = new HashMap<>();
                 map.put("letter", message);
                 var userPut = userService.findUserById(message.getFromId());
@@ -143,17 +148,18 @@ public class MessageApiController {
             }
         }
         data.put("letters", letters);
+        data.put("page", pageWithConversationId);
 
         // 私信目标
         data.put("target", getLetterTarget(conversationId));
 
+        List<Message> letterListToRead = messageService.findLetters(conversationId);
         // 将私信列表中的未读消息改为已读
-        List<Integer> ids = getUnreadLetterIds(letterList);
+        List<Integer> ids = getUnreadLetterIds(letterListToRead);
         if (!ids.isEmpty()) {
             messageService.readMessage(ids);
         }
 
-//        return "/site/letter-detail";
         return R.ok(GPMSResponseCode.OK.value(), "私信详情", data);
     }
 
@@ -187,7 +193,7 @@ public class MessageApiController {
         if (letterList != null) {
             for (Message message : letterList) {
                 // 当前用户是私信的接收者且该私信处于未读状态
-                if (hostHolder.getUser().getId() == message.getToId() && message.getStatus() == 0) {
+                if ((hostHolder.getUser().getId() == message.getToId()) && (message.getStatus() == 0)) {
                     ids.add(message.getId());
                 }
             }
@@ -216,6 +222,14 @@ public class MessageApiController {
         // Integer.valueOf("abc"); // 测试统一异常处理（异步请求）
         User target = userService.findAUserByRoleName(toName);
         if (target == null) {
+            try {
+                target = userService.findUserById(Integer.parseInt(toName));
+                if (target == null) {
+                    return R.error(GPMSResponseCode.CLIENT_ERROR.value(), "目标用户不存在");
+                }
+            } catch (Exception e) {
+                log.warn(e.toString());
+            }
             return R.error(GPMSResponseCode.CLIENT_ERROR.value(), "目标用户不存在");
         }
 

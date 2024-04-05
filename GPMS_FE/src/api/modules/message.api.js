@@ -18,5 +18,21 @@ export default ({
       method: 'POST',
       data
     })
+  },
+  SEND_MESSAGE (data = {}) {
+    return request({
+      contentType: 'application/json',
+      url: 'letter/send',
+      method: 'POST',
+      data
+    })
+  },
+  CONVERSATION_DETAIL (data = {}) {
+    return request({
+      contentType: 'application/json',
+      url: 'letter/detail',
+      method: 'POST',
+      data
+    })
   }
 })
