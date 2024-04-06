@@ -95,6 +95,33 @@ const frameIn = [
         component: _import('admin/reports_management')
       },
       {
+        path: 'plans_management',
+        name: 'plans_management',
+        meta: {
+          title: '实习管理',
+          auth: true
+        },
+        component: _import('admin/plans_management')
+      },
+      {
+        path: 'planchoose_management',
+        name: 'planchoose_management',
+        meta: {
+          title: '已选实习',
+          auth: true
+        },
+        component: _import('admin/planchoose_management')
+      },
+      {
+        path: 'planDetail/:planid',
+        name: 'planDetail',
+        meta: {
+          title: '实习详情',
+          auth: true
+        },
+        component: _import('planDetail')
+      },
+      {
         path: 'alterPassword',
         name: 'alterPassword',
         meta: {

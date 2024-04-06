@@ -20,7 +20,12 @@ export default {
       rememberMe = ''
     } = {}) {
       // const res = await api.FAKE_SYS_USER_LOGIN({ username, password })
-      let res = await api.SYS_USER_LOGIN({ username, password, code, rememberMe })
+      let res = await api.SYS_USER_LOGIN({
+        username,
+        password,
+        code,
+        rememberMe
+      })
       res = res.data // 增加这一句
       // 设置 cookie 一定要存 uuid 和 token 两个 cookie
       // 整个系统依赖这两个数据进行校验和存储
@@ -38,16 +43,27 @@ export default {
       }
       const userType = uinfo.type
       const userId = uinfo.id
-      await dispatch('d2admin/user/set', { name: usernameDisplay, userType: userType, userId: userId }, { root: true })
+      const usernameinfo = uinfo.username
+      const rolenameinfo = uinfo.roleName
+      await dispatch('d2admin/user/set', {
+        username: usernameinfo,
+        rolename: rolenameinfo,
+        name: usernameDisplay,
+        userType: userType,
+        userId: userId
+      }, { root: true })
       // 用户登录后从持久化数据加载一系列的设置
-      await dispatch('load')
+      await dispatch('load', { userType: userType })
     },
     /**
      * @description 注销用户并返回登录页面
      * @param {Object} context
      * @param {Object} payload confirm {Boolean} 是否需要确认
      */
-    logout ({ commit, dispatch }, { confirm = false } = {}) {
+    logout ({
+      commit,
+      dispatch
+    }, { confirm = false } = {}) {
       /**
        * @description 注销
        */
@@ -63,10 +79,14 @@ export default {
         // 跳转路由
         router.push({ name: 'login' })
       }
+
       // 判断是否需要确认
       if (confirm) {
         commit('d2admin/gray/set', true, { root: true })
-        MessageBox.confirm('确定要注销当前用户吗', '注销用户', { type: 'warning', customClass: 'message-logout' })
+        MessageBox.confirm('确定要注销当前用户吗', '注销用户', {
+          type: 'warning',
+          customClass: 'message-logout'
+        })
           .then(() => {
             commit('d2admin/gray/set', false, { root: true })
             logout()
@@ -83,7 +103,7 @@ export default {
      * @description 用户登录后从持久化数据加载一系列的设置
      * @param {Object} context
      */
-    async load ({ dispatch }) {
+    async load ({ dispatch }, info) {
       // 加载用户名
       await dispatch('d2admin/user/load', null, { root: true })
       // 加载主题

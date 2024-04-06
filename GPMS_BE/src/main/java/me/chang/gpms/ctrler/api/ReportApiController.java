@@ -269,7 +269,7 @@ public class ReportApiController {
             page.setLimit(5);
         }
         page.setPath("/discuss/detail/" + discussPostId);
-        page.setRows(discussPost.getCommentCount());
+//        page.setRows(discussPost.getCommentCount());
 
         // 帖子的评论列表
         List<Comment> commentList = commentService.findCommentByEntity(

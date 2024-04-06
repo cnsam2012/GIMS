@@ -1,6 +1,8 @@
 package me.chang.gpms.pojo;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,18 +20,15 @@ import java.util.Date;
 @NoArgsConstructor
 public class Plan {
 
+    @TableId(type = IdType.AUTO, value = "ID")
     private int id;
+
     private int type;
     private String name;
     private int major_orie_id;
     private int grade;
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date start_d;
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date end_d;
-
     private int class_hour;
     private float credit;
     private int percent_in;
@@ -43,11 +42,11 @@ public class Plan {
     private int percent_in_weekly_report;
     private int percent_in_monthly_report;
     private int percent_in_summary;
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date deadline;
-
     private int creator;
+
+    @TableField(exist = false)
+    private String _creator;
 
     public static Plan getPlanByPlanRo(PlanRo planRo) {
         var p = new Plan();
@@ -75,6 +74,7 @@ public class Plan {
         p.creator = planRo.getCreator();
         return p;
     }
+
     public static Plan getPlanByPlanAddRo(PlanAddRo planRo) {
         var p = new Plan();
         p.type = planRo.getType();

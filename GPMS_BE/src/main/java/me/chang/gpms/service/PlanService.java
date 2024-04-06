@@ -13,11 +13,14 @@ import java.util.List;
 @Service
 public class PlanService {
     private final PlanMapper planMapper;
+    private final PlanchooseService planchooseService;
 
     @Autowired
-    public PlanService(PlanMapper planMapper) {
+    public PlanService(PlanMapper planMapper, PlanchooseService planchooseService) {
         this.planMapper = planMapper;
+        this.planchooseService = planchooseService;
     }
+
 
     public List<Plan> findAllPlanByPage(int pageNum, int pageSize) {
         Page<Plan> page = new Page<>(pageNum, pageSize);
@@ -44,7 +47,9 @@ public class PlanService {
     }
 
     public int deletePlanById(int planId) {
-        return planMapper.deleteById(this.getPlanById(planId));
+        var plan = this.getPlanById(planId);
+        planchooseService.deletePlancByPlanId(planId);
+        return planMapper.deleteById(plan);
     }
 
     public int updatePlan(Plan plan) {

@@ -11,6 +11,7 @@ import me.chang.gpms.pojo.ro.DepartmentUpdateRo;
 import me.chang.gpms.pojo.ro.PlanAddRo;
 import me.chang.gpms.pojo.ro.PlanRo;
 import me.chang.gpms.service.PlanService;
+import me.chang.gpms.service.UserService;
 import me.chang.gpms.util.HostHolder;
 import me.chang.gpms.util.R;
 import me.chang.gpms.util.constant.GPMSResponseCode;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @Tag(name = "PAC", description = "PlanApiController")
@@ -29,6 +31,9 @@ public class PlanApiController {
 
     @Autowired
     PlanService planService;
+
+    @Autowired
+    UserService userService;
 
     @Autowired
     HostHolder hostHolder;
@@ -45,7 +50,19 @@ public class PlanApiController {
         var pageSize = page.getLimit();
         var pageTotal = planService.getAllPlanRows();
         page.setRows(pageTotal);
-        data.put("plan", planService.findAllPlanByPage(pageNum, pageSize));
+        var allPlan = planService.findAllPlanByPage(pageNum, pageSize);
+        var planReturn = new ArrayList<Plan>();
+        for (Plan p : allPlan) {
+            try {
+                var creatorId = p.getCreator();
+                var userGot = userService.findUserById(creatorId);
+                p.set_creator(userGot.getRoleName());
+                planReturn.add(p);
+            } catch (Exception e) {
+
+            }
+        }
+        data.put("plan", planReturn);
         data.put("page", page);
         return R.ok(GPMSResponseCode.OK.value(), "success", data);
     }
@@ -58,7 +75,11 @@ public class PlanApiController {
             PlanIdRo planIdRo
     ) {
         var data = new HashMap<String, Object>();
-        data.put("plan", planService.getPlanById(planIdRo.getPlanId()));
+        Plan planById = planService.getPlanById(planIdRo.getPlanId());
+        var creatorId = planById.getCreator();
+        var userGot = userService.findUserById(creatorId);
+        planById.set_creator(userGot.getRoleName());
+        data.put("plan", planById);
         return R.ok(GPMSResponseCode.OK.value(), "success", data);
     }
 

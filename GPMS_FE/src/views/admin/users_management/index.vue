@@ -329,20 +329,17 @@ export default {
       this.pagination.total = pageRec.rows
       this.pagination.pageSize = pageRec.limit
       this.data = res.users
+      this.originalData = res.users
     },
     async onSearch () {
-      // if (this.searchKeywords) {
-      //   const pageWithKeywords = {
-      //     keywords: this.searchKeywords,
-      //     current: this.pagination.currentPage,
-      //     limit: this.pagination.pageSize
-      //   }
-      //   let res = await this.$api.FETCH_FUZZY_DEPARTMENTS(pageWithKeywords)
-      //   res = res.data
-      //   this.updateData(res)
-      // } else {
-      //   await this.fetchData()
-      // }
+      if (this.searchKeywords === '') {
+        this.data = this.originalData
+        return
+      }
+      this.loading = true
+      const searchResults = this.data.filter(obj => obj.roleName.includes(this.searchKeywords))
+      this.data = searchResults
+      this.loading = false
     },
     onAdd () {
       this.$refs.departments.showDialog({

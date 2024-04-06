@@ -1,5 +1,8 @@
 package me.chang.gpms.service;
 
+import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -29,6 +32,9 @@ public class ReportService {
 
     @Autowired
     private ReportMapper reportMapper;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private SensitiveFilter sensitiveFilter;
@@ -255,5 +261,31 @@ public class ReportService {
      */
     public int deleteReport(int id) {
         return reportMapper.deleteById(id);
+    }
+
+    public List<Report> searchReports(String keywords, int current, int limit) {
+        String username = null;
+        try {
+            var userFound = userService.findAUserByRoleName(keywords);
+            username = String.valueOf(userFound.getId());
+            log.info("==========got user {}", username);
+        } catch (Exception e) {
+            log.warn(e.toString());
+        }
+        Page<Report> page = new Page<>(current, limit); // 创建分页对象
+        QueryWrapper<Report> queryWrapper = new QueryWrapper<>(); // 创建查询条件包装器
+        if (ObjectUtil.isNotNull(username) || ObjectUtil.isNotEmpty(username)) {
+            queryWrapper.like("title", "%" + keywords + "%")
+                    .or()
+                    .like("content", "%" + keywords + "%")
+                    .or()
+                    .eq("user_id", username);
+        } else {
+            queryWrapper.like("title", "%" + keywords + "%")
+                    .or()
+                    .like("content", "%" + keywords + "%");
+        }
+        reportMapper.selectPage(page, queryWrapper); // 执行分页查询
+        return page.getRecords(); // 返回查询结果
     }
 }

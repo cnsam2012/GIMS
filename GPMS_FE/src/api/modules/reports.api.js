@@ -33,14 +33,14 @@ export default ({
   //  * @returns {*}
   //  * @constructor
   //  */
-  // FETCH_FUZZY_DEPARTMENTS (data = {}) {
-  //   return request({
-  //     contentType: 'application/json',
-  //     url: 'fuzzySearchDepartments',
-  //     method: 'POST',
-  //     data
-  //   })
-  // },
+  FETCH_FUZZY_REPORTS (data = {}) {
+    return request({
+      contentType: 'application/json',
+      url: 'search',
+      method: 'POST',
+      data
+    })
+  },
   // /**
   //  * 添加部门
   //  * @param data

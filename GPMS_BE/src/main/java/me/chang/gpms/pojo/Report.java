@@ -69,12 +69,12 @@ public class Report {
     @Schema(description = "发布时间", example = "2023-09-24 17:12:17", name = "")
     private Date createTime;
 
-    /**
-     * 评论数量
-     */
-    @Field(type = FieldType.Integer)
-    @Schema(description = "评论数量", example = "0", name = "")
-    private Integer commentCount;
+//    /**
+//     * 评论数量
+//     */
+//    @Field(type = FieldType.Integer)
+//    @Schema(description = "评论数量", example = "0", name = "")
+//    private Integer commentCount;
 
     /**
      * 热度/分数
@@ -99,7 +99,7 @@ public class Report {
 
     @Field(type = FieldType.Integer)
     @Schema(description = "通过", example = "0", name = "")
-    private Integer isPassed;
+    private Integer isPass;
 
     @Field(type = FieldType.Integer)
     @Schema(description = "最后编辑", example = "0", name = "")

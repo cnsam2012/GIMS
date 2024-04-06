@@ -1,6 +1,7 @@
 <template>
   <d2-container>
     <template slot="header">
+      <h1>全部实习</h1>
     </template>
     <d2-crud-x
       ref="reports"
@@ -10,6 +11,7 @@
       :pagination="pagination"
       :form-options="formOptions"
       :loading="loading"
+      :addTemplate="addTemplate"
       selection-row
       @show-detail="showDetail"
       @on-edit-click="onEditClick"
@@ -19,6 +21,7 @@
       @dialog-open="handleDialogOpen"
       @row-edit="handleRowEdit"
       @row-remove="handleRowRemove"
+      @row-add="handleRowAdd"
       @selection-change="handleSelectionChange"
     >
       <el-button
@@ -26,48 +29,25 @@
         type="success"
         style="margin: 7px"
         @click="onAdd"
-        v-if="info.userType === 1"
-      >新建报告
+        v-if="info.userType != 1"
+      >新建实习
       </el-button>
 
-      <template
-        v-if="info.userType === 1"
+      <el-input
+        slot="header"
+        type="text"
+        v-model="searchKeywords"
+        placeholder="搜索实习..."
+        style="width: 20%; margin: 7px"
       >
-        <el-input
-          slot="header"
-          type="text"
-          v-model="searchKeywords"
-          placeholder="搜索我的报告..."
-          style="width: 20%; margin: 7px"
-        >
-          <template slot="append">
-            <el-button
-              slot="header"
-              @click="onSearch"
-            >搜索
-            </el-button>
-          </template>
-        </el-input>
-      </template>
-      <template
-        v-else
-      >
-        <el-input
-          slot="header"
-          type="text"
-          v-model="searchKeywords"
-          placeholder="搜索提交人..."
-          style="width: 20%; margin: 7px"
-        >
-          <template slot="append">
-            <el-button
-              slot="header"
-              @click="onSearch"
-            >搜索
-            </el-button>
-          </template>
-        </el-input>
-      </template>
+        <template slot="append">
+          <el-button
+            slot="header"
+            @click="onSearch"
+          >搜索
+          </el-button>
+        </template>
+      </el-input>
       <el-input-number
         slot="header"
         v-model="pagination.pageSize"
@@ -94,23 +74,134 @@ export default {
   },
   data () {
     return {
+      originalData: [],
       loading: false,
-      addTemplate: {},
+      addTemplate: {
+        type: {
+          title: '类型'
+        },
+        name: {
+          title: '名称',
+          value: 'name'
+        },
+        major_orie_id: {
+          title: '专业方向ID',
+          value: '00',
+          display: false
+        },
+        grade: {
+          title: '年级',
+          value: '4'
+        },
+        start_d: {
+          title: '开始日期',
+          value: '2020-02-10'
+        },
+        end_d: {
+          title: '结束日期',
+          value: '2020-02-10'
+        },
+        class_hour: {
+          title: '课时',
+          value: '0'
+        },
+        credit: {
+          title: '学分',
+          value: '0'
+        },
+        percent_in: {
+          title: '内部百分比',
+          value: '0'
+        },
+        percent_ex: {
+          title: '外部百分比',
+          value: '0'
+        },
+        content: {
+          title: '内容',
+          component: {
+            name: 'el-input',
+            type: 'textarea',
+            rows: '6'
+          }
+        },
+        objective: {
+          title: '目标',
+          value: 'objective',
+          display: false
+        },
+        demand: {
+          title: '要求',
+          value: 'demand',
+          display: false
+        },
+        score_cal_type: {
+          title: '分数计算类型',
+          value: '0',
+          display: false
+        },
+        percent_in_daily_report: {
+          title: '每日报告内部百分比',
+          value: '5'
+        },
+        percent_in_weekly_report: {
+          title: '每周报告内部百分比',
+          value: '15'
+        },
+        percent_in_monthly_report: {
+          title: '每月报告内部百分比',
+          value: '30'
+        },
+        percent_in_summary: {
+          title: '总结报告内部百分比',
+          value: '50'
+        },
+        deadline: {
+          title: '截止日期',
+          value: '2020-02-10'
+        }
+      },
       columns: [
         {
-          title: '提交人',
-          key: '_id',
-          fixed: true
+          title: '类型',
+          key: 'type'
         },
         {
-          title: '报告类型',
-          key: 'type',
-          formatter: this.typeNumToStrFormatter
+          title: '名称',
+          key: 'name',
+          fixed: 'left'
         },
         {
-          title: '标题',
-          key: 'title',
-          showOverflowTooltip: true
+          title: '专业方向ID',
+          key: 'major_orie_id'
+        },
+        {
+          title: '年级',
+          key: 'grade'
+        },
+        // {
+        //   title: '开始日期',
+        //   key: 'start_d'
+        // },
+        // {
+        //   title: '结束日期',
+        //   key: 'end_d'
+        // },
+        {
+          title: '课时',
+          key: 'class_hour'
+        },
+        {
+          title: '学分',
+          key: 'credit'
+        },
+        {
+          title: '内部百分比',
+          key: 'percent_in'
+        },
+        {
+          title: '外部百分比',
+          key: 'percent_ex'
         },
         {
           title: '内容',
@@ -118,46 +209,69 @@ export default {
           showOverflowTooltip: true
         },
         {
-          title: '提交时间',
-          key: 'createTime',
-          formatter: this.colCreateTimeFormatter
+          title: '目标',
+          key: 'objective'
         },
         {
-          title: '阅读状态',
-          key: 'isRead',
-          formatter: this.readNumToStrFormatter
+          title: '要求',
+          key: 'demand',
+          showOverflowTooltip: true
         },
         {
-          title: '最后操作',
-          key: '_lastedEditUserId'
+          title: '分数计算类型',
+          key: 'score_cal_type'
+        },
+        {
+          title: '每日报告内部百分比',
+          key: 'percent_in_daily_report'
+        },
+        {
+          title: '每周报告内部百分比',
+          key: 'percent_in_weekly_report'
+        },
+        {
+          title: '每月报告内部百分比',
+          key: 'percent_in_monthly_report'
+        },
+        {
+          title: '总结报告内部百分比',
+          key: 'percent_in_summary'
+        },
+        {
+          title: '截止日期',
+          key: 'deadline'
+        },
+        {
+          title: '创建者',
+          key: '_creator',
+          showOverflowTooltip: true,
+          fixed: 'left'
         }
       ],
       data: [
         {
-          id: '1',
-          title: '通知标题1',
-          key: 'title',
-          content: '通知内容1',
-          createTime: '2021-01-01 10:00:00',
-          isRead: '1',
-          lastedEditUserId: '910018',
-          type: '1',
-          _id: 'username1',
-          _type: 'type1',
-          _isRead: '已读'
-        },
-        {
-          id: '2',
-          title: '通知标题2',
-          key: 'title',
-          content: '通知内容2',
-          createTime: '2021-02-01 14:30:00',
-          isRead: '0',
-          lastedEditUserId: '910018',
-          type: '2',
-          _id: 'username2',
-          _type: 'type2',
-          _isRead: '未读'
+          id: 0,
+          type: 0,
+          name: 'string',
+          major_orie_id: 0,
+          grade: 0,
+          start_d: null,
+          end_d: null,
+          class_hour: 0,
+          credit: 0,
+          percent_in: 0,
+          percent_ex: 0,
+          content: 'string',
+          objective: 'string',
+          demand: 'string',
+          score_cal_type: 0,
+          percent_in_daily_report: 0,
+          percent_in_weekly_report: 0,
+          percent_in_monthly_report: 0,
+          percent_in_summary: 0,
+          deadline: '2024-03-30T16:00:00.000+00:00',
+          creator: 910007,
+          _deleted: false
         }
       ],
       rowHandle: {
@@ -167,12 +281,6 @@ export default {
             type: 'success',
             size: 'small',
             emit: 'show-detail'
-          },
-          {
-            text: '更改',
-            type: 'light',
-            size: 'small',
-            emit: 'on-edit-click'
           }
         ],
         remove: {
@@ -185,7 +293,7 @@ export default {
       },
       pagination: {
         currentPage: 1,
-        pageSize: 7,
+        pageSize: 4,
         total: 15
       },
       formOptions: {
@@ -233,20 +341,17 @@ export default {
     this.fetchData()
     document.addEventListener('keypress', this.handleWatchEnter)
     if (this.info.userType === 1) {
-      this.editingTemplate = {
-        // TODO 报告类型应为多选框，内容应为长文本框
-        type: {
-          title: '报告类型',
-          value: 'type'
-        },
-        title: {
-          title: '标题',
-          value: 'title'
-        },
-        content: {
-          title: '内容',
-          value: 'content'
-        }
+      this.rowHandle = {
+        custom: [
+          {
+            text: '查看',
+            type: 'success',
+            size: 'small',
+            emit: 'show-detail'
+          }
+        ],
+        fixed: 'right',
+        width: '80'
       }
     }
   },
@@ -254,20 +359,13 @@ export default {
     async fetchData () {
       const pageAndMode = {
         current: this.pagination.currentPage,
-        limit: this.pagination.pageSize,
-        orderMode: 0
+        limit: this.pagination.pageSize
       }
       this.loading = true
+      // eslint-disable-next-line no-unused-vars
       let res = null
-      // AUTH START
-      // TODO 教师2 实习单位3 查看其所属单位、所管理学生的报告
-      // 仅管理员可拉取所有报告，其他用户根据特定情况拉取
-      if (this.info.userType === 9) {
-        res = await this.$api.FETCH_ALL_REPORTS(pageAndMode)
-      } else {
-        pageAndMode.id = this.info.userId
-        res = await this.$api.FETCH_SPEC_USER_REPORTS(pageAndMode)
-      }
+      // AUTH START取
+      res = await this.$api.FETCH_ALL_PLANS(pageAndMode)
       // AUTH END
       res = res.data
       this.updateData(res)
@@ -277,46 +375,11 @@ export default {
       index,
       row
     }) {
-      this.$refs.reports.showDialog({
-        mode: 'view',
-        rowIndex: index,
-        template: {
-          id: {
-            title: '提交人',
-            value: '_id',
-            formatter: this.id2NameFormatter
-          },
-          type: {
-            title: '报告类型',
-            value: 'type',
-            formatter: this.typeNumToStrFormatter
-          },
-          title: {
-            title: '标题',
-            value: 'title',
-            formatter: this.generalFormatter
-          },
-          content: {
-            title: '内容',
-            value: 'content',
-            formatter: this.generalFormatter
-          },
-          createTime: {
-            title: '提交时间',
-            value: 'createTime',
-            formatter: this.colCreateTimeFormatter
-          },
-          isRead: {
-            title: '阅读状态',
-            value: 'isRead',
-            formatter: this.readNumToStrFormatter
-          },
-          lastedEditUserId: {
-            title: '最后操作',
-            value: 'lastedEditUserId',
-            formatter: this.latestIdToUsernameFormatter
-          }
-        }
+      this.goToPlanDetail(row.id)
+    },
+    goToPlanDetail (planId) {
+      this.$router.push({
+        path: 'planDetail/' + planId
       })
     },
     onEditClick ({
@@ -343,28 +406,18 @@ export default {
       this.pagination.currentPage = pageRec.current
       this.pagination.total = pageRec.rows
       this.pagination.pageSize = pageRec.limit
-      var dataToThis = []
-      res.reports.map(item => {
-        var dataPushed = item.reports
-        dataPushed._id = item.user.roleName + ' (' + item.user.username + ')'
-        dataPushed._lastedEditUserId = item.latestEditRoleName + ' (' + item.latestEditUserName + ')'
-        dataToThis.push(dataPushed)
-      })
-      this.data = dataToThis
+      this.data = res.plan
+      this.originalData = res.plan
     },
     async onSearch () {
-      if (this.searchKeywords) {
-        const pageWithKeywords = {
-          keywords: this.searchKeywords,
-          current: this.pagination.currentPage,
-          limit: this.pagination.pageSize
-        }
-        let res = await this.$api.FETCH_FUZZY_REPORTS(pageWithKeywords)
-        res = res.data
-        this.updateData(res)
-      } else {
-        await this.fetchData()
+      if (this.searchKeywords === '') {
+        this.data = this.originalData
+        return
       }
+      this.loading = true
+      const searchResults = this.data.filter(obj => obj.name.includes(this.searchKeywords))
+      this.data = searchResults
+      this.loading = false
     },
     onAdd () {
       this.$refs.reports.showDialog({
@@ -404,16 +457,52 @@ export default {
       row
     }, done) {
       setTimeout(async () => {
-        var data = {
-          id: row.id
-        }
-        await this.$api.DROP_REPORTS(data)
+        await this.$api.DROP_A_PLAN(row.id)
         this.$message({
           message: '删除成功',
           type: 'success'
         })
         done()
       }, 300)
+    },
+    async handleRowAdd (row, done) {
+      this.formOptions.saveLoading = true
+      await this.$message({
+        message: '保存成功',
+        type: 'success'
+      })
+      // // done可以传入一个对象来修改提交的某个字段
+      // done({
+      //   address: '我是通过done事件传入的数据！'
+      // })
+      this.formOptions.saveLoading = false
+      const data = {
+        type: row.type,
+        name: row.name,
+        major_orie_id: row.major_orie_id,
+        grade: row.grade,
+        start_d: row.start_d,
+        end_d: row.end_d,
+        class_hour: row.class_hour,
+        credit: row.credit,
+        percent_in: row.percent_in,
+        percent_ex: row.percent_ex,
+        content: row.content,
+        objective: row.objective,
+        demand: row.demand,
+        score_cal_type: row.score_cal_type,
+        percent_in_daily_report: row.percent_in_daily_report,
+        percent_in_weekly_report: row.percent_in_weekly_report,
+        percent_in_monthly_report: row.percent_in_monthly_report,
+        percent_in_summary: row.percent_in_summary,
+        deadline: row.deadline,
+        is_deleted: row.is_deleted
+      }
+      console.log(data)
+      const res = await this.$api.ADD_A_PLAN(data)
+      console.log(res)
+      done()
+      this.fetchData()
     },
     handleDialogOpen ({ mode }) {
       this.$message({
@@ -487,12 +576,16 @@ export default {
       return res._lastedEditUserId
     },
     colCreateTimeFormatter (row, column, cellValue, index) {
-      var dateRegex = /^\d{4}-\d{2}-\d{2}/
-      var match = cellValue.match(dateRegex)
-      if (match) {
-        return match[0] // 返回匹配到的日期部分
-      } else {
-        return 'NULL' // 如果没有匹配到日期部分，则返回空字符串
+      try {
+        var dateRegex = /^\d{4}-\d{2}-\d{2}/
+        var match = cellValue.match(dateRegex)
+        if (match) {
+          return match[0] // 返回匹配到的日期部分
+        } else {
+          return 'NULL' // 如果没有匹配到日期部分，则返回空字符串
+        }
+      } catch (e) {
+        console.warn(e)
       }
     },
     handleSelectionChange (selection) {
