@@ -136,6 +136,7 @@ public class ReportApiController {
             @RequestBody
             ReportTitleContentTypeRo dpReceive
     ) {
+        var data = new HashMap<String, Object>();
         var title = dpReceive.getTitle();
         var content = dpReceive.getContent();
         var type = dpReceive.getType();
@@ -152,7 +153,8 @@ public class ReportApiController {
         report.setCreateTime(new Date());
         report.setIsDraft(dpReceive.getIsDraft());
         report.setLastedEditUserId(user.getId());
-        reportService.addReport(report);
+        var count = reportService.addReport(report);
+        data.put("count", count);
         // 触发发帖事件，通过消息队列将其存入 Elasticsearch 服务器
 //        Event event = new Event()
 //                .setTopic(BbKafkaTopic.TOPIC_PUBLISH.value())
@@ -164,7 +166,7 @@ public class ReportApiController {
 //        String redisKey = RedisKeyUtil.getPostScoreKey();
 //        redisTemplate.opsForSet().add(redisKey, report.getId());
         var status = GPMSResponseCode.OK.value();
-        return R.ok(status, "报告上传成功");
+        return R.ok(status, "报告上传成功", data);
     }
 
     /**

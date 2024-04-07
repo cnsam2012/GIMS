@@ -39,7 +39,9 @@
       </el-form>
     </div>
 
-    <template slot="footer" > <random-motto/> </template>
+    <template slot="footer">
+      <random-motto/>
+    </template>
   </d2-container>
 </template>
 <script>
@@ -59,28 +61,39 @@ export default {
   },
   data () {
     var validateOldPass = (rule, value, callback) => {
+      // 验证原密码是否为空
       if (value === '') {
+        // 如果原密码为空，则返回错误提示
         callback(new Error('请输入原密码'))
       } else {
+        // 如果原密码不为空，通过验证
         callback()
       }
     }
     var validatePass = (rule, value, callback) => {
+      // 验证新密码是否为空
       if (value === '') {
+        // 如果新密码为空，则返回错误提示
         callback(new Error('请输入密码'))
       } else {
+        // 如果已经输入确认密码，需要再次验证确认密码
         if (this.ruleForm.checkPass !== '') {
           this.$refs.ruleForm.validateField('checkPass')
         }
+        // 新密码不为空，通过验证
         callback()
       }
     }
     var validatePass2 = (rule, value, callback) => {
+      // 验证确认密码是否为空
       if (value === '') {
+        // 如果确认密码为空，则返回错误提示
         callback(new Error('请再次输入密码'))
       } else if (value !== this.ruleForm.pass) {
+        // 如果确认密码与新密码不一致，则返回错误提示
         callback(new Error('两次输入密码不一致!'))
       } else {
+        // 如果确认密码不为空且与新密码一致，通过验证
         callback()
       }
     }
@@ -195,10 +208,29 @@ export default {
         return false
       }
     },
+    /**
+     * 定义submitForm方法，用于提交表单
+     * 参数formName是一个字符串，指定了要提交的表单的名称
+     * @param formName
+     */
     submitForm (formName) {
+      // 清空表单错误信息
+      // 这里假设formError是一个对象，用来存储表单验证过程中出现的错误信息
+      // oldPass和pass可能是表单中的两个字段，分别对应旧密码和新密码
+      // 在提交表单之前，将这两个字段的错误信息清空，以确保不会显示之前的验证错误
       this.formError.oldPass = ''
       this.formError.pass = ''
-      this.$refs[formName].validate((valid) => this.submitValidate(valid))
+
+      // 使用$refs访问Vue组件中的DOM元素或子组件
+      // [formName]是一个动态的属性名，对应于传入的formName参数
+      // validate是Vue表单组件的一个方法，用于执行表单验证
+      // validate方法接受一个回调函数作为参数，这个回调函数会在验证完成后被调用
+      // 回调函数的参数valid是一个布尔值，表示表单是否通过验证
+      this.$refs[formName].validate((valid) => {
+        // 在回调函数内部调用submitValidate方法
+        // 将valid作为参数传递给submitValidate方法，以便根据表单验证的结果执行相应的操作
+        this.submitValidate(valid)
+      })
     },
     resetForm (formName) {
       this.$refs[formName].resetFields()

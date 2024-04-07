@@ -24,8 +24,8 @@
           :value="item.value">
         </el-option>
       </el-select>
-      <el-button @click="submit" type="success">确认无误，提交报告</el-button>
-      <el-button type="info">保存为草稿</el-button>
+      <el-button @click="submit(0)" type="success">确认无误，提交报告</el-button>
+      <el-button @click="submit(1)" type="info">保存为草稿</el-button>
     </div>
     <template slot="footer">
       <random-motto/>
@@ -100,7 +100,7 @@ export default {
     closeThisTag () {
       this.close({ tagName: '/addReports' })
     },
-    async submit () {
+    async submit (judge) {
       if (this.title === '') {
         this.$message.warning('请输入标题')
         return -1
@@ -116,9 +116,19 @@ export default {
       var data = {
         title: this.title,
         content: this.text,
-        type: this.reportType
+        type: this.reportType,
+        isDraft: judge
       }
       console.log(data)
+      try {
+        var res = await this.$api.ADD_REPORTS(data)
+        console.log(res)
+        this.$message.success('报告添加成功')
+        await this.close({ tagName: '/addReports' })
+      } catch (e) {
+        console.warn(e)
+        this.$message.error('报告添加失败')
+      }
     }
   }
 }

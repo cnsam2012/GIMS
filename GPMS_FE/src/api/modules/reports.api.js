@@ -44,7 +44,7 @@ export default ({
   ADD_REPORTS (data = {}) {
     return request({
       contentType: 'application/json',
-      url: 'addDepartment',
+      url: 'report/add',
       method: 'POST',
       data
     })

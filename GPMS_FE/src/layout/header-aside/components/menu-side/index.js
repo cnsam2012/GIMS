@@ -2,6 +2,8 @@ import { mapState } from 'vuex'
 import menuMixin from '../mixin/menu'
 import { createMenu } from '../libs/util.menu'
 import BScroll from 'better-scroll'
+import store from '@/store'
+import { menuAside, menuAsideStudent } from '@/menu'
 
 export default {
   name: 'd2-layout-header-aside-menu-side',
@@ -11,13 +13,13 @@ export default {
   render (h) {
     return <div class="d2-layout-header-aside-menu-side">
       <el-menu
-        collapse={ this.asideCollapse }
-        collapseTransition={ this.asideTransition }
-        uniqueOpened={ true }
-        defaultActive={ this.$route.fullPath }
+        collapse={this.asideCollapse}
+        collapseTransition={this.asideTransition}
+        uniqueOpened={true}
+        defaultActive={this.$route.fullPath}
         ref="menu"
-        onSelect={ this.handleMenuSelect }>
-        { this.aside.map(menu => createMenu.call(this, h, menu)) }
+        onSelect={this.handleMenuSelect}>
+        {this.aside.map(menu => createMenu.call(this, h, menu))}
       </el-menu>
       {
         this.aside.length === 0 && !this.asideCollapse
@@ -40,6 +42,9 @@ export default {
       'aside',
       'asideCollapse',
       'asideTransition'
+    ]),
+    ...mapState('d2admin/user', [
+      'info'
     ])
   },
   watch: {
@@ -51,8 +56,12 @@ export default {
       }, 500)
     }
   },
-  mounted () {
+  async mounted () {
     this.scrollInit()
+    // RABC
+    if (this.info.userType === 1) {
+      await this.$store.commit('d2admin/menu/asideSet', menuAsideStudent)
+    }
   },
   beforeDestroy () {
     this.scrollDestroy()
