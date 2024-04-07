@@ -6,7 +6,7 @@
 
     <sql id="selectFields">
         id
-        , user_id, title, content, type, status, create_time, score, is_read, is_pass, lasted_edit_user_id, att_id
+        , user_id, title, content, type, status, create_time, score, is_read, is_pass, lasted_edit_user_id, att_id, is_draft
 -- id
 -- user_id
 -- title
@@ -21,7 +21,7 @@
 
     <sql id="insertFields">
         user_id
-        , title, content, type, status, create_time, score, is_read, is_pass, lasted_edit_user_id
+        , title, content, type, status, create_time, score, is_read, is_pass, lasted_edit_user_id, is_draft
     </sql>
 
     <sql id="logicDelete">
@@ -48,7 +48,7 @@
         </if>
 
         <if test="orderMode == 0">
-            order by type desc, create_time desc
+            order by create_time desc
         </if>
 
         <if test="orderMode == 1">
@@ -82,7 +82,8 @@
         #{score},
         #{is_read},
         #{is_pass},
-        #{lasted_edit_user_id}
+        #{lasted_edit_user_id},
+        #{isDraft}
         )
     </insert>
 
