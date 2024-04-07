@@ -9,9 +9,13 @@ import lombok.Data;
  */
 @Data
 @Schema(description = "讨论标题、内容请求对象", name = "DiscussPostTitleContentRo")
-public class ReportTitleContentRo {
+public class ReportTitleContentTypeRo {
     @Schema(description = "标题，非空", example = "not_null_title", name = "title")
     private String title;
     @Schema(description = "内容", example = "content", name = "content")
     private String content;
+    @Schema(description = "报告类型", example = "3", name = "type")
+    private int type;
+    @Schema(description = "保存为草稿", example = "0", name = "isDraft")
+    private int isDraft;
 }

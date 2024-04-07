@@ -1,5 +1,6 @@
 package me.chang.gpms.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import me.chang.gpms.dao.MessageMapper;
 import me.chang.gpms.pojo.Message;
 import me.chang.gpms.util.SensitiveFilter;
@@ -97,6 +98,12 @@ public class MessageService {
         return messageMapper.insertMessage(message);
     }
 
+    public int emptyMessageByFromUserId(int id) {
+        QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(id != 0, "from_id", id);
+        return messageMapper.delete(queryWrapper);
+    }
+
     /**
      * 查询某个主题下最新的系统通知
      * @param userId
@@ -138,5 +145,6 @@ public class MessageService {
     public List<Message> findNotices(int userId, String topic, int offset, int limit) {
         return messageMapper.selectNotices(userId, topic, offset, limit);
     }
+
 
 }

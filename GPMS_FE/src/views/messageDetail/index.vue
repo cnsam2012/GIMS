@@ -158,7 +158,7 @@ export default {
             size: 'small',
             emit: 'reply-message',
             disabled: (index, row) => {
-              if (row._fromId === this.currentUserInfo.rolename) {
+              if (row._fromId === this.currentUserInfo.rolename || row.fromId === 910000) {
                 return true
               }
               return false

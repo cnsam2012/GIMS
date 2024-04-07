@@ -12,9 +12,9 @@ import java.util.Date;
 public class PlanRo {
 
     private int id;
-    private int type;
+    private String type;
     private String name;
-    private int major_orie_id;
+    private String major_orie_id;
     private int grade;
     private Date start_d;
     private Date end_d;

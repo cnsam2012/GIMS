@@ -41,20 +41,14 @@ export default ({
       data
     })
   },
-  // /**
-  //  * 添加部门
-  //  * @param data
-  //  * @returns {*}
-  //  * @constructor
-  //  */
-  // ADD_DEPARTMENTS (data = {}) {
-  //   return request({
-  //     contentType: 'application/json',
-  //     url: 'addDepartment',
-  //     method: 'POST',
-  //     data
-  //   })
-  // },
+  ADD_REPORTS (data = {}) {
+    return request({
+      contentType: 'application/json',
+      url: 'addDepartment',
+      method: 'POST',
+      data
+    })
+  },
   // UPDATE_DEPARTMENTS (data = {}) {
   //   return request({
   //     contentType: 'application/json',

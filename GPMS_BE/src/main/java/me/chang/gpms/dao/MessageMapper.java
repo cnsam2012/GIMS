@@ -1,12 +1,13 @@
 package me.chang.gpms.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import me.chang.gpms.pojo.Message;
 
 import java.util.List;
 
 @Mapper
-public interface MessageMapper {
+public interface MessageMapper extends BaseMapper<Message> {
 
     /**
      * 查询当前用户的会话列表，针对每个会话只返回一条最新的私信

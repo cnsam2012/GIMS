@@ -80,7 +80,7 @@ public class Report {
      * 热度/分数
      */
     @Field(type = FieldType.Double)
-    @Schema(description = "热度/分数", example = "3553", name = "")
+    @Schema(description = "分数", example = "3553", name = "")
     private double score;
 
     /**
@@ -108,4 +108,8 @@ public class Report {
     @Field(type = FieldType.Integer)
     @Schema(description = "附件id", example = "0", name = "")
     private String att_id;
+
+    @Field(type = FieldType.Integer)
+    @Schema(description = "保存为草稿", example = "0", name = "isDraft")
+    private int isDraft;
 }

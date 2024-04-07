@@ -1,6 +1,6 @@
 package me.chang.gpms.util.constant;
 
-public enum BbActivationStatus {
+public enum GPMSActivationStatus {
     /**
      * 激活成功
      */
@@ -18,7 +18,7 @@ public enum BbActivationStatus {
 
     private final int value;
 
-    BbActivationStatus(int i) {
+    GPMSActivationStatus(int i) {
         this.value = i;
     }
 

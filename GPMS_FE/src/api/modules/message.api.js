@@ -27,6 +27,14 @@ export default ({
       data
     })
   },
+  SEND_ANNOUNCEMENT (data = {}) {
+    return request({
+      contentType: 'application/json',
+      url: 'notice/send',
+      method: 'POST',
+      data
+    })
+  },
   CONVERSATION_DETAIL (data = {}) {
     return request({
       contentType: 'application/json',

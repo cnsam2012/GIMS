@@ -5,15 +5,26 @@
         新建报告
       </h1>
     </template>
-    <v-md-editor
-      v-model="text"
-      height="400px"
-      ref="editor"
-      :autofocus="true"
-      left-toolbar="undo redo clear | h bold italic strikethrough quote | ul ol table hr | link code | save"
-    ></v-md-editor>
+    <el-input v-model="title" placeholder="请输入标题"></el-input>
     <div style="margin-top: 30px">
-      <el-button type="success">确认无误，提交报告</el-button>
+      <v-md-editor
+        v-model="text"
+        height="400px"
+        ref="editor"
+        :autofocus="true"
+        left-toolbar="undo redo clear | h bold italic strikethrough quote | ul ol table hr | link code | save"
+      ></v-md-editor>
+    </div>
+    <div style="margin-top: 30px">
+      <el-select v-model="reportType" placeholder="请选择报告类型" style="margin-right: 30px">
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+      <el-button @click="submit" type="success">确认无误，提交报告</el-button>
       <el-button type="info">保存为草稿</el-button>
     </div>
     <template slot="footer">
@@ -62,7 +73,19 @@ export default {
         '**成果展示**：\n' +
         '**挑战与成长**：\n' +
         '**感谢和反馈**：\n' +
-        '**职业规划**：'
+        '**职业规划**：',
+      title: '',
+      reportType: '',
+      options: [{
+        value: '1',
+        label: '周记'
+      }, {
+        value: '2',
+        label: '月记'
+      }, {
+        value: '3',
+        label: '总结'
+      }]
     }
   },
   async mounted () {
@@ -76,6 +99,26 @@ export default {
     ]),
     closeThisTag () {
       this.close({ tagName: '/addReports' })
+    },
+    async submit () {
+      if (this.title === '') {
+        this.$message.warning('请输入标题')
+        return -1
+      }
+      if (this.text === '') {
+        this.$message.warning('请输入报告内容')
+        return -1
+      }
+      if (this.reportType === '') {
+        this.$message.warning('请选择报告类型')
+        return -1
+      }
+      var data = {
+        title: this.title,
+        content: this.text,
+        type: this.reportType
+      }
+      console.log(data)
     }
   }
 }

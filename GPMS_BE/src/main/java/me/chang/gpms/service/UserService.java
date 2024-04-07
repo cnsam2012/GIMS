@@ -16,7 +16,7 @@ import me.chang.gpms.util.GPMSUtil;
 import me.chang.gpms.util.MailClient;
 import me.chang.gpms.util.RedisKeyUtil;
 import me.chang.gpms.util.WechatLoginUtil;
-import me.chang.gpms.util.constant.BbActivationStatus;
+import me.chang.gpms.util.constant.GPMSActivationStatus;
 import me.chang.gpms.util.constant.BbExpiredSeconds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -236,7 +236,7 @@ public class UserService {
         Context context = new Context();
         context.setVariable("email", user.getEmail());
         // http://localhost:8080/echo/activation/用户id/激活码
-        String url = domain + (contextPath.equals("/") ? "" : contextPath) + "/activation/" + user.getId() + "/" + user.getActivationCode();
+        String url = domain + (contextPath.equals("/") ? "" : contextPath) + "/api/activation/" + user.getId() + "/" + user.getActivationCode();
         context.setVariable("url", url);
         String content = templateEngine.process("mail/activation", context);
         mailClient.sendMail(user.getEmail(), "激活 GPMS(数科院毕业设计管理系统) 账号", content);
@@ -255,14 +255,14 @@ public class UserService {
         User user = userMapper.selectById(userId);
         if (user.getStatus() == 1) {
             // 用户已激活
-            return BbActivationStatus.ACTIVATION_REPEAT.value();
+            return GPMSActivationStatus.ACTIVATION_REPEAT.value();
         } else if (user.getActivationCode().equals(code)) {
             // 修改用户状态为已激活
             userMapper.updateStatus(userId, 1);
             clearCache(userId); // 用户信息变更，清除缓存中的旧数据
-            return BbActivationStatus.ACTIVATION_SUCCESS.value();
+            return GPMSActivationStatus.ACTIVATION_SUCCESS.value();
         } else {
-            return BbActivationStatus.ACTIVATION_FAILURE.value();
+            return GPMSActivationStatus.ACTIVATION_FAILURE.value();
         }
     }
 
@@ -603,6 +603,16 @@ public class UserService {
 
     public List<User> getAllUsers(int offset, int limit) {
         var userList = userMapper.getAllUsers(offset, limit);
+        for (User user : userList) {
+            user.setActivationCode("");
+            user.setPassword("");
+            user.setSalt("");
+        }
+        return userList;
+    }
+
+    public List<User> getAllUsers() {
+        var userList = userMapper.selectList(null);
         for (User user : userList) {
             user.setActivationCode("");
             user.setPassword("");

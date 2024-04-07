@@ -277,39 +277,40 @@ export default {
         template: {
           password: {
             title: '用户密码'
-          },
-          roleName: {
-            title: '角色名称',
-            value: 'roleName'
-          },
-          username: {
-            title: '用户名',
-            value: 'username'
-          },
-          email: {
-            title: '邮箱',
-            value: 'email'
-          },
-          phone: {
-            title: '手机号',
-            value: 'phone'
-          },
-          type: {
-            title: '类型',
-            value: 'type'
-          },
-          status: {
-            title: '状态',
-            value: 'status'
-          },
-          createTime: {
-            title: '创建时间',
-            value: 'createTime'
-          },
-          departmentId: {
-            title: '部门',
-            value: 'departmentId'
           }
+          // ,
+          // roleName: {
+          //   title: '角色名称',
+          //   value: 'roleName'
+          // },
+          // username: {
+          //   title: '用户名',
+          //   value: 'username'
+          // },
+          // email: {
+          //   title: '邮箱',
+          //   value: 'email'
+          // },
+          // phone: {
+          //   title: '手机号',
+          //   value: 'phone'
+          // },
+          // type: {
+          //   title: '类型',
+          //   value: 'type'
+          // },
+          // status: {
+          //   title: '状态',
+          //   value: 'status'
+          // },
+          // createTime: {
+          //   title: '创建时间',
+          //   value: 'createTime'
+          // },
+          // departmentId: {
+          //   title: '部门',
+          //   value: 'departmentId'
+          // }
         }
       })
     },

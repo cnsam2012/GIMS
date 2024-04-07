@@ -78,15 +78,16 @@ export default {
       loading: false,
       addTemplate: {
         type: {
-          title: '类型'
+          title: '类型',
+          value: '顶岗实习'
         },
         name: {
           title: '名称',
-          value: 'name'
+          value: '网络工程师'
         },
         major_orie_id: {
           title: '专业方向ID',
-          value: '00',
+          value: '网络工程方向',
           display: false
         },
         grade: {
@@ -95,11 +96,11 @@ export default {
         },
         start_d: {
           title: '开始日期',
-          value: '2020-02-10'
+          value: '2024-01-01'
         },
         end_d: {
           title: '结束日期',
-          value: '2020-02-10'
+          value: '2024-07-01'
         },
         class_hour: {
           title: '课时',
@@ -107,7 +108,7 @@ export default {
         },
         credit: {
           title: '学分',
-          value: '0'
+          value: '4'
         },
         percent_in: {
           title: '内部百分比',
@@ -122,23 +123,53 @@ export default {
           component: {
             name: 'el-input',
             type: 'textarea',
-            rows: '6'
+            rows: '6',
+            value: '熟悉网络设备和技术：通过实习，深入了解并熟悉各种网络设备和技术，包括路由器、交换机、防火墙等，并能熟练配置和管理网络设备。\n' +
+              '\n' +
+              '网络故障排除和维护：通过实践经验，掌握常见的网络故障排除方法，能够快速定位和解决网络故障，并能进行网络维护和优化。\n' +
+              '\n' +
+              '网络安全知识和技能：学习和了解网络安全的基本概念和原理，熟悉常见的网络攻击和防御方法，并能够实施一些基本的网络安全防护措施。\n' +
+              '\n' +
+              '网络规划和设计：参与网络规划和设计项目，学习并掌握网络规划和设计的基本原则和方法，能够根据需求进行网络规划和设计，并提出改进建议。\n' +
+              '\n' +
+              '网络监控和性能优化：了解网络监控系统和工具的使用，学习并掌握网络性能优化的方法，能够进行网络性能监控和优化，提高网络的稳定性和性能。'
           }
         },
         objective: {
           title: '目标',
-          value: 'objective',
-          display: false
+          component: {
+            name: 'el-input',
+            type: 'textarea',
+            rows: '6',
+            value: '熟悉网络设备和技术：通过实习，深入了解并熟悉各种网络设备和技术，包括路由器、交换机、防火墙等，并能熟练配置和管理网络设备。\n' +
+              '\n' +
+              '网络故障排除和维护：通过实践经验，掌握常见的网络故障排除方法，能够快速定位和解决网络故障，并能进行网络维护和优化。\n' +
+              '\n' +
+              '网络安全知识和技能：学习和了解网络安全的基本概念和原理，熟悉常见的网络攻击和防御方法，并能够实施一些基本的网络安全防护措施。\n' +
+              '\n' +
+              '网络规划和设计：参与网络规划和设计项目，学习并掌握网络规划和设计的基本原则和方法，能够根据需求进行网络规划和设计，并提出改进建议。\n' +
+              '\n' +
+              '网络监控和性能优化：了解网络监控系统和工具的使用，学习并掌握网络性能优化的方法，能够进行网络性能监控和优化，提高网络的稳定性和性能。'
+          }
         },
         demand: {
           title: '要求',
-          value: 'demand',
-          display: false
+          component: {
+            name: 'el-input',
+            type: 'textarea',
+            rows: '6',
+            value: '网络知识基础：具备扎实的计算机网络基础知识，包括网络协议、网络拓扑、网络设备和技术等方面的知识。\n' +
+              '\n' +
+              '熟悉网络设备和工具：熟悉常见的网络设备和工具，如路由器、交换机、防火墙、网络监控工具等，并能进行基本的配置和管理。\n' +
+              '\n' +
+              '网络故障排除能力：具备一定的网络故障排除能力，能够分析和解决常见的网络故障，并具备良好的问题解决能力。\n' +
+              '\n' +
+              '网络安全意识：具备一定的网络安全意识，了解网络安全的基本概念和原理，并能够采取一些基本的网络安全防护措施。'
+          }
         },
         score_cal_type: {
           title: '分数计算类型',
-          value: '0',
-          display: false
+          value: '0'
         },
         percent_in_daily_report: {
           title: '每日报告内部百分比',
@@ -158,7 +189,7 @@ export default {
         },
         deadline: {
           title: '截止日期',
-          value: '2020-02-10'
+          value: '2024-05-01'
         }
       },
       columns: [
@@ -172,37 +203,39 @@ export default {
           fixed: 'left'
         },
         {
-          title: '专业方向ID',
-          key: 'major_orie_id'
+          title: '专业方向',
+          key: 'majorOrieId'
         },
         {
           title: '年级',
           key: 'grade'
         },
-        // {
-        //   title: '开始日期',
-        //   key: 'start_d'
-        // },
-        // {
-        //   title: '结束日期',
-        //   key: 'end_d'
-        // },
+        {
+          title: '开始日期',
+          key: 'startD',
+          formatter: this.colCreateTimeFormatter
+        },
+        {
+          title: '结束日期',
+          key: 'endD',
+          formatter: this.colCreateTimeFormatter
+        },
         {
           title: '课时',
-          key: 'class_hour'
+          key: 'classHour'
         },
         {
           title: '学分',
           key: 'credit'
         },
-        {
-          title: '内部百分比',
-          key: 'percent_in'
-        },
-        {
-          title: '外部百分比',
-          key: 'percent_ex'
-        },
+        // {
+        //   title: '内部百分比',
+        //   key: 'percentIn'
+        // },
+        // {
+        //   title: '外部百分比',
+        //   key: 'percentEx'
+        // },
         {
           title: '内容',
           key: 'content',
@@ -210,7 +243,8 @@ export default {
         },
         {
           title: '目标',
-          key: 'objective'
+          key: 'objective',
+          showOverflowTooltip: true
         },
         {
           title: '要求',
@@ -219,33 +253,34 @@ export default {
         },
         {
           title: '分数计算类型',
-          key: 'score_cal_type'
+          key: 'scoreCalType'
         },
         {
           title: '每日报告内部百分比',
-          key: 'percent_in_daily_report'
+          key: 'percentInDailyReport'
         },
         {
           title: '每周报告内部百分比',
-          key: 'percent_in_weekly_report'
+          key: 'percentInWeeklyReport'
         },
         {
           title: '每月报告内部百分比',
-          key: 'percent_in_monthly_report'
+          key: 'percentInMonthlyReport'
         },
         {
           title: '总结报告内部百分比',
-          key: 'percent_in_summary'
-        },
-        {
-          title: '截止日期',
-          key: 'deadline'
+          key: 'percentInSummary'
         },
         {
           title: '创建者',
           key: '_creator',
           showOverflowTooltip: true,
           fixed: 'left'
+        },
+        {
+          title: '截止日期',
+          key: 'deadline',
+          formatter: this.colCreateTimeFormatter
         }
       ],
       data: [

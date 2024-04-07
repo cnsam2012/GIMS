@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import me.chang.gpms.pojo.ro.RegisterRo;
 import me.chang.gpms.util.HostHolder;
+import me.chang.gpms.util.constant.GPMSActivationStatus;
 import me.chang.gpms.util.constant.GPMSResponseCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
@@ -23,6 +24,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
@@ -41,9 +44,9 @@ import java.util.concurrent.TimeUnit;
  * 登录、登出、注册
  */
 @Slf4j
-@RestController
 @Tag(description = "Login Api Controller", name = "LAC")
 @CrossOrigin
+@Controller
 public class LoginApiController {
 
     private final UserService userService;
@@ -65,12 +68,42 @@ public class LoginApiController {
         this.hostHolder = hostHolder;
     }
 
+
+    /**
+     * 激活用户
+     *
+     * @param model
+     * @param userId
+     * @param code   激活码
+     * @return http://localhost:8080/echo/activation/用户id/激活码
+     */
+    @GetMapping("api/activation/{userId}/{code}")
+    public String activation(Model model, @PathVariable("userId") int userId,
+                             @PathVariable("code") String code) {
+        int result = userService.activation(userId, code);
+        if (result == GPMSActivationStatus.ACTIVATION_SUCCESS.value()) {
+            model.addAttribute("msg", "激活成功, 您的账号已经可以正常使用!");
+            model.addAttribute("target", "/");
+        } else if (result == GPMSActivationStatus.ACTIVATION_REPEAT.value()) {
+            model.addAttribute("msg", "无效的操作, 您的账号已被激活过!");
+            model.addAttribute("target", "/");
+        } else if (result == GPMSActivationStatus.ACTIVATION_FAILURE.value()) {
+            model.addAttribute("msg", "激活失败, 您提供的激活码不正确!");
+            model.addAttribute("target", "/");
+        } else {
+            model.addAttribute("msg", "激活失败, 未知异常!");
+            model.addAttribute("target", "/");
+        }
+        return "site/operate-result";
+    }
+
     /**
      * 注册用户
      * @param rr
      * @return
      */
     @PostMapping("api/register")
+    @ResponseBody
     public R register(
             @RequestBody
             RegisterRo rr
@@ -167,6 +200,7 @@ public class LoginApiController {
      * @return
      */
     @PostMapping("api/login")
+    @ResponseBody
     public R login(
             @Parameter(required = true)
             @RequestBody
@@ -243,6 +277,7 @@ public class LoginApiController {
      * @return
      */
     @GetMapping("api/logout")
+    @ResponseBody
     public R logout(
             @CookieValue("ticket") String ticket
     ) {

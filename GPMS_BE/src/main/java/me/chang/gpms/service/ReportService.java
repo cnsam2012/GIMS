@@ -112,12 +112,24 @@ public class ReportService {
      */
     public List<Report> findReports(int userId, int offset, int limit, int orderMode) {
         // 查询本地缓存(当查询的是所有用户的报告并且按照热度排序时)
-        if (userId == 0 && orderMode == 1) {
-            return reportListCache.get(offset + ":" + limit);
+//        if (userId == 0 && orderMode == 1) {
+//            return reportListCache.get(offset + ":" + limit);
+//        }
+
+        Page<Report> page = new Page<>(offset, limit);
+        QueryWrapper<Report> qw = new QueryWrapper<>();
+
+        if (userId == 0 && orderMode == 0) {
+            qw.orderByDesc("create_time");
+        } else if (orderMode == 1) {
+            qw = null;
+        } else {
+            qw.orderByDesc("create_time");
+            qw.eq(userId != 0, "user_id", userId);
         }
-        // 查询数据库
-        log.debug("load report list from DB");
-        return reportMapper.selectReports(userId, offset, limit, orderMode);
+
+        return reportMapper.selectPage(page, qw).getRecords();
+//        return reportMapper.selectReports(userId, offset, limit, orderMode);
     }
 
     /**
@@ -157,7 +169,8 @@ public class ReportService {
         reportAdded.setTitle(sensitiveFilter.filter(reportAdded.getTitle()));
         reportAdded.setContent(sensitiveFilter.filter(reportAdded.getContent()));
 
-        return reportMapper.insertReport(reportAdded);
+        return reportMapper.insert(reportAdded);
+//        return reportMapper.insertReport(reportAdded);
     }
 
     /**

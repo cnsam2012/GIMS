@@ -21,7 +21,6 @@ import me.chang.gpms.util.HostHolder;
 import me.chang.gpms.util.R;
 import me.chang.gpms.util.RedisKeyUtil;
 import me.chang.gpms.util.constant.BbEntityType;
-import me.chang.gpms.util.constant.BbKafkaTopic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -43,7 +42,7 @@ import java.util.*;
 public class ReportApiController {
 
     @Autowired
-    private ReportService discussPostService;
+    private ReportService reportService;
 
     @Autowired
     private HostHolder hostHolder;
@@ -130,32 +129,30 @@ public class ReportApiController {
      * @param dpReceive
      * @return
      */
-    @Operation(description = "添加讨论（发布通知） (auth)")
+    @Operation(description = "添加报告 (auth)")
     @RequestMapping(method = RequestMethod.POST, path = "add")
     public R addReport(
             @Parameter(required = true)
             @RequestBody
-            ReportTitleContentRo dpReceive
+            ReportTitleContentTypeRo dpReceive
     ) {
         var title = dpReceive.getTitle();
         var content = dpReceive.getContent();
-
-
+        var type = dpReceive.getType();
         User user = hostHolder.getUser();
         if (user == null) {
             var status = GPMSResponseCode.OK.value();
-//            return BbUtil.getJSONString(status, "您还未登录");
             return R.error(status, "您尚未登录");
         }
-
-        Report discussPost = new Report();
-        discussPost.setUserId(user.getId());
-        discussPost.setTitle(title);
-        discussPost.setContent(content);
-        discussPost.setCreateTime(new Date());
-
-        discussPostService.addReport(discussPost);
-
+        Report report = new Report();
+        report.setUserId(user.getId());
+        report.setTitle(title);
+        report.setContent(content);
+        report.setType(type);
+        report.setCreateTime(new Date());
+        report.setIsDraft(dpReceive.getIsDraft());
+        report.setLastedEditUserId(user.getId());
+        reportService.addReport(report);
         // 触发发帖事件，通过消息队列将其存入 Elasticsearch 服务器
 //        Event event = new Event()
 //                .setTopic(BbKafkaTopic.TOPIC_PUBLISH.value())
@@ -163,15 +160,11 @@ public class ReportApiController {
 //                .setEntityType(BbEntityType.ENTITY_TYPE_POST.value())
 //                .setEntityId(discussPost.getId());
 //        eventProducer.fireEvent(event);
-
-        // 计算帖子分数
-        String redisKey = RedisKeyUtil.getPostScoreKey();
-        redisTemplate.opsForSet().add(redisKey, discussPost.getId());
-
+//        // 计算帖子分数
+//        String redisKey = RedisKeyUtil.getPostScoreKey();
+//        redisTemplate.opsForSet().add(redisKey, report.getId());
         var status = GPMSResponseCode.OK.value();
-//        return BbUtil.getJSONString(status, "discussPost_added");
-        return R.ok(status, "讨论添加成功");
-
+        return R.ok(status, "报告上传成功");
     }
 
     /**
@@ -197,10 +190,10 @@ public class ReportApiController {
         Map<String, Object> data = new HashMap<>();
         var orderMode = page.getOrderMode();
         // 获取总页数
-        page.setRows(discussPostService.findReportRows(0));
+        page.setRows(reportService.findReportRows(0));
         page.setPath("/index?orderMode=" + orderMode);
         // 分页查询
-        List<Report> list = discussPostService.findReports(0, page.getOffset(), page.getLimit(), orderMode);
+        List<Report> list = reportService.findReports(0, page.getCurrent(), page.getLimit(), orderMode);
         // 封装帖子和该帖子对应的用户信息
         List<Map<String, Object>> discussPosts = new ArrayList<>();
         if (list != null) {
@@ -212,7 +205,12 @@ public class ReportApiController {
 //                long likeCount = likeService.findEntityLikeCount(BbEntityType.ENTITY_TYPE_POST.value(), post.getId());
 //                map.put("likeCount", likeCount);
                 var userId = post.getLastedEditUserId();
-                User lEuser = userService.findUserById(userId);
+
+                User lEuser = new User();
+                try {
+                    lEuser = userService.findUserById(userId);
+                } catch (Exception e) {
+                }
                 map.put("latestEditUserName", lEuser.getUsername());
                 map.put("latestEditRoleName", lEuser.getRoleName());
                 discussPosts.add(map);
@@ -246,7 +244,7 @@ public class ReportApiController {
         Map<String, Object> data = new HashMap<>();
 
         // 帖子
-        Report discussPost = discussPostService.findReportById(discussPostId);
+        Report discussPost = reportService.findReportById(discussPostId);
         String content = HtmlUtils.htmlUnescape(discussPost.getContent()); // 内容反转义，不然 markDown 格式无法显示
         discussPost.setContent(content);
         data.put("post", discussPost);
@@ -356,7 +354,7 @@ public class ReportApiController {
         var id = idAndType.getId();
         var type = idAndType.getType();
 
-        var res = discussPostService.updateType(id, type);
+        var res = reportService.updateType(id, type);
         if (res == -1) {
             return R.error(
                     GPMSResponseCode.CLIENT_ERROR.value(), "非法报告类型：1-周记; 2-月记; 3-总结"
@@ -398,7 +396,7 @@ public class ReportApiController {
         }
         var id = dpId.getId();
 
-        discussPostService.updateStatus(id, 1);
+        reportService.updateStatus(id, 1);
 
 
         // 触发发帖事件，通过消息队列将其存入 Elasticsearch 服务器
@@ -431,7 +429,7 @@ public class ReportApiController {
 
         }
         var id = dpId.getId();
-        var res = discussPostService.updatePass(id, dpId.getIsPassed());
+        var res = reportService.updatePass(id, dpId.getIsPassed());
         if (res == -1) {
             return R.error(
                     GPMSResponseCode.CLIENT_ERROR.value(), "非法通过状态：状态仅为-1、0、1"
@@ -463,7 +461,7 @@ public class ReportApiController {
 
         }
         var id = rIr.getId();
-        var res = discussPostService.updateRead(id, rIr.getIsRead());
+        var res = reportService.updateRead(id, rIr.getIsRead());
         if (res == -1) {
             return R.error(
                     GPMSResponseCode.CLIENT_ERROR.value(), "非法已读状态：状态仅为 1-read; 0-unread"
@@ -487,6 +485,7 @@ public class ReportApiController {
 
     /**
      * 删除
+     *
      * @param discussPostId
      * @return
      */
@@ -503,7 +502,7 @@ public class ReportApiController {
         }
         var id = discussPostId.getId();
 //        discussPostService.updateStatus(id, 2);
-        int i = discussPostService.deleteReport(id);
+        int i = reportService.deleteReport(id);
         if (i <= 0) {
             var status = GPMSResponseCode.CLIENT_ERROR.value();
             return R.ok(status, "找不到帖子，没有帖子被删除");

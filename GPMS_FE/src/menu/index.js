@@ -68,6 +68,11 @@ export const menuAside = supplementPath([
     path: '/planchoose_management',
     title: '已选实习',
     icon: 'check-square-o'
+  },
+  {
+    path: '/addAnnouncement',
+    title: '发布公告',
+    icon: 'bullhorn'
   }
 ])
 

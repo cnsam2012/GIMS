@@ -339,33 +339,45 @@ export default {
           roleName: this.formSignup.roleName,
           type: this.formSignup.roleType
         }
-        const res = await api.SYS_USER_SIGNUP(data).data
+        let res = {}
+        try {
+          res = await api.SYS_USER_SIGNUP(data)
+          res = res.data
+        } catch (e) {
+          console.warn(e)
+        }
+        console.log(res)
         try {
           this.formError.username = res.usernameMsg
+          console.log(res.usernameMsg)
         } catch (e) {
         }
         try {
           this.formError.roleName = res.depMsg
+          console.log(res.depMsg)
         } catch (e) {
         }
         try {
           this.formError.email = res.emailMsg
+          console.log(res.emailMsg)
         } catch (e) {
         }
         try {
           this.formError.password = res.passwordMsg
+          console.log(res.passwordMsg)
         } catch (e) {
         }
         try {
           this.formError.roleType = res.typeMsg
+          console.log(res.typeMsg)
         } catch (e) {
         }
         if (
-          this.formError.username ||
-          this.formError.roleName ||
-          this.formError.email ||
-          this.formError.password ||
-          this.formError.roleType
+          !(this.formError.username === '') ||
+            !(this.formError.roleName === '') ||
+              !(this.formError.email === '') ||
+                !(this.formError.password === '') ||
+                  !(this.formError.roleType === '')
         ) {
           ld.close()
         } else {

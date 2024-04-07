@@ -25,6 +25,7 @@ public class PlanService {
     public List<Plan> findAllPlanByPage(int pageNum, int pageSize) {
         Page<Plan> page = new Page<>(pageNum, pageSize);
         QueryWrapper<Plan> planQueryWrapper = new QueryWrapper<>();
+        planQueryWrapper.orderByDesc("ID");
         return planMapper.selectPage(page, planQueryWrapper).getRecords();
     }
 
