@@ -1,0 +1,126 @@
+@startuml
+
+!define Table(name,desc) class name << (T,#FFAAAA) >> {
+desc
+}
+
+!define PrimaryKey(desc) <u>desc</u>
+!define ForeignKey(desc) #desc
+
+Table(annocement, "Announcement") {
+    PrimaryKey(id) : int
+    message_id_start : int
+    message_id_end : int
+}
+
+Table(attachment, "Attachment") {
+    PrimaryKey(id) : varchar
+    att : blob
+    is_store_in_mysql : int
+    url : varchar
+}
+
+Table(comment, "Comment") {
+    PrimaryKey(id) : int
+    ForeignKey(user_id) : int
+    entity_type : int
+    entity_id : int
+    target_id : int
+    content : text
+    status : int
+    create_time : timestamp
+}
+
+Table(departments, "Departments") {
+    PrimaryKey(id) : int
+    type : int
+    name : varchar
+    content : text
+    belong_to : int
+}
+
+Table(message, "Message") {
+    PrimaryKey(id) : int
+    ForeignKey(from_id) : int
+    ForeignKey(to_id) : int
+    conversation_id : varchar
+    content : text
+    status : int
+    create_time : timestamp
+}
+
+Table(plan, "Plan") {
+    PrimaryKey(ID) : int
+    TYPE : varchar
+    NAME : varchar
+    MAJOR_ORIE_ID : varchar
+    GRADE : int
+    START_D : datetime
+    END_D : datetime
+    CLASS_HOUR : int
+    CREDIT : float
+    PERCENT_IN : int
+    PERCENT_EX : int
+    IS_DELETED : tinyint
+    CONTENT : varchar
+    OBJECTIVE : varchar
+    DEMAND : varchar
+    SCORE_CAL_TYPE : int
+    PERCENT_IN_DAILY_REPORT : int
+    PERCENT_IN_WEEKLY_REPORT : int
+    PERCENT_IN_MONTHLY_REPORT : int
+    PERCENT_IN_SUMMARY : int
+    DEADLINE : date
+    CREATOR : int
+}
+
+Table(planchoose, "PlanChoose") {
+    PrimaryKey(id) : int
+    ForeignKey(user_id) : int
+    ForeignKey(plan_id) : int
+    status : int
+    create_time : datetime
+    score : int
+}
+
+Table(report, "Report") {
+    PrimaryKey(id) : int
+    ForeignKey(user_id) : int
+    title : varchar
+    content : text
+    type : int
+    status : int
+    create_time : timestamp
+    comment : text
+    score : double
+    is_deleted : int
+    is_read : int
+    is_pass : int
+    lasted_edit_user_id : int
+    att_id : varchar
+    is_draft : int
+}
+
+Table(user, "User") {
+    PrimaryKey(id) : int
+    username : varchar
+    password : varchar
+    salt : varchar
+    email : varchar
+    phone : varchar
+    type : int
+    status : int
+    activation_code : varchar
+    header_url : varchar
+    create_time : timestamp
+    wechat_open_id : varchar
+    ForeignKey(department_id) : int
+    role_name : varchar
+}
+
+comment -down-> user : "Foreign Key\n(user_id)"
+planchoose -down-> plan : "Foreign Key\n(plan_id)"
+report -down-> user : "Foreign Key\n(user_id)"
+user -down-> departments : "Foreign Key\n(department_id)"
+
+@enduml

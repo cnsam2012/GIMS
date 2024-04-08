@@ -66,17 +66,17 @@
       <h1 slot="header">已选实习： {{ currentUserPlanc._planId }}</h1>
       <el-descriptions title="实习信息">
         <el-descriptions-item label="类型">{{ data.type }}</el-descriptions-item>
-        <el-descriptions-item label="主要方向">{{ data.major_orie_id }}</el-descriptions-item>
+        <el-descriptions-item label="主要方向">{{ data.majorOrieId }}</el-descriptions-item>
         <el-descriptions-item label="等级">{{ data.grade }}</el-descriptions-item>
         <el-descriptions-item label="学分">{{ data.credit }}</el-descriptions-item>
         <el-descriptions-item label="内容">{{ data.content }}</el-descriptions-item>
         <el-descriptions-item label="目标">{{ data.objective }}</el-descriptions-item>
         <el-descriptions-item label="需求">{{ data.demand }}</el-descriptions-item>
-        <el-descriptions-item label="评分计算类型">{{ data.score_cal_type }}</el-descriptions-item>
-        <el-descriptions-item label="日报占比">{{ data.percent_in_daily_report }}%</el-descriptions-item>
-        <el-descriptions-item label="周报占比">{{ data.percent_in_weekly_report }}%</el-descriptions-item>
-        <el-descriptions-item label="月报占比">{{ data.percent_in_monthly_report }}%</el-descriptions-item>
-        <el-descriptions-item label="总结占比">{{ data.percent_in_summary }}%</el-descriptions-item>
+        <el-descriptions-item label="评分计算类型">{{ data.scoreCalType }}</el-descriptions-item>
+        <el-descriptions-item label="日报占比">{{ data.percentInDailyReport }}%</el-descriptions-item>
+        <el-descriptions-item label="周报占比">{{ data.percentInWeeklyReport }}%</el-descriptions-item>
+        <el-descriptions-item label="月报占比">{{ data.percentInMonthlyReport }}%</el-descriptions-item>
+        <el-descriptions-item label="总结占比">{{ data.percentInSummary }}%</el-descriptions-item>
         <el-descriptions-item label="截止日期">{{ data.deadline }}</el-descriptions-item>
         <el-descriptions-item label="创建者">{{ data._creator }}</el-descriptions-item>
       </el-descriptions>
@@ -135,22 +135,22 @@ export default {
           id: 0,
           type: 0,
           name: 'string',
-          major_orie_id: 0,
+          majorOrieId: 0,
           grade: 0,
-          start_d: null,
-          end_d: null,
-          class_hour: 0,
+          startD: null,
+          endD: null,
+          classHour: 0,
           credit: 0,
-          percent_in: 0,
-          percent_ex: 0,
+          percentIn: 0,
+          percentEx: 0,
           content: 'string',
           objective: 'string',
           demand: 'string',
-          score_cal_type: 0,
-          percent_in_daily_report: 0,
-          percent_in_weekly_report: 0,
-          percent_in_monthly_report: 0,
-          percent_in_summary: 0,
+          scoreCalType: 0,
+          percentInDailyReport: 0,
+          percentInWeeklyReport: 0,
+          percentInMonthlyReport: 0,
+          percentInSummary: 0,
           deadline: '2024-03-30T16:00:00.000+00:00',
           creator: 910007,
           _deleted: false
