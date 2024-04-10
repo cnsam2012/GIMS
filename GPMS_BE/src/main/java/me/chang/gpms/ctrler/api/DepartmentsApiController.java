@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 @RestController
@@ -136,15 +135,17 @@ public class DepartmentsApiController {
 
         // 查询该用户有无创建Plan
         var creatorSPlan = planService.getPlanByCreator(user.getId());
+        log.info("having plan -- {}", creatorSPlan);
         // 无，pass
         if (creatorSPlan.size() <= 0) {
             log.info("this user has not create any departments -- {}", user.toString());
         } else {
             // 有，在planchoose中将所有选中该plan的用户的departmentId修改为新建的department
+            log.info("this user has departments -- {}", user.toString());
             for (Plan plan : creatorSPlan) {
                 var planId = plan.getId();
-                List<Planchoose> plancByPlanId = planchooseService.getPlancByPlanId(planId);
-                for (Planchoose next : plancByPlanId) {
+                List<PlanChoose> plancByPlanId = planchooseService.getPlancByPlanId(planId);
+                for (PlanChoose next : plancByPlanId) {
                     int userId = next.getUserId();
                     var userRoleName = userService.findUserById(userId).getRoleName();
 
@@ -210,8 +211,8 @@ public class DepartmentsApiController {
                 // 有，在planchoose中将所有选中该plan的用户的departmentId置为-1，表示无归属部门
                 for (Plan plan : creatorSPlan) {
                     var planId = plan.getId();
-                    List<Planchoose> plancByPlanId = planchooseService.getPlancByPlanId(planId);
-                    for (Planchoose next : plancByPlanId) {
+                    List<PlanChoose> plancByPlanId = planchooseService.getPlancByPlanId(planId);
+                    for (PlanChoose next : plancByPlanId) {
                         int userId = next.getUserId();
                         userService.updateDepartment(userId, -1);
                         var userRoleName = userService.findUserById(userId).getRoleName();

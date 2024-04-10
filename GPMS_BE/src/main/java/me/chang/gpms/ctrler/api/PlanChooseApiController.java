@@ -23,7 +23,7 @@ import java.util.List;
 @Tag(name = "PCAC", description = "PlanchooseApiController")
 @RestController
 @Slf4j
-public class PlanchooseApiController {
+public class PlanChooseApiController {
 
     @Autowired
     PlanchooseService planchooseService;
@@ -55,8 +55,8 @@ public class PlanchooseApiController {
         var pageSize = page.getLimit();
         var pageTotal = planchooseService.getAllPlancRows();
         page.setRows(pageTotal);
-        List<Planchoose> allPlancByPage = planchooseService.findAllPlancByPage(pageNum, pageSize);
-        for (Planchoose pc : allPlancByPage) {
+        List<PlanChoose> allPlancByPage = planchooseService.findAllPlancByPage(pageNum, pageSize);
+        for (PlanChoose pc : allPlancByPage) {
             var planId = pc.getPlanId();
             var userId = pc.getUserId();
             var _planId = "";
@@ -114,7 +114,7 @@ public class PlanchooseApiController {
     public R addPlanc(
             @Parameter(required = true)
             @RequestBody
-            Planchoose pc
+            PlanChoose pc
     ) {
         var data = new HashMap<String, Object>();
 
@@ -162,17 +162,17 @@ public class PlanchooseApiController {
         if (user == null) {
             return R.error(GPMSResponseCode.CLIENT_NO_AUTHORITY.value(), "您尚未登录");
         }
-        Planchoose plancById = planchooseService.getPlancById(plancId);
+        PlanChoose plancById = planchooseService.getPlancById(plancId);
         if (ObjectUtil.isEmpty(plancById)) {
             data.put("planMsg", "找不到记录，该id对应的记录不存在");
             return R.error(GPMSResponseCode.CLIENT_ERROR.value(), "找不到记录，该id对应的记录不存在", data);
         }
         if (planchooseService.deletePlancById(plancId) != 0) {
-
             try {
                 // 更新用户的部门信息,
-                Plan planById = planService.getPlanById(plancId);
+                Plan planById = planService.getPlanById(plancById.getPlanId());
                 Departments departmentByCreator = departmentsService.getDepartmentByCreator(planById.getCreator());
+                log.info("====== {}", departmentByCreator);
                 // 若计划创建者有创建了的部门，则加入
                 if (ObjectUtil.isNotNull(departmentByCreator)) {
                     int departmentByCreatorId = departmentByCreator.getId();
@@ -184,7 +184,6 @@ public class PlanchooseApiController {
             } catch (Exception e) {
                 log.error(e.toString());
             }
-
             return R.ok(
                     GPMSResponseCode.OK.value(),
                     "success",
