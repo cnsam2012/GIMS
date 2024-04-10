@@ -3,6 +3,7 @@ package me.chang.gpms.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import me.chang.gpms.dao.PlanchooseMapper;
+import me.chang.gpms.pojo.Plan;
 import me.chang.gpms.pojo.Planchoose;
 import me.chang.gpms.pojo.ro.PlanRo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,12 @@ public class PlanchooseService {
 
     public Planchoose getPlancById(int plancId) {
         return planchooseMapper.selectById(plancId);
+    }
+
+    public List<Planchoose> getPlancByPlanId(int planId) {
+        QueryWrapper<Planchoose> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("plan_id", planId);
+        return planchooseMapper.selectList(queryWrapper);
     }
 
     public Planchoose getPlancByUserId(int userId) {

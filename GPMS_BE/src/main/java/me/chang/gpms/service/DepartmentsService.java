@@ -1,5 +1,6 @@
 package me.chang.gpms.service;
 
+import lombok.extern.slf4j.Slf4j;
 import me.chang.gpms.dao.DepartmentsMapper;
 import me.chang.gpms.pojo.Departments;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Slf4j
 public class DepartmentsService {
     private DepartmentsMapper departmentsMapper;
 
@@ -25,9 +27,13 @@ public class DepartmentsService {
     }
 
     public int insertDepartment(Departments departments) {
-        return departmentsMapper.insertDepartment(
-                departments
-        );
+//        return departmentsMapper.insertDepartment(
+//                departments
+//        );
+        int insert = departmentsMapper.insert(departments);
+        int departmentsId = departments.getId();
+        log.info("DEPARTMENT INSERTED! mapper return={} --- departmentsId={}", insert, departmentsId);
+        return departmentsId;
     }
 
     public int updateType(Departments departments, int newType) {

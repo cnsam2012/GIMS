@@ -293,6 +293,25 @@ public class UserApiController {
         );
     }
 
+
+    @PutMapping("alter/department")
+    @Operation(summary = "修改用户部门")
+    public R alterDepartment(
+            @Parameter(required = false)
+            @RequestBody
+            AlterUserDepartmentRo alterUserRo
+    ) {
+
+//        userService.updatePassword(alterUserRo.getId(), alterUserRo.getPassword());
+        userService.updateDepartment(alterUserRo.getId(), alterUserRo.getDepartmentId());
+
+        return R.ok(
+                GPMSResponseCode.OK.value(),
+                "用户资料修改成功（仅修改用户归属部门）"
+//                ,data
+        );
+    }
+
     /**
      * 个人主页（个人数据）
      *

@@ -1,12 +1,13 @@
 package me.chang.gpms.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import me.chang.gpms.pojo.Departments;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
 @Mapper
-public interface DepartmentsMapper {
+public interface DepartmentsMapper extends BaseMapper<Departments> {
 
     List<Departments> selectDepartments(int offset, int limit);
 

@@ -626,4 +626,13 @@ public class UserService {
     }
 
 
+    public int updateDepartment(Integer id, Integer departmentId) {
+        try {
+            User user = this.findUserById(id);
+            user.setDepartmentId(departmentId);
+            return userMapper.updateById(user);
+        } catch (Exception e) {
+        }
+        return -1;
+    }
 }

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import me.chang.gpms.pojo.*;
+import me.chang.gpms.service.DepartmentsService;
 import me.chang.gpms.service.PlanService;
 import me.chang.gpms.service.PlanchooseService;
 import me.chang.gpms.service.UserService;
@@ -28,13 +29,16 @@ import java.util.List;
 public class PlanchooseApiController {
 
     @Autowired
-    PlanchooseService plancService;
+    PlanchooseService planchooseService;
 
     @Autowired
     PlanService planService;
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    DepartmentsService departmentsService;
 
     @Autowired
     HostHolder hostHolder;
@@ -49,9 +53,9 @@ public class PlanchooseApiController {
         var data = new HashMap<String, Object>();
         var pageNum = page.getCurrent();
         var pageSize = page.getLimit();
-        var pageTotal = plancService.getAllPlancRows();
+        var pageTotal = planchooseService.getAllPlancRows();
         page.setRows(pageTotal);
-        List<Planchoose> allPlancByPage = plancService.findAllPlancByPage(pageNum, pageSize);
+        List<Planchoose> allPlancByPage = planchooseService.findAllPlancByPage(pageNum, pageSize);
         for (Planchoose pc : allPlancByPage) {
             var planId = pc.getPlanId();
             var userId = pc.getUserId();
@@ -82,7 +86,7 @@ public class PlanchooseApiController {
             int requestUserId
     ) {
         var data = new HashMap<String, Object>();
-        var pc = plancService.getPlancByUserId(requestUserId);
+        var pc = planchooseService.getPlancByUserId(requestUserId);
         if (ObjectUtil.isNotNull(pc) && ObjectUtil.isNotEmpty(pc)) {
             int planId = pc.getPlanId();
             int userId = pc.getUserId();
@@ -119,7 +123,12 @@ public class PlanchooseApiController {
             return R.error(GPMSResponseCode.CLIENT_NO_AUTHORITY.value(), "您尚未登录");
         }
         pc.setCreateTime(new Date());
-        var cnt = plancService.insertOnePlanc(pc);
+        var cnt = planchooseService.insertOnePlanc(pc);
+
+        // 发送部门信息通知
+
+
+
         data.put("operationCount", cnt);
         return R.ok(
                 GPMSResponseCode.OK.value(),
@@ -139,11 +148,11 @@ public class PlanchooseApiController {
         if (user == null) {
             return R.error(GPMSResponseCode.CLIENT_NO_AUTHORITY.value(), "您尚未登录");
         }
-        if (ObjectUtil.isEmpty(plancService.getPlancById(plancId))) {
+        if (ObjectUtil.isEmpty(planchooseService.getPlancById(plancId))) {
             data.put("planMsg", "找不到记录，该id对应的记录不存在");
             return R.error(GPMSResponseCode.CLIENT_ERROR.value(), "找不到记录，该id对应的记录不存在", data);
         }
-        if (plancService.deletePlancById(plancId) != 0) {
+        if (planchooseService.deletePlancById(plancId) != 0) {
             return R.ok(
                     GPMSResponseCode.OK.value(),
                     "success",

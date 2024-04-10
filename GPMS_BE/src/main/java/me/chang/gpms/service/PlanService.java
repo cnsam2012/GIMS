@@ -61,4 +61,10 @@ public class PlanService {
         // TODO 获取所有userId创建的plan
         return null;
     }
+
+    public List<Plan> getPlanByCreator(Integer id) {
+        QueryWrapper<Plan> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("CREATOR", id);
+        return planMapper.selectList(queryWrapper);
+    }
 }
