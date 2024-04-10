@@ -5,14 +5,14 @@ import lombok.Data;
 
 @Data
 public class Message {
-    private int id;
-    private int fromId;
+    private Integer id;
+    private Integer fromId;
     private String _fromId;
-    private int toId;
+    private Integer toId;
     private String _toId;
     private String conversationId;
     private String content;
-    private int status;
+    private Integer status;
     private java.util.Date createTime;
 
 }

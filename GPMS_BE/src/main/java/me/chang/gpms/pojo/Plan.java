@@ -19,7 +19,7 @@ import java.util.Date;
 public class Plan {
 
     @TableId(type = IdType.AUTO, value = "ID")
-    private int id;
+    private Integer id;
 
     private String type;
     private String name;
@@ -27,7 +27,7 @@ public class Plan {
     @TableField(value = "MAJOR_ORIE_ID")
     private String majorOrieId;
 
-    private int grade;
+    private Integer grade;
 
     @TableField(value = "START_D")
     private Date startD;
@@ -37,19 +37,19 @@ public class Plan {
 
     private int classHour;
     private float credit;
-    private int percentIn;
-    private int percentEx;
+    private Integer percentIn;
+    private Integer percentEx;
     private boolean isDeleted;
     private String content;
     private String objective;
     private String demand;
-    private int scoreCalType;
-    private int percentInDailyReport;
-    private int percentInWeeklyReport;
-    private int percentInMonthlyReport;
-    private int percentInSummary;
+    private Integer scoreCalType;
+    private Integer percentInDailyReport;
+    private Integer percentInWeeklyReport;
+    private Integer percentInMonthlyReport;
+    private Integer percentInSummary;
     private Date deadline;
-    private int creator;
+    private Integer creator;
 
     @TableField(exist = false)
     private String _creator;

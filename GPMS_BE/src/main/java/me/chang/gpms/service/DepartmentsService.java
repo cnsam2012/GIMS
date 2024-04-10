@@ -1,5 +1,7 @@
 package me.chang.gpms.service;
 
+import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import me.chang.gpms.dao.DepartmentsMapper;
 import me.chang.gpms.pojo.Departments;
@@ -26,10 +28,25 @@ public class DepartmentsService {
         return departmentsMapper.selectByName(name);
     }
 
+    public Departments getDepartmentByCreator(int creator) {
+        return departmentsMapper.selectOne(new QueryWrapper<Departments>().eq("belong_to", creator));
+    }
+
     public int insertDepartment(Departments departments) {
 //        return departmentsMapper.insertDepartment(
 //                departments
 //        );
+
+        // 删除原有的部门，此时新建部门相当于更新部门信息，除学生外，一个用户只能创建一个部门
+        try {
+            Departments departmentByCreator = this.getDepartmentByCreator(departments.getBelongTo());
+            if (ObjectUtil.isNotNull(departmentByCreator)) {
+                this.deleteDepartmentsById(departmentByCreator.getId());
+            }
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
+
         int insert = departmentsMapper.insert(departments);
         int departmentsId = departments.getId();
         log.info("DEPARTMENT INSERTED! mapper return={} --- departmentsId={}", insert, departmentsId);

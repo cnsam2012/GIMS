@@ -10,15 +10,15 @@ import lombok.Data;
 public class Departments {
 
     @TableId(type = IdType.AUTO)
-    private int id;
+    private Integer id;
 
-    private int type;
+    private Integer type;
 
     private String name;
 
     private String content;
 
     @TableField("belong_to")
-    private int belongTo;
+    private Integer belongTo;
 
 }

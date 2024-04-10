@@ -153,9 +153,13 @@ public class MessageApiController {
         // 私信目标
         data.put("target", getLetterTarget(conversationId));
 
+
         List<Message> letterListToRead = messageService.findLetters(conversationId);
+
         // 将私信列表中的未读消息改为已读
         List<Integer> ids = getUnreadLetterIds(letterListToRead);
+        log.info("------------------ids = {}", ids.toString());
+
         if (!ids.isEmpty()) {
             messageService.readMessage(ids);
         }
@@ -167,7 +171,6 @@ public class MessageApiController {
      * 获取私信对方对象
      *
      * @param conversationId
-     * @return
      */
     private User getLetterTarget(String conversationId) {
         String[] ids = conversationId.split("_");
@@ -193,9 +196,17 @@ public class MessageApiController {
         if (letterList != null) {
             for (Message message : letterList) {
                 // 当前用户是私信的接收者且该私信处于未读状态
-                if ((hostHolder.getUser().getId() == message.getToId()) && (message.getStatus() == 0)) {
+                log.info("======================");
+                log.info("id  {}", message.getId());
+                log.info("host  {}", hostHolder.getUser().getId());
+                log.info("messageToId  {}", message.getToId());
+                log.info("messageStatus {}", message.getStatus());
+
+                if ((hostHolder.getUser().getId().intValue() == message.getToId().intValue()) && (message.getStatus() == 0)) {
                     ids.add(message.getId());
                 }
+
+                log.info("======================");
             }
         }
 

@@ -347,7 +347,7 @@ export default {
       row
     }, done) {
       setTimeout(async () => {
-        await this.$api.DROP_A_PLAN(row.id)
+        await this.$api.DROP_A_PLAN_C(row.id)
         this.$message({
           message: '删除成功',
           type: 'success'
@@ -425,7 +425,7 @@ export default {
           name: row.name,
           content: row.content
         }
-        const res = await this.$api.UPDATE_DEPARTMENTS(data)
+        const res = await this.$api.EDIT_A_PLAN_C(data)
         console.log(res)
         // done可以传入一个对象来修改提交的某个字段
         done({
