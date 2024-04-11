@@ -86,6 +86,15 @@ const frameIn = [
         component: _import('admin/users_management')
       },
       {
+        path: 'tutorial_management',
+        name: 'tutorial_management',
+        meta: {
+          title: '指导学生管理',
+          auth: true
+        },
+        component: _import('admin/tutorial_management')
+      },
+      {
         path: 'reports_management',
         name: 'reports_management',
         meta: {

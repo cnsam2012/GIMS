@@ -262,12 +262,12 @@ export default {
       // AUTH START
       // TODO 教师2 实习单位3 查看其所属单位、所管理学生的报告
       // 仅管理员可拉取所有报告，其他用户根据特定情况拉取
-      if (this.info.userType === 9) {
-        res = await this.$api.FETCH_ALL_REPORTS(pageAndMode)
-      } else {
-        pageAndMode.id = this.info.userId
-        res = await this.$api.FETCH_SPEC_USER_REPORTS(pageAndMode)
-      }
+      // if (this.info.userType === 9) {
+      res = await this.$api.FETCH_ALL_REPORTS(pageAndMode)
+      // } else {
+      //   pageAndMode.id = this.info.userId
+      //   res = await this.$api.FETCH_SPEC_USER_REPORTS(pageAndMode)
+      // }
       // AUTH END
       res = res.data
       this.updateData(res)

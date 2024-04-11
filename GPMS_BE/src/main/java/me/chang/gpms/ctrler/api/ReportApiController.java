@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import me.chang.gpms.pojo.ro.*;
 import me.chang.gpms.util.constant.GPMSResponseCode;
+import me.chang.gpms.util.constant.GPMSUserAuth;
 import org.apache.http.HttpStatus;
 import me.chang.gpms.event.EventProducer;
 import me.chang.gpms.pojo.*;
@@ -169,6 +170,7 @@ public class ReportApiController {
         return R.ok(status, "报告上传成功", data);
     }
 
+
     /**
      * 获取所有报告
      *
@@ -188,14 +190,59 @@ public class ReportApiController {
             @Parameter(required = true)
             PageAndOrderModeRo page
     ) {
+        User currentUser = hostHolder.getUser();
+        if (ObjectUtil.isNull(currentUser) || ObjectUtil.isEmpty(currentUser)) {
+            return R.ok(GPMSResponseCode.CLIENT_ERROR.value(), "用户未登录");
+        }
+        int userType = currentUser.getType();
+        List<Report> list = null;
+
 
         Map<String, Object> data = new HashMap<>();
         var orderMode = page.getOrderMode();
         // 获取总页数
-        page.setRows(reportService.findReportRows(0));
-        page.setPath("/index?orderMode=" + orderMode);
         // 分页查询
-        List<Report> list = reportService.findReports(0, page.getCurrent(), page.getLimit(), orderMode);
+
+        // 根据已登录的用户类型返回特定的report
+        switch (userType) {
+            case 9 -> { // 管理员
+                log.info("got admin list");
+                list = reportService.findReports(0, page.getCurrent(), page.getLimit(), orderMode); // 返回所有
+                page.setRows(reportService.findReportRows(0));
+            }
+            case 1 -> { // 学生
+                log.info("student list");
+                list = reportService.findReports(currentUser.getId(), page.getCurrent(), page.getLimit(), orderMode); // 返回自己的报告
+                page.setRows(reportService.findReportRows(currentUser.getId()));
+            }
+            case 2 -> {  // 老师
+                log.info("got tutor's student's report list");
+                var tutorSId = currentUser.getId();
+                // get all this tutor's student
+                list = reportService.findTutorSStudentSReport(tutorSId, page.getOffset(), page.getLimit(), orderMode);
+                page.setRows(reportService.findTutorSStudentSReportRows(tutorSId));
+
+            }
+            case 3 -> { // 企业
+                log.info("got com's dep list");
+                var comUserSId = currentUser.getId();
+                // get all this com's student
+                list = reportService.findDepartmentSStudentSReport(comUserSId, page.getOffset(), page.getLimit(), orderMode);
+                page.setRows(reportService.findDepartmentSStudentSReportRow(comUserSId));
+            }
+            default -> { // 默认
+                log.error("no usertype got!");
+            }
+        }
+
+        // 管理员 所有report
+        // 教师 所管理学生的report 部门下的report
+        // 学生 自己的report
+
+
+//        List<Report> list = reportService.findReports(0, page.getCurrent(), page.getLimit(), orderMode);
+
+
         // 封装帖子和该帖子对应的用户信息
         List<Map<String, Object>> discussPosts = new ArrayList<>();
         if (list != null) {
@@ -226,6 +273,7 @@ public class ReportApiController {
         val ok = GPMSResponseCode.OK.value();
         return R.ok(ok, "所有报告", data);
     }
+
 
     /**
      * 进入特定讨论详情页

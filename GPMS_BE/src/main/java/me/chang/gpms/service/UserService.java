@@ -81,6 +81,8 @@ public class UserService {
         User user = getCache(id); // 优先从缓存中查询数据
         if (user == null) {
             user = initCache(id);
+            user.setPassword("");
+            user.setSalt("");
         }
         if (ObjectUtil.isNotEmpty(user)) {
             user.setPassword("");
@@ -628,11 +630,17 @@ public class UserService {
 
     public int updateDepartment(Integer id, Integer departmentId) {
         try {
-            User user = this.findUserById(id);
+            User user = this.findUserByIdReturnPwd(id);
             user.setDepartmentId(departmentId);
             return userMapper.updateById(user);
         } catch (Exception e) {
         }
         return -1;
+    }
+
+    public List<User> findUsersByTutor(Integer tutorSId) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(tutorSId != 0, "tutor", tutorSId);
+        return userMapper.selectList(queryWrapper);
     }
 }

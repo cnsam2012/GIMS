@@ -95,6 +95,60 @@
         <include refid="logicDelete"></include>
     </select>
 
+
+    <select id="findTutorSStudentSReport" resultType="me.chang.gpms.pojo.Report">
+        SELECT r.* FROM report r
+        INNER JOIN user u ON r.user_id = u.id
+        WHERE u.tutor = #{tutorId}
+        <choose>
+            <when test="orderMode == 1">
+                ORDER BY r.create_time DESC
+            </when>
+            <otherwise>
+                ORDER BY r.create_time DESC
+            </otherwise>
+        </choose>
+        LIMIT #{offset}, #{limit}
+    </select>
+
+
+    <select id="findTutorSStudentSReportRows" resultType="java.lang.Integer">
+        SELECT count(*) FROM report r
+        INNER JOIN user u ON r.user_id = u.id
+        WHERE u.tutor = #{tutorId}
+    </select>
+
+
+    <select id="findDepartmentSStudentSReport" resultType="me.chang.gpms.pojo.Report">
+        SELECT
+        r.*
+        FROM
+        report r
+        INNER JOIN user u ON r.user_id = u.id
+        INNER JOIN departments d ON u.department_id = d.id
+        WHERE
+        d.belong_to = #{comUserSId}
+        AND r.is_deleted = 0 <!-- 假设我们只想要未被删除的报告 -->
+        <if test="orderMode == 1">
+            ORDER BY r.create_time DESC
+        </if>
+        <if test="orderMode != 1">
+            ORDER BY r.create_time DESC
+        </if>
+        LIMIT #{offset}, #{limit}
+    </select>
+    <select id="findDepartmentSStudentSReportRow" resultType="java.lang.Integer">
+        SELECT
+        count(*)
+        FROM
+        report r
+        INNER JOIN user u ON r.user_id = u.id
+        INNER JOIN departments d ON u.department_id = d.id
+        WHERE
+        d.belong_to = #{comUserSId}
+        AND r.is_deleted = 0 <!-- 假设我们只想要未被删除的报告 -->
+    </select>
+
     <!--    <update id="updateCommentCount">-->
     <!--        update report-->
     <!--        set comment_count = #{commentCount}-->

@@ -141,8 +141,6 @@ public class MessageApiController {
                 Map<String, Object> map = new HashMap<>();
                 map.put("letter", message);
                 var userPut = userService.findUserById(message.getFromId());
-                userPut.setSalt("");
-                userPut.setPassword("");
                 map.put("fromUser", userPut);
                 letters.add(map);
             }

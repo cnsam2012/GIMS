@@ -21,6 +21,7 @@ public class User {
     private String wechatOpenId;
     private Integer departmentId;
     private String roleName;
+    private Integer tutor;
 
     public static User getUserByRr(RegisterRo rr) {
         var user = new User();

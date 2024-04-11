@@ -7,19 +7,19 @@
     </template>
     <el-descriptions title="实习信息">
       <el-descriptions-item label="类型">{{ data.type }}</el-descriptions-item>
-      <el-descriptions-item label="主要方向">{{ data.major_orie_id }}</el-descriptions-item>
+      <el-descriptions-item label="主要方向">{{ data.majorOrieId }}</el-descriptions-item>
       <el-descriptions-item label="等级">{{ data.grade }}</el-descriptions-item>
       <el-descriptions-item label="学分">{{ data.credit }}</el-descriptions-item>
       <el-descriptions-item label="内容">{{ data.content }}</el-descriptions-item>
       <el-descriptions-item label="目标">{{ data.objective }}</el-descriptions-item>
       <el-descriptions-item label="需求">{{ data.demand }}</el-descriptions-item>
-      <el-descriptions-item label="评分计算类型">{{ data.score_cal_type }}</el-descriptions-item>
-      <el-descriptions-item label="日报占比">{{ data.percent_in_daily_report }}%</el-descriptions-item>
-      <el-descriptions-item label="周报占比">{{ data.percent_in_weekly_report }}%</el-descriptions-item>
-      <el-descriptions-item label="月报占比">{{ data.percent_in_monthly_report }}%</el-descriptions-item>
-      <el-descriptions-item label="总结占比">{{ data.percent_in_summary }}%</el-descriptions-item>
+      <el-descriptions-item label="评分计算类型">{{ data.scoreCalType }}</el-descriptions-item>
+      <el-descriptions-item label="日报占比">{{ data.percentInDailyReport }}%</el-descriptions-item>
+      <el-descriptions-item label="周报占比">{{ data.percentInWeeklyReport }}%</el-descriptions-item>
+      <el-descriptions-item label="月报占比">{{ data.percentInMonthlyReport }}%</el-descriptions-item>
+      <el-descriptions-item label="总结占比">{{ data.percentInSummary }}%</el-descriptions-item>
       <el-descriptions-item label="截止日期">{{ data.deadline }}</el-descriptions-item>
-      <el-descriptions-item label="创建者">{{ data._creator }}</el-descriptions-item>
+      <el-descriptions-item label="创建者">{{ data.creator }}</el-descriptions-item>
     </el-descriptions>
     <template>
       <el-button @click="my_submit" type="success">参加</el-button>

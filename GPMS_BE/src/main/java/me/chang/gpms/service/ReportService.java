@@ -105,18 +105,13 @@ public class ReportService {
      *
      * @param userId    当传入的 userId = 0 时查找所有用户的报告
      *                  当传入的 userId != 0 时，查找该指定用户的报告
-     * @param offset    每页的起始索引
+     * @param current    每页的起始索引
      * @param limit     每页显示多少条数据
      * @param orderMode 排行模式(若传入 1, 则按照热度来排序)
      * @return
      */
-    public List<Report> findReports(int userId, int offset, int limit, int orderMode) {
-        // 查询本地缓存(当查询的是所有用户的报告并且按照热度排序时)
-//        if (userId == 0 && orderMode == 1) {
-//            return reportListCache.get(offset + ":" + limit);
-//        }
-
-        Page<Report> page = new Page<>(offset, limit);
+    public List<Report> findReports(int userId, int current, int limit, int orderMode) {
+        Page<Report> page = new Page<>(current, limit);
         QueryWrapper<Report> qw = new QueryWrapper<>();
 
         if (userId == 0 && orderMode == 0) {
@@ -129,7 +124,37 @@ public class ReportService {
         }
 
         return reportMapper.selectPage(page, qw).getRecords();
-//        return reportMapper.selectReports(userId, offset, limit, orderMode);
+    }
+
+    public List<Report> findTutorSStudentSReport(int tutorId, int offset, int limit, int orderMode) {
+        // 查询本地缓存(当查询的是所有用户的报告并且按照热度排序时)
+//        if (tutorId == 0 && orderMode == 1) {
+//            return reportListCache.get(offset + ":" + limit);
+//        }
+//
+//        QueryWrapper<Report> qw = new QueryWrapper<>();
+//
+//        if (tutorId == 0 && orderMode == 0) {
+//            qw.orderByDesc("create_time");
+//        } else if (orderMode == 1) {
+//            qw = null;
+//        } else {
+//            qw.orderByDesc("create_time");
+//            qw.eq(tutorId != 0, "user_id", tutorId);
+//        }
+//        return reportMapper.selectReports(tutorId, offset, limit, orderMode);
+        return reportMapper.findTutorSStudentSReport(tutorId, offset, limit, orderMode);
+    }
+    public int findTutorSStudentSReportRows(int tutorId) {
+        return reportMapper.findTutorSStudentSReportRows(tutorId);
+    }
+
+    public List<Report> findDepartmentSStudentSReport(Integer comUserSId, int offset, int limit, int orderMode) {
+        return reportMapper.findDepartmentSStudentSReport(comUserSId, offset, limit, orderMode);
+    }
+
+    public int findDepartmentSStudentSReportRow(Integer comUserSId) {
+        return reportMapper.findDepartmentSStudentSReportRow(comUserSId);
     }
 
     /**
@@ -301,4 +326,7 @@ public class ReportService {
         reportMapper.selectPage(page, queryWrapper); // 执行分页查询
         return page.getRecords(); // 返回查询结果
     }
+
+
+
 }

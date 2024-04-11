@@ -71,7 +71,7 @@ swagger:
   enable: true
 community:
   path:
-    domain: http://127.0.0.1:8080
+    domain: http://127.0.0.1
     editormdUploadPath: C:/Users/chang/Documents/Star/MyProject/Banbang/banbang-be/src/main/resources/static/editor-md-upload
 caffeine:
   reports:

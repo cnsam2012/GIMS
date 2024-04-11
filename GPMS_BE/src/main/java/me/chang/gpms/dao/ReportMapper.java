@@ -91,4 +91,12 @@ public interface ReportMapper extends BaseMapper<Report> {
      * @return
      */
     int updatePass(int id, int idRead);
+
+    List<Report> findTutorSStudentSReport(int tutorId, int offset, int limit, int orderMode);
+
+    int findTutorSStudentSReportRows(int tutorId);
+
+    List<Report> findDepartmentSStudentSReport(Integer comUserSId, int offset, int limit, int orderMode);
+
+    int findDepartmentSStudentSReportRow(Integer comUserSId);
 }
