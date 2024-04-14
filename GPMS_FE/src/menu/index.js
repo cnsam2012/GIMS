@@ -28,6 +28,14 @@ export const menuHeader = supplementPath([
   }
 ])
 
+export const menuHeaderAdmin = supplementPath([
+  {
+    path: '/index',
+    title: '首页',
+    icon: 'home'
+  }
+])
+
 export const menuAside = supplementPath([
   {
     path: '/index',
@@ -73,6 +81,11 @@ export const menuAside = supplementPath([
     path: '/addAnnouncement',
     title: '发布公告',
     icon: 'bullhorn'
+  },
+  {
+    path: '/announcement',
+    title: '已发布公告',
+    icon: 'exclamation'
   }
 ])
 

@@ -62,6 +62,7 @@ export default {
     if (this.info.userType === 1) {
       await this.$store.commit('d2admin/menu/asideSet', menuAsideStudent)
     }
+    // RABC END
   },
   beforeDestroy () {
     this.scrollDestroy()

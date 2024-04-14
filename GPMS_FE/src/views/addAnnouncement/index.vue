@@ -13,8 +13,10 @@
       v-model="text">
     </el-input>
 
-    <div style="margin-top: 30px">
+    <div style="margin-top: 30px;">
       <el-button @click="submit" type="success">确认无误，发布公告</el-button>
+      <el-button @click="toAddAnno" type="warning">查看已发布公告</el-button>
+      <el-button @click="closeThisTag" type="info">取消</el-button>
     </div>
     <template slot="footer">
       <random-motto/>
@@ -50,7 +52,10 @@ export default {
       'close'
     ]),
     closeThisTag () {
-      this.close({ tagName: '/addReports' })
+      this.close({ tagName: '/addAnnouncement' })
+    },
+    toAddAnno () {
+      this.$router.push({ name: 'announcement' })
     },
     async submit () {
       var data = {
@@ -58,6 +63,7 @@ export default {
       }
       await this.$api.SEND_ANNOUNCEMENT(data)
       this.$message.info('发布成功')
+      this.closeThisTag()
     }
   }
 }

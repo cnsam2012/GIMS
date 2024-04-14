@@ -2,6 +2,7 @@ import { throttle } from 'lodash'
 import { mapState } from 'vuex'
 import menuMixin from '../mixin/menu'
 import { createMenu } from '../libs/util.menu'
+import { menuHeaderAdmin } from '@/menu'
 
 export default {
   name: 'd2-layout-header-aside-menu-header',
@@ -125,13 +126,18 @@ export default {
       }
     }
   },
-  mounted () {
+  async mounted () {
     // 初始化判断
     // 默认判断父元素和子元素的大小，以确定初始情况是否显示滚动
     this.checkScroll()
     // 全局窗口变化监听，判断父元素和子元素的大小，从而控制isScroll的开关
     this.throttledCheckScroll = throttle(this.checkScroll, 300)
     window.addEventListener('resize', this.throttledCheckScroll)
+    // RABC
+    if (this.info.userType === (2 || 3)) {
+      await this.$store.commit('d2admin/menu/headerSet', menuHeaderAdmin)
+    }
+    // RABC END
   },
   beforeDestroy () {
     // 取消监听

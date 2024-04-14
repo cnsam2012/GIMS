@@ -35,6 +35,14 @@ export default ({
       data
     })
   },
+  EMPTY_ANNOUNCEMENT (data = {}) {
+    return request({
+      contentType: 'application/json',
+      url: 'notice/empty',
+      method: 'POST',
+      data
+    })
+  },
   CONVERSATION_DETAIL (data = {}) {
     return request({
       contentType: 'application/json',

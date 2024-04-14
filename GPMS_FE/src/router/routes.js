@@ -167,6 +167,15 @@ const frameIn = [
         component: _import('addAnnouncement')
       },
       {
+        path: 'announcement',
+        name: 'announcement',
+        meta: {
+          title: '已发布公告',
+          auth: true
+        },
+        component: _import('announcementDetail')
+      },
+      {
         path: 'myMessage',
         name: 'myMessage',
         meta: {
