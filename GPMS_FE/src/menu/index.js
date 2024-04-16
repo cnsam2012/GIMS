@@ -44,12 +44,22 @@ export const menuAside = supplementPath([
   },
   {
     title: '我的',
-    icon: 'folder-o',
+    icon: 'user-circle-o',
     children: [
       {
         path: '/my',
-        title: '我的 缺省',
+        title: '关于我',
         icon: 'user'
+      },
+      {
+        path: '/alterUsername',
+        title: '修改用户名',
+        icon: 'pencil'
+      },
+      {
+        path: '/alterPassword',
+        title: '修改密码',
+        icon: 'key'
       }
     ]
   },

@@ -27,23 +27,6 @@
             提交问题
           </el-button>
         </el-button-group>
-        <h2>询问其它使用者或作者</h2>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <img src="./image/qq.svg" style="width: 100%;">
-            <div class="d2-help--qr-info">
-              请使用手机 QQ 扫面上方二维码<br/>
-              1群 806395827 (满) | 2群 592981556
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <img src="./image/we.svg" style="width: 100%;">
-            <div class="d2-help--qr-info">
-              请使用手机微信扫面上方二维码<br/>
-              添加作者微信好友，邀请加入微信群
-            </div>
-          </el-col>
-        </el-row>
       </div>
     </el-dialog>
   </div>

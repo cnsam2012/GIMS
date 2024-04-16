@@ -1,35 +1,6 @@
 <template>
   <d2-container>
-    <template slot="header">
-      <h1>
-        {{ getTimeState() }}{{ data.roleName }}
-      </h1>
-    </template>
-
-    <el-descriptions title="用户信息">
-      <el-descriptions-item label="用户名">{{ data.username }}</el-descriptions-item>
-      <el-descriptions-item label="手机号">{{ data.phone ? data.phone : '暂无' }}</el-descriptions-item>
-      <el-descriptions-item label="电子邮件">{{ data.email }}</el-descriptions-item>
-      <el-descriptions-item label="用户类型">{{ data.type }}</el-descriptions-item>
-      <el-descriptions-item label="状态">{{ data.status }}</el-descriptions-item>
-      <el-descriptions-item label="激活码">{{ data.activationCode }}</el-descriptions-item>
-      <el-descriptions-item label="头像URL">
-        <a :href="data.headerUrl" target="_blank">查看头像</a>
-      </el-descriptions-item>
-      <el-descriptions-item label="创建时间">{{ data.createTime }}</el-descriptions-item>
-      <el-descriptions-item label="角色名称">{{ data.roleName }}</el-descriptions-item>
-      <el-descriptions-item label="部门ID">{{ data.departmentId }}</el-descriptions-item>
-      <!-- 根据需要添加更多的描述项 -->
-    </el-descriptions>
-    <template>
-      <el-button @click="submit" type="success">TEST</el-button>
-    </template>
     <div style="margin-top: 20px">
-      <el-row :gutter="gutter">
-        <el-col :span="24">
-          <div class="grid-content bg-purple-dark">1</div>
-        </el-col>
-      </el-row>
       <el-row :gutter="gutter">
         <el-col :span="6">
           <a :href="data.headerUrl">
@@ -47,7 +18,7 @@
               <div style="align-self: flex-start;">
                 <span style="margin: 0px;">{{ getTimeState() }}</span>
                 <h1 style="margin: 0px;">{{ data.roleName }}</h1>
-                <span style="margin: 5px;">{{ data.username }}</span>
+                <span style="margin-top: 5px;">{{ data.username }}</span>
               </div>
             </div>
           </el-card>
@@ -96,39 +67,41 @@
             </el-descriptions>
           </el-card>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="12" style="display: flex; flex-direction: column; justify-content: space-between; height: 280px">
           <el-card :shadow="shadow" style="height: 130px">
             <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
               <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px">26</span>
+                <span style="font-size: 40px">1</span>
                 <div class="bottom clearfix">
-                  <span style="color: #99a9bf">报告总数</span>
+                  <span style="color: #99a9bf">活跃用户</span>
                 </div>
               </el-card>
               <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px">2</span>
+                <span style="font-size: 40px">5</span>
                 <div class="bottom clearfix">
-                  <span style="color: #99a9bf">今日提交</span>
+                  <span style="color: #99a9bf">系统UV</span>
                 </div>
               </el-card>
-              <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px">26</span>
+              <el-card shadow="hover" style="width:272px;height: 95px; border: none; margin-right: 10px">
+                <span style="font-size: 40px">0</span>
                 <div class="bottom clearfix">
-                  <span style="color: #99a9bf">未读消息</span>
-                </div>
-              </el-card>
-              <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px; color: red">3</span>
-                <div class="bottom clearfix">
-                  <span style="color: #99a9bf">重要通知</span>
+                  <span style="color: #99a9bf">没有未读信息</span>
                 </div>
               </el-card>
             </div>
           </el-card>
+          <el-card :shadow="shadow" style="height: 130px">
+            <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
+              <!-- 新增一个div作为容器，用于包裹需要靠左对齐的内容 -->
+              <div style="align-self: flex-start;">
+                <span style="margin: 0px;">正在参加的实习</span>
+                <h1 style="margin: 0px;">网络工程师</h1>
+                <span style="margin-top: 5px;">康陶科技 - 林毅儿</span>
+              </div>
+            </div>
+          </el-card>
         </el-col>
       </el-row>
-
-
       <el-row :gutter="gutter">
         <el-col :span="8">
           <div class="grid-content bg-purple">4</div>
