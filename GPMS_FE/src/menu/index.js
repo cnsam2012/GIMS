@@ -48,7 +48,8 @@ export const menuAside = supplementPath([
     children: [
       {
         path: '/my',
-        title: '我的 缺省'
+        title: '我的 缺省',
+        icon: 'user'
       }
     ]
   },
@@ -101,7 +102,8 @@ export const menuAsideStudent = supplementPath([
     children: [
       {
         path: '/my',
-        title: '我的 缺省'
+        title: '我的 缺省',
+        icon: 'user'
       }
     ]
   },

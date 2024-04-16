@@ -2,31 +2,214 @@
   <d2-container>
     <template slot="header">
       <h1>
-        {{ getTimeState() }}这里是header
+        {{ getTimeState() }}{{ data.roleName }}
       </h1>
     </template>
+
     <el-descriptions title="用户信息">
-      <el-descriptions-item label="用户名">kooriookami</el-descriptions-item>
-      <el-descriptions-item label="手机号">18100000000</el-descriptions-item>
-      <el-descriptions-item label="居住地">苏州市</el-descriptions-item>
-      <el-descriptions-item label="备注">
-        <el-tag size="small" type="success">学校</el-tag>
+      <el-descriptions-item label="用户名">{{ data.username }}</el-descriptions-item>
+      <el-descriptions-item label="手机号">{{ data.phone ? data.phone : '暂无' }}</el-descriptions-item>
+      <el-descriptions-item label="电子邮件">{{ data.email }}</el-descriptions-item>
+      <el-descriptions-item label="用户类型">{{ data.type }}</el-descriptions-item>
+      <el-descriptions-item label="状态">{{ data.status }}</el-descriptions-item>
+      <el-descriptions-item label="激活码">{{ data.activationCode }}</el-descriptions-item>
+      <el-descriptions-item label="头像URL">
+        <a :href="data.headerUrl" target="_blank">查看头像</a>
       </el-descriptions-item>
-      <el-descriptions-item label="联系地址">江苏省苏州市吴中区吴中大道 1188 号</el-descriptions-item>
-      <el-descriptions-item label="msg">{{ msg }}</el-descriptions-item>
+      <el-descriptions-item label="创建时间">{{ data.createTime }}</el-descriptions-item>
+      <el-descriptions-item label="角色名称">{{ data.roleName }}</el-descriptions-item>
+      <el-descriptions-item label="部门ID">{{ data.departmentId }}</el-descriptions-item>
+      <!-- 根据需要添加更多的描述项 -->
     </el-descriptions>
     <template>
       <el-button @click="submit" type="success">TEST</el-button>
     </template>
-    <template slot="footer"><random-motto/></template>
+    <div style="margin-top: 20px">
+      <el-row :gutter="gutter">
+        <el-col :span="24">
+          <div class="grid-content bg-purple-dark">1</div>
+        </el-col>
+      </el-row>
+      <el-row :gutter="gutter">
+        <el-col :span="6">
+          <a :href="data.headerUrl">
+            <el-card :shadow="shadow" style="height: 130px">
+              <div style="display: flex; align-items: center; justify-content: center; height: 100px">
+                <img :src="data.headerUrl" alt=""/>
+              </div>
+            </el-card>
+          </a>
+        </el-col>
+        <el-col :span="6">
+          <el-card :shadow="shadow" style="height: 130px">
+            <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
+              <!-- 新增一个div作为容器，用于包裹需要靠左对齐的内容 -->
+              <div style="align-self: flex-start;">
+                <span style="margin: 0px;">{{ getTimeState() }}</span>
+                <h1 style="margin: 0px;">{{ data.roleName }}</h1>
+                <span style="margin: 5px;">{{ data.username }}</span>
+              </div>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="12">
+          <el-card :shadow="shadow" style="height: 130px">
+            <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
+              <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
+                <span style="font-size: 40px">26</span>
+                <div class="bottom clearfix">
+                  <span style="color: #99a9bf">报告总数</span>
+                </div>
+              </el-card>
+              <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
+                <span style="font-size: 40px">2</span>
+                <div class="bottom clearfix">
+                  <span style="color: #99a9bf">今日提交</span>
+                </div>
+              </el-card>
+              <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
+                <span style="font-size: 40px">26</span>
+                <div class="bottom clearfix">
+                  <span style="color: #99a9bf">未读消息</span>
+                </div>
+              </el-card>
+              <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
+                <span style="font-size: 40px; color: red">3</span>
+                <div class="bottom clearfix">
+                  <span style="color: #99a9bf">重要通知</span>
+                </div>
+              </el-card>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+      <el-row :gutter="gutter">
+        <el-col :span="12">
+          <el-card :shadow="shadow" style="height: 280px">
+            <el-descriptions title="用户信息" direction="vertical" column="2">
+              <el-descriptions-item label="手机号">{{ data.phone ? data.phone : '暂无' }}</el-descriptions-item>
+              <el-descriptions-item label="电子邮件">{{ data.email }}</el-descriptions-item>
+              <el-descriptions-item label="用户类型">{{ data.type }}</el-descriptions-item>
+              <el-descriptions-item label="状态">{{ data.status }}</el-descriptions-item>
+              <el-descriptions-item label="创建时间">{{ data.createTime }}</el-descriptions-item>
+              <el-descriptions-item label="部门ID">{{ data.departmentId }}</el-descriptions-item>
+            </el-descriptions>
+          </el-card>
+        </el-col>
+        <el-col :span="12">
+          <el-card :shadow="shadow" style="height: 130px">
+            <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
+              <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
+                <span style="font-size: 40px">26</span>
+                <div class="bottom clearfix">
+                  <span style="color: #99a9bf">报告总数</span>
+                </div>
+              </el-card>
+              <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
+                <span style="font-size: 40px">2</span>
+                <div class="bottom clearfix">
+                  <span style="color: #99a9bf">今日提交</span>
+                </div>
+              </el-card>
+              <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
+                <span style="font-size: 40px">26</span>
+                <div class="bottom clearfix">
+                  <span style="color: #99a9bf">未读消息</span>
+                </div>
+              </el-card>
+              <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
+                <span style="font-size: 40px; color: red">3</span>
+                <div class="bottom clearfix">
+                  <span style="color: #99a9bf">重要通知</span>
+                </div>
+              </el-card>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+
+
+      <el-row :gutter="gutter">
+        <el-col :span="8">
+          <div class="grid-content bg-purple">4</div>
+        </el-col>
+        <el-col :span="8">
+          <div class="grid-content bg-purple-light">5</div>
+        </el-col>
+        <el-col :span="4">
+          <div class="grid-content bg-purple-light">5a</div>
+        </el-col>
+        <el-col :span="4">
+          <div class="grid-content bg-purple">6</div>
+
+        </el-col>
+      </el-row>
+      <el-row :gutter="gutter">
+        <el-col :span="6">
+          <div class="grid-content bg-purple">7</div>
+        </el-col>
+        <el-col :span="6">
+          <div class="grid-content bg-purple-light">8</div>
+        </el-col>
+        <el-col :span="6">
+          <div class="grid-content bg-purple">9</div>
+        </el-col>
+        <el-col :span="6">
+          <div class="grid-content bg-purple-light">a</div>
+        </el-col>
+      </el-row>
+      <el-row :gutter="gutter">
+        <el-col :span="4">
+          <div class="grid-content bg-purple">b</div>
+        </el-col>
+        <el-col :span="4">
+          <div class="grid-content bg-purple-light">c</div>
+        </el-col>
+        <el-col :span="4">
+          <div class="grid-content bg-purple">d</div>
+        </el-col>
+        <el-col :span="4">
+          <div class="grid-content bg-purple-light">e</div>
+        </el-col>
+        <el-col :span="4">
+          <div class="grid-content bg-purple">f</div>
+        </el-col>
+        <el-col :span="4">
+          <div class="grid-content bg-purple-light">g</div>
+        </el-col>
+      </el-row>
+    </div>
+    <template slot="footer">
+      <random-motto/>
+    </template>
   </d2-container>
 </template>
 <script>
 import util from '@/libs/util.js'
+
 export default {
   data () {
     return {
-      msg: '正在加载...'
+      gutter: 20,
+      shadow: 'hover',
+      msg: '正在加载...',
+      data: {
+        id: 910007,
+        username: 'cc',
+        password: '',
+        salt: '',
+        email: 'cnsam2012@qq.com',
+        phone: null,
+        type: 9,
+        status: 1,
+        activationCode: '44bf21c5ee9341a9ae5bd02e0635e150',
+        headerUrl: 'http://images.nowcoder.com/head/12t.png',
+        createTime: '2024-01-07T08:33:40.000+00:00',
+        wechatOpenId: null,
+        departmentId: 810008,
+        roleName: '管理员',
+        tutor: null
+      }
     }
   },
   mounted () {
@@ -93,6 +276,74 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
+.el-col {
+  border-radius: 4px;
+}
 
+.bg-purple-dark {
+  background: #99a9bf;
+}
+
+.bg-purple {
+  background: #d3dce6;
+}
+
+.bg-purple-light {
+  background: #e5e9f2;
+}
+
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
+
+.el-row {
+  margin-bottom: 20px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.el-col {
+  border-radius: 4px;
+}
+
+.bg-purple-dark {
+  background: #99a9bf;
+}
+
+.bg-purple {
+  background: #d3dce6;
+}
+
+.bg-purple-light {
+  background: #e5e9f2;
+}
+
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
+
+.row-bg {
+  padding: 10px 0;
+  background-color: #f9fafc;
+}
+
+.bottom {
+  margin-top: 13px;
+  line-height: 12px;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+
+.clearfix:after {
+  clear: both
+}
 </style>
