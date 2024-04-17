@@ -2,7 +2,7 @@ import { throttle } from 'lodash'
 import { mapState } from 'vuex'
 import menuMixin from '../mixin/menu'
 import { createMenu } from '../libs/util.menu'
-import { menuHeaderAdmin } from '@/menu'
+import { menuHeaderTutorAndCom } from '@/menu'
 
 export default {
   name: 'd2-layout-header-aside-menu-header',
@@ -57,6 +57,9 @@ export default {
   computed: {
     ...mapState('d2admin/menu', [
       'header'
+    ]),
+    ...mapState('d2admin/user', [
+      'info'
     ])
   },
   data () {
@@ -135,7 +138,7 @@ export default {
     window.addEventListener('resize', this.throttledCheckScroll)
     // RABC
     if (this.info.userType === (2 || 3)) {
-      await this.$store.commit('d2admin/menu/headerSet', menuHeaderAdmin)
+      await this.$store.commit('d2admin/menu/headerSet', menuHeaderTutorAndCom)
     }
     // RABC END
   },

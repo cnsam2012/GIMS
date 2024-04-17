@@ -5,12 +5,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import me.chang.gpms.dao.PlanMapper;
 import me.chang.gpms.pojo.*;
-import me.chang.gpms.pojo.ro.DepartmentUpdateRo;
 import me.chang.gpms.pojo.ro.PlanAddRo;
 import me.chang.gpms.pojo.ro.PlanRo;
 import me.chang.gpms.service.PlanService;
+import me.chang.gpms.service.PlanchooseService;
 import me.chang.gpms.service.UserService;
 import me.chang.gpms.util.HostHolder;
 import me.chang.gpms.util.R;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 @Tag(name = "PAC", description = "PlanApiController")
@@ -31,6 +31,9 @@ public class PlanApiController {
 
     @Autowired
     PlanService planService;
+
+    @Autowired
+    PlanchooseService planchooseService;
 
     @Autowired
     UserService userService;
@@ -103,8 +106,26 @@ public class PlanApiController {
         }
         var planRo = Plan.getPlanByPlanAddRo(planAddRo);
         planRo.setCreator(user.getId());
-        var cnt = planService.insertOnePlan(planRo);
-        data.put("operationCount", cnt);
+        if (user.getType() == 1) {
+            planRo.setType(planRo.getType() + "（自主实习）");
+        }
+        var newPlanId = planService.insertOnePlanThenGetNewPlanId(planRo);
+        data.put("newPlanId", newPlanId);
+
+        if (user.getType() == 1) {
+            log.info("student create plan! adding planc....");
+            log.info("new plan id is {}", newPlanId);
+            // 若为学生自己新建实习，则将实习记录做已选实习
+            PlanChoose pc = new PlanChoose();
+            pc.setUserId(user.getId());
+            pc.set_userId(user.getRoleName());
+            pc.setPlanId(newPlanId);
+            pc.set_planId(planRo.getName());
+            pc.setCreateTime(new Date());
+            pc.setStatus(2);
+            planchooseService.insertOnePlanc(pc);
+        }
+
         return R.ok(
                 GPMSResponseCode.OK.value(),
                 "success",

@@ -145,6 +145,7 @@ public class ReportService {
 //        return reportMapper.selectReports(tutorId, offset, limit, orderMode);
         return reportMapper.findTutorSStudentSReport(tutorId, offset, limit, orderMode);
     }
+
     public int findTutorSStudentSReportRows(int tutorId) {
         return reportMapper.findTutorSStudentSReportRows(tutorId);
     }
@@ -169,10 +170,13 @@ public class ReportService {
         if (userId == 0) {
             return reportRowsCache.get(userId);
         }
-
         // 查询数据库
         log.debug("load report rows from DB");
         return reportMapper.selectReportRows(userId);
+    }
+
+    public int findReportRowsByTodayDate(int userId) {
+        return reportMapper.findReportRowsByTodayDate(userId);
     }
 
     /**

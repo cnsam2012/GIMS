@@ -1,48 +1,37 @@
 <template>
   <d2-container>
+    <template slot="header">
+      <h1>
+        xxx 的实习： 评分页面 {{ pid }}
+      </h1>
+    </template>
+
     <div style="margin-top: 20px">
-      <el-row :gutter="gutter" v-if="welcomeMesgDisplay">
-        <el-col :span="24">
-          <el-card :shadow="shadow" style="width: 100%" :style="{ height: welcomeCardHeight }">
-            <div style="display: flex; justify-content: center; align-items: center; width: 100%;"
-                 :style="{ height: welcomeCardHeight }">
-              <!-- 新增一个div作为容器，用于包裹需要靠左对齐的内容 -->
-              <div style="font-size: 80px">
-                <span style="margin: 0px;">{{ getTimeState() }}</span>
-                <h1 style="margin-top: 5px;">{{ data.username }}, 欢迎您</h1>
-              </div>
+      <el-row :gutter="gutter">
+        <el-col :span="4">
+          <el-card :shadow="shadow" style="height: 130px;background-color: rgba(255,0,0,0.07)">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100px;">
+              <h1 style="margin: 5px">不可评分</h1>
+              <span>存在待阅报告</span>
             </div>
           </el-card>
         </el-col>
-      </el-row>
-      <el-row :gutter="gutter">
-        <el-col :span="24">
-          <el-card :shadow="shadow" style="width: 100%" @click.native="searchBoxClick">
-            <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
-              <el-icon class="el-icon-search"></el-icon>
-              <span>搜索功能</span>
+        <el-col :span="4">
+          <el-card :shadow="shadow" style="height: 130px;background-color: rgba(85,255,0,0.07)">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100px;">
+              <h1 style="margin: 5px">等待评分</h1>
+              <span>请提交最终得分</span>
             </div>
           </el-card>
         </el-col>
-      </el-row>
-      <el-row :gutter="gutter">
-        <el-col :span="6">
-          <a :href="data.headerUrl">
-            <el-card :shadow="shadow" style="height: 130px">
-              <div style="display: flex; align-items: center; justify-content: center; height: 100px">
-                <img :src="data.headerUrl" alt=""/>
-              </div>
-            </el-card>
-          </a>
-        </el-col>
-        <el-col :span="6">
+        <el-col :span="4">
           <el-card :shadow="shadow" style="height: 130px">
             <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
               <!-- 新增一个div作为容器，用于包裹需要靠左对齐的内容 -->
               <div style="align-self: flex-start;">
-                <span style="margin: 0px;">{{ getTimeState() }}</span>
-                <h1 style="margin: 0px;">{{ data.roleName }}</h1>
-                <span style="margin-top: 5px;">{{ data.username }}</span>
+                <span style="margin: 0px;">学生姓名</span>
+                <h1 style="margin: 0px;">刘伊尔</h1>
+                <span style="margin-top: 5px;">xs</span>
               </div>
             </div>
           </el-card>
@@ -51,9 +40,9 @@
           <el-card :shadow="shadow" style="height: 130px">
             <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
               <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px">26</span>
+                <span style="font-size: 40px; color: red">30</span>
                 <div class="bottom clearfix">
-                  <span style="color: #99a9bf">报告总数</span>
+                  <span style="color: #99a9bf">报告待阅</span>
                 </div>
               </el-card>
               <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
@@ -63,13 +52,13 @@
                 </div>
               </el-card>
               <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px">26</span>
+                <span style="font-size: 40px">302</span>
                 <div class="bottom clearfix">
-                  <span style="color: #99a9bf">未读消息</span>
+                  <span style="color: #99a9bf">对话总数</span>
                 </div>
               </el-card>
               <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px; color: red">3</span>
+                <span style="font-size: 40px;">20</span>
                 <div class="bottom clearfix">
                   <span style="color: #99a9bf">重要通知</span>
                 </div>
@@ -95,21 +84,21 @@
           <el-card :shadow="shadow" style="height: 130px">
             <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
               <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px">1</span>
+                <span style="font-size: 40px">30%</span>
                 <div class="bottom clearfix">
-                  <span style="color: #99a9bf">活跃用户</span>
+                  <span style="color: #99a9bf">周记占比</span>
                 </div>
               </el-card>
               <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px">5</span>
+                <span style="font-size: 40px">10%</span>
                 <div class="bottom clearfix">
-                  <span style="color: #99a9bf">系统UV</span>
+                  <span style="color: #99a9bf">月记占比</span>
                 </div>
               </el-card>
               <el-card shadow="hover" style="width:272px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px">0</span>
+                <span style="font-size: 40px">50%</span>
                 <div class="bottom clearfix">
-                  <span style="color: #99a9bf">没有未读信息</span>
+                  <span style="color: #99a9bf">总结占比</span>
                 </div>
               </el-card>
             </div>
@@ -131,7 +120,7 @@
         <el-col :span="16">
           <el-card :shadow="shadow" style="width: 100%" ref="elStepsCard">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; width: 100%">
-              <el-steps :active="1" style="width: 100%;" finish-status="success">
+              <el-steps :active="2" style="width: 100%;" finish-status="success">
                 <el-step title="选择实习"
                          description="在实习准备阶段，学校、单位会先考察潜在实习单位，并开设实习课程。学生可以选择集中式实习或自主寻找实习机会，自主实习的学生请在实习管理中填写具体实习信息。"></el-step>
                 <el-step title="进行实习"
@@ -146,9 +135,9 @@
           <el-card :shadow="shadow" :style="{ height: stepsCardHeight }">
             <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
               <div style="align-self: flex-start;">
-                <span style="margin: 0px;"><i class="el-icon-circle-plus-outline"></i></span>
-                <h1 style="margin: 0px;">提交报告</h1>
-                <span style="margin-top: 5px;">点此快速提交报告</span>
+                <span style="margin: 0px;"><i class="el-icon-edit"></i></span>
+                <h1 style="margin: 0px;">78</h1>
+                <span style="margin-top: 5px;">计划评分（计算得）</span>
               </div>
             </div>
           </el-card>
@@ -157,9 +146,9 @@
           <el-card :shadow="shadow" :style="{ height: stepsCardHeight }">
             <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
               <div style="align-self: flex-start;">
-                <span style="margin: 0px;"><i class="el-icon-info"></i></span>
-                <h1 style="margin: 0px;">更改实习</h1>
-                <span style="margin-top: 5px;">点此更改实习信息</span>
+                <span style="margin: 0px;"><i class="el-icon-check"></i></span>
+                <h1 style="margin: 0px;">提交得分</h1>
+                <span style="margin-top: 5px;">点击确认并提交得分</span>
               </div>
             </div>
           </el-card>
@@ -167,64 +156,84 @@
       </el-row>
       <!--  实习状态end  -->
     </div>
+
     <template slot="footer">
       <random-motto/>
     </template>
   </d2-container>
 </template>
 <script>
-import util from '@/libs/util.js'
-import { mapMutations, mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 export default {
+  computed: {
+    ...mapState('d2admin/user', [
+      'info'
+    ])
+  },
   data () {
     return {
       gutter: 20,
       shadow: 'hover',
-      msg: '正在加载...',
       stepsCardHeight: 'auto',
       welcomeCardHeight: '600px',
-      welcomeMesgDisplay: true,
-      data: {
-        id: 910007,
-        username: 'cc',
-        password: '',
-        salt: '',
-        email: 'cnsam2012@qq.com',
-        phone: null,
-        type: 9,
-        status: 1,
-        activationCode: '44bf21c5ee9341a9ae5bd02e0635e150',
-        headerUrl: 'http://images.nowcoder.com/head/12t.png',
-        createTime: '2024-01-07T08:33:40.000+00:00',
-        wechatOpenId: null,
-        departmentId: 810008,
-        roleName: '管理员',
-        tutor: null
-      }
+      msg: '正在加载...',
+      pid: -1,
+      data: {}
     }
   },
   mounted () {
     this.updateCardHeight()
-    this.intervalId = setInterval(this.updateCardHeight, 1000) // 每1000毫秒更新一次高度，确保布局变化能够反映出来
-    this.intervalId = setInterval(this.updateWelcomeMsgShow, 1500)
+    this.intervalId = setInterval(this.updateCardHeight, 500) // 每1000毫秒更新一次高度，确保布局变化能够反映出来
+    this.refreshData()
   },
-  beforeDestroy () {
-    if (this.intervalId) {
-      clearInterval(this.intervalId)
-    }
-  },
-  computed: {
-    ...mapState('d2admin', {
-      searchActive: state => state.search.active,
-      searchHotkey: state => state.search.hotkey
-    })
-  },
+  // beforeDestroy () {
+  // },
   methods: {
-    ...mapMutations({
-      searchToggle: 'd2admin/search/toggle',
-      searchSet: 'd2admin/search/set'
-    }),
+    ...mapActions('d2admin/page', [
+      'close'
+    ]),
+    async my_submit () {
+      // this.$confirm('此操作将参加该实习, 是否继续?', '提示', {
+      //   confirmButtonText: '确定',
+      //   cancelButtonText: '取消',
+      //   type: 'warning',
+      //   confirmButtonClass: 'el-button el-button--default el-button--small el-button--success',
+      //   showClose: false
+      // }).then(() => {
+      //   var data = {
+      //     userId: this.info.userId,
+      //     planId: this.data.id,
+      //     status: 2
+      //   }
+      //   console.log(data)
+      // }).catch(() => {
+      //   this.$message({
+      //     type: 'info',
+      //     message: '已取消'
+      //   })
+      // })
+      this.$confirm('此操作将参加该实习, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        confirmButtonClass: 'el-button el-button--default el-button--small el-button--success',
+        showClose: false
+      }).then(async () => {
+        var data = {
+          userId: this.info.userId,
+          planId: this.data.id,
+          status: 2
+        }
+        await this.$api.ADD_A_PLAN_C(data)
+        await this.$router.push({ name: 'planchoose_management' })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        })
+      })
+    },
     updateCardHeight () {
       // 使用this.$refs来获取el-card的DOM引用
       const elStepsCard = this.$refs.elStepsCard
@@ -232,52 +241,23 @@ export default {
         this.stepsCardHeight = elStepsCard.$el.offsetHeight + 'px' // 获取高度并转换为px单位
       }
     },
-    updateWelcomeMsgShow () {
-      // this.welcomeMesgDisplay = false
-      this.welcomeCardHeight = 0 + 'px'
-      setTimeout(() => {
-        this.welcomeMesgDisplay = false
-      }, 500)
-    },
-    searchBoxClick () {
-      this.searchToggle()
-      if (this.searchActive) {
-        setTimeout(() => {
-          if (this.$refs.panelSearch) {
-            this.$refs.panelSearch.focus()
-          }
-        }, 500)
-      }
-    },
-    /**
-     * 按键事件
-     * @returns {Promise<void>}
-     */
-    async submit () {
-      console.log('manual refresh')
-      console.log('refreshing data')
-      try {
-        const res = await this.$api.DEMO_FETCH().data
-        console.log(res)
-        console.log(util.cookies.getAll())
-        this.msg = res.reMsg
-      } catch (error) {
-        console.error(error)
-      }
+    async cancel () {
+      var path = this.$route.path + ''
+      console.log(path)
+      await this.close({ tagName: path })
     },
     /**
      * 刷新数据
      * @returns {Promise<void>}
      */
     async refreshData () {
-      console.log('refreshing data')
-      try {
-        const res = await this.$api.DEMO_FETCH().data
-        console.log('data got')
-        console.log(res)
-      } catch (error) {
-        console.error(error)
-      }
+      var pid = this.$route.params.planid
+      this.pid = pid
+      // var requestBody = {
+      //   planId: pid
+      // }
+      // const res = await this.$api.FETCH_SPEC_PLAN(requestBody)
+      // this.data = res.data.plan
     },
     /**
      * 自适应问候

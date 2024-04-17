@@ -22,17 +22,27 @@ export const menuHeader = supplementPath([
     icon: 'home'
   },
   {
+    path: '/my',
+    title: '关于我',
+    icon: 'user'
+  },
+  {
     path: '/addReports',
     title: '新建报告',
     icon: 'plus-square-o'
   }
 ])
 
-export const menuHeaderAdmin = supplementPath([
+export const menuHeaderTutorAndCom = supplementPath([
   {
     path: '/index',
     title: '首页',
     icon: 'home'
+  },
+  {
+    path: '/my',
+    title: '关于我',
+    icon: 'user'
   }
 ])
 
@@ -89,6 +99,11 @@ export const menuAside = supplementPath([
     icon: 'check-square-o'
   },
   {
+    path: '/planscore_management',
+    title: '实习评分',
+    icon: 'sort-numeric-asc'
+  },
+  {
     path: '/addAnnouncement',
     title: '发布公告',
     icon: 'bullhorn'
@@ -108,12 +123,22 @@ export const menuAsideStudent = supplementPath([
   },
   {
     title: '我的',
-    icon: 'folder-o',
+    icon: 'user-circle-o',
     children: [
       {
         path: '/my',
-        title: '我的 缺省',
+        title: '关于我',
         icon: 'user'
+      },
+      {
+        path: '/alterUsername',
+        title: '修改用户名',
+        icon: 'pencil'
+      },
+      {
+        path: '/alterPassword',
+        title: '修改密码',
+        icon: 'key'
       }
     ]
   },

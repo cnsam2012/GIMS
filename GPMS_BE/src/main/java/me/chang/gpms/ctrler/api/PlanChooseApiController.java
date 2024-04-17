@@ -167,12 +167,41 @@ public class PlanChooseApiController {
             data.put("planMsg", "找不到记录，该id对应的记录不存在");
             return R.error(GPMSResponseCode.CLIENT_ERROR.value(), "找不到记录，该id对应的记录不存在", data);
         }
+
+        // 用户为学生，即自删自退实习时候
+        if (user.getType() == 1) {
+            try {
+                // 校验是否为自主实习（自主实习的creator即为删除者）
+                Plan planById = planService.getPlanById(
+                        planchooseService.getPlancById(plancId).getPlanId()
+                );
+                // 若为自主实习，删除对应的实习信息
+                if (planById.getCreator().equals(user.getId())) {
+                    log.info("STUDENT SELF_PLAN DETECTED");
+                    data.put("planMsg", "delete a self-plan");
+                    var cnt = planService.deletePlanById(planById.getId());
+                    data.put("opCount", cnt);
+                    return R.ok(
+                            GPMSResponseCode.OK.value(),
+                            "success",
+                            data
+                    );
+                }
+            } catch (Exception e) {
+                data.put("errorMsg", "plancId找不到对应的planchoose，或planchoose中记录的planId找不到对应的plan，请练习管理员");
+                return R.ok(
+                        GPMSResponseCode.CLIENT_ERROR.value(),
+                        "error",
+                        data
+                );
+            }
+        }
+
         if (planchooseService.deletePlancById(plancId) != 0) {
             try {
                 // 更新用户的部门信息,
                 Plan planById = planService.getPlanById(plancById.getPlanId());
                 Departments departmentByCreator = departmentsService.getDepartmentByCreator(planById.getCreator());
-                log.info("====== {}", departmentByCreator);
                 // 若计划创建者有创建了的部门，则加入
                 if (ObjectUtil.isNotNull(departmentByCreator)) {
                     int departmentByCreatorId = departmentByCreator.getId();

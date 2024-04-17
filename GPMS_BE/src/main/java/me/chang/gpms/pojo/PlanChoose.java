@@ -17,6 +17,7 @@ public class PlanChoose {
     private Integer planId;
     private Integer status;
     private Date createTime;
+    private Integer score;
 
     @TableField(exist = false)
     private String _userId;

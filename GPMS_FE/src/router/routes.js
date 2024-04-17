@@ -122,6 +122,24 @@ const frameIn = [
         component: _import('admin/planchoose_management')
       },
       {
+        path: 'planscore_management',
+        name: 'planscore_management',
+        meta: {
+          title: '实习评分',
+          auth: true
+        },
+        component: _import('admin/planscore_management')
+      },
+      {
+        path: 'planScoreDetail/:planid',
+        name: 'planScoreDetail',
+        meta: {
+          title: '评分中',
+          auth: true
+        },
+        component: _import('planScoreDetail')
+      },
+      {
         path: 'planDetail/:planid',
         name: 'planDetail',
         meta: {

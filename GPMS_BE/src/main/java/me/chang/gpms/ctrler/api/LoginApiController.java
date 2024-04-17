@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import me.chang.gpms.pojo.ro.RegisterRo;
+import me.chang.gpms.service.*;
 import me.chang.gpms.util.HostHolder;
 import me.chang.gpms.util.constant.GPMSActivationStatus;
 import me.chang.gpms.util.constant.GPMSResponseCode;
@@ -14,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import me.chang.gpms.pojo.User;
 import me.chang.gpms.pojo.ro.LoginUserRo;
-import me.chang.gpms.service.UserService;
 import me.chang.gpms.util.GPMSUtil;
 import me.chang.gpms.util.R;
 import me.chang.gpms.util.RedisKeyUtil;
@@ -57,17 +57,31 @@ public class LoginApiController {
 
     private final HostHolder hostHolder;
 
+    private final ReportService reportService;
+
+    private final PlanService planService;
+
+    private final PlanchooseService planchooseService;
+
+    private final MessageService messageService;
+
+    private final DataService dataService;
+
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
     @Autowired
-    public LoginApiController(UserService userService, Producer kaptchaProducer, RedisTemplate redisTemplate, HostHolder hostHolder) {
+    public LoginApiController(UserService userService, Producer kaptchaProducer, RedisTemplate redisTemplate, HostHolder hostHolder, ReportService reportService, PlanService planService, PlanchooseService planchooseService, MessageService messageService, DataService dataService) {
         this.userService = userService;
         this.kaptchaProducer = kaptchaProducer;
         this.redisTemplate = redisTemplate;
         this.hostHolder = hostHolder;
+        this.reportService = reportService;
+        this.planService = planService;
+        this.planchooseService = planchooseService;
+        this.messageService = messageService;
+        this.dataService = dataService;
     }
-
 
     /**
      * 激活用户
@@ -99,6 +113,7 @@ public class LoginApiController {
 
     /**
      * 注册用户
+     *
      * @param rr
      * @return
      */
@@ -393,6 +408,26 @@ public class LoginApiController {
             loginUser.setSalt("");
             var data = new HashMap<String, Object>();
             data.put("loginUser", loginUser);
+
+            // TODO 补充用户信息
+
+            // 查询报告总数
+            int reportRows = reportService.findReportRows(loginUser.getId());
+
+            // 查询今日提交
+            int todaySubmitReportRows = reportService.findReportRowsByTodayDate(loginUser.getId());
+
+            // 查询未读消息
+            int unreadSum = (messageService.findLetterUnreadCount(loginUser.getId(), null)) + (messageService.findNoticeUnReadCount(loginUser.getId(), null))
+
+            // 查询重要通知：来自管理员的message
+            // 未读信息第一条的摘要
+            // 通过planc、plan查询正在参加的实习
+            // 查询实习阶段
+            //      1 = planc中没有记录
+            //      2 = planc中有记录，尚未得分
+            //      3 = 对应的planc已经得分
+
             return R.ok(
                     GPMSResponseCode.OK.value(),
                     "login user got",

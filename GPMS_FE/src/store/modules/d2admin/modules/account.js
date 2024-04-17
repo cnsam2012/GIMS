@@ -52,6 +52,7 @@ export default {
         userType: userType,
         userId: userId
       }, { root: true })
+
       // 用户登录后从持久化数据加载一系列的设置
       await dispatch('load', { userType: userType })
     },

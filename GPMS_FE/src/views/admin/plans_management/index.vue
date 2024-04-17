@@ -33,6 +33,15 @@
       >新建实习
       </el-button>
 
+      <el-button
+        slot="header"
+        type="warning"
+        style="margin: 7px"
+        @click="onAdd"
+        v-if="info.userType == 1"
+      ><i class="el-icon-warning"></i>找不到理想的实习？点此申请自主实习
+      </el-button>
+
       <el-input
         slot="header"
         type="text"

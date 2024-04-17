@@ -1,6 +1,7 @@
 package me.chang.gpms.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import lombok.extern.slf4j.Slf4j;
 import me.chang.gpms.dao.PlanMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import me.chang.gpms.pojo.Plan;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Slf4j
 public class PlanService {
     private final PlanMapper planMapper;
     private final PlanchooseService planchooseService;
@@ -34,11 +36,12 @@ public class PlanService {
         return Math.toIntExact(planMapper.selectCount(planQueryWrapper));
     }
 
-    public int insertOnePlan(Plan plan) {
-        return planMapper.insert(plan);
+    public int insertOnePlanThenGetNewPlanId(Plan plan) {
+        int insert = planMapper.insert(plan);
+        return plan.getId();
     }
 
-    public int insertOnePlan(PlanRo plan) {
+    public int insertOnePlanThenGetNewPlanId(PlanRo plan) {
         Plan planInsert = Plan.getPlanByPlanRo(plan);
         return planMapper.insert(planInsert);
     }
