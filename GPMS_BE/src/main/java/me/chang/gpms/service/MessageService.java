@@ -147,4 +147,13 @@ public class MessageService {
     }
 
 
+    public int findMessageFromSystemUnread(int userId) {
+        // Define the query conditions
+        QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("to_id", userId)
+                .eq("from_id", 910000);
+        // Use MyBatis Plus to execute the query and return the count of unread letters
+        int unreadCount = Math.toIntExact(messageMapper.selectCount(queryWrapper));
+        return unreadCount;
+    }
 }

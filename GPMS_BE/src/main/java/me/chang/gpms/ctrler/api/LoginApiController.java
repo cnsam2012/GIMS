@@ -6,6 +6,8 @@ import com.google.code.kaptcha.Producer;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import me.chang.gpms.pojo.Message;
+import me.chang.gpms.pojo.PlanChoose;
 import me.chang.gpms.pojo.ro.RegisterRo;
 import me.chang.gpms.service.*;
 import me.chang.gpms.util.HostHolder;
@@ -36,7 +38,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -418,15 +422,51 @@ public class LoginApiController {
             int todaySubmitReportRows = reportService.findReportRowsByTodayDate(loginUser.getId());
 
             // 查询未读消息
-            int unreadSum = (messageService.findLetterUnreadCount(loginUser.getId(), null)) + (messageService.findNoticeUnReadCount(loginUser.getId(), null))
+            int unreadSum = (messageService.findLetterUnreadCount(loginUser.getId(), null)) + (messageService.findNoticeUnReadCount(loginUser.getId(), null));
 
             // 查询重要通知：来自管理员的message
+            int messageFromAdminUnreadCount = messageService.findMessageFromSystemUnread(loginUser.getId());
+
             // 未读信息第一条的摘要
+            // 私信列表
+            List<Message> conversationList = messageService.findConversations(
+                    loginUser.getId(), 0, 1);
+            List<Map<String, Object>> conversation = new ArrayList<>();
+            if (conversationList != null) {
+                for (Message message : conversationList) {
+                    Map<String, Object> map = new HashMap<>();
+                    var fromUserRoleName = userService.findUserById(message.getFromId()).getRoleName();
+                    var toUserRoleName = userService.findUserById(message.getToId()).getRoleName();
+                    message.set_fromId(fromUserRoleName);
+                    message.set_toId(toUserRoleName);
+                    map.put("conversation", message); // 私信
+                    map.put("letterCount", messageService.findLetterCount(
+                            message.getConversationId())); // 私信数量
+                    map.put("unreadCount", messageService.findLetterUnreadCount(
+                            loginUser.getId(), message.getConversationId())); // 未读私信数量
+                    int targetId = loginUser.getId() == message.getFromId() ? message.getToId() : message.getFromId();
+                    var userPut = userService.findUserById(targetId);
+                    userPut.setSalt("");
+                    userPut.setPassword("");
+                    map.put("target", userPut); // 私信对方
+                    conversation.add(map);
+                }
+            }
+            var conversationRes = conversation;
+            // 摘要end
+
+
             // 通过planc、plan查询正在参加的实习
+            int planStage;
+            PlanChoose plancByUserId = planchooseService.getPlancByUserId(loginUser.getId());
             // 查询实习阶段
+            if (ObjectUtil.isEmpty(plancByUserId) || ObjectUtil.isNull(plancByUserId)) {
+
+            }
             //      1 = planc中没有记录
             //      2 = planc中有记录，尚未得分
             //      3 = 对应的planc已经得分
+
 
             return R.ok(
                     GPMSResponseCode.OK.value(),

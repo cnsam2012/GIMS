@@ -100,7 +100,5 @@ public interface MessageMapper extends BaseMapper<Message> {
      */
     List<Message> selectNotices(int userId, String topic, int offset, int limit);
 
-
-
 }
 
