@@ -40,12 +40,12 @@ export default {
      */
     alterPassword () {
       this.$router.push({
-        path: 'alterPassword'
+        path: '/alterPassword'
       })
     },
     alterUsername () {
       this.$router.push({
-        path: 'alterUsername'
+        path: '/alterUsername'
       })
     }
   }

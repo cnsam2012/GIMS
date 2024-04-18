@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import me.chang.gpms.pojo.Message;
+import me.chang.gpms.pojo.Plan;
 import me.chang.gpms.pojo.PlanChoose;
 import me.chang.gpms.pojo.ro.RegisterRo;
 import me.chang.gpms.service.*;
@@ -38,10 +39,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -69,13 +67,15 @@ public class LoginApiController {
 
     private final MessageService messageService;
 
+    private final DepartmentsService departmentsService;
+
     private final DataService dataService;
 
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
     @Autowired
-    public LoginApiController(UserService userService, Producer kaptchaProducer, RedisTemplate redisTemplate, HostHolder hostHolder, ReportService reportService, PlanService planService, PlanchooseService planchooseService, MessageService messageService, DataService dataService) {
+    public LoginApiController(UserService userService, Producer kaptchaProducer, RedisTemplate redisTemplate, HostHolder hostHolder, ReportService reportService, PlanService planService, PlanchooseService planchooseService, MessageService messageService, DepartmentsService departmentsService, DataService dataService) {
         this.userService = userService;
         this.kaptchaProducer = kaptchaProducer;
         this.redisTemplate = redisTemplate;
@@ -84,8 +84,10 @@ public class LoginApiController {
         this.planService = planService;
         this.planchooseService = planchooseService;
         this.messageService = messageService;
+        this.departmentsService = departmentsService;
         this.dataService = dataService;
     }
+
 
     /**
      * 激活用户
@@ -96,8 +98,7 @@ public class LoginApiController {
      * @return http://localhost:8080/echo/activation/用户id/激活码
      */
     @GetMapping("api/activation/{userId}/{code}")
-    public String activation(Model model, @PathVariable("userId") int userId,
-                             @PathVariable("code") String code) {
+    public String activation(Model model, @PathVariable("userId") int userId, @PathVariable("code") String code) {
         int result = userService.activation(userId, code);
         if (result == GPMSActivationStatus.ACTIVATION_SUCCESS.value()) {
             model.addAttribute("msg", "激活成功, 您的账号已经可以正常使用!");
@@ -123,10 +124,7 @@ public class LoginApiController {
      */
     @PostMapping("api/register")
     @ResponseBody
-    public R register(
-            @RequestBody
-            RegisterRo rr
-    ) {
+    public R register(@RequestBody RegisterRo rr) {
         var user = User.getUserByRr(rr);
         System.out.println(user);
         Map<String, Object> map = userService.register(user);
@@ -156,9 +154,7 @@ public class LoginApiController {
      */
     @GetMapping("api/kaptcha")
     @CrossOrigin
-    public void getKaptcha(
-            HttpServletResponse response
-    ) {
+    public void getKaptcha(HttpServletResponse response) {
         // 生成验证码
         String text = kaptchaProducer.createText(); // 生成随机字符
         log.info("验证码：" + text);
@@ -194,9 +190,7 @@ public class LoginApiController {
      * @param checkCode    用户输入的图片验证码
      * @return 失败则返回原因, 验证成功返回 "",
      */
-    private String checkKaptchaCode(
-            String kaptchaOwner, String checkCode
-    ) {
+    private String checkKaptchaCode(String kaptchaOwner, String checkCode) {
         if (StringUtils.isBlank(checkCode)) {
             return "未发现输入的图片验证码";
         }
@@ -220,14 +214,7 @@ public class LoginApiController {
      */
     @PostMapping("api/login")
     @ResponseBody
-    public R login(
-            @Parameter(required = true)
-            @RequestBody
-            LoginUserRo user,
-            HttpServletResponse response,
-            @CookieValue(value = "kaptchaOwner", required = false)
-            String kaptchaOwner
-    ) {
+    public R login(@Parameter(required = true) @RequestBody LoginUserRo user, HttpServletResponse response, @CookieValue(value = "kaptchaOwner", required = false) String kaptchaOwner) {
         var username = user.getUsername();
         var password = user.getPassword();
         var code = user.getCode();
@@ -270,21 +257,13 @@ public class LoginApiController {
             User userLogined = userService.findUserByName(user.getUsername());
             data.put("userinfo", userLogined);
             data.put("ticket", ticketStr);
-            return R.ok(
-                    GPMSResponseCode.OK.value(),
-                    "登录成功",
-                    data
-            );
+            return R.ok(GPMSResponseCode.OK.value(), "登录成功", data);
         } else {
             data.put("usernameMsg", map.get("usernameMsg"));
             data.put("passwordMsg", map.get("passwordMsg"));
             var status = HttpStatus.SC_BAD_REQUEST;
             response.setStatus(status);
-            return R.error(
-                    GPMSResponseCode.CLIENT_ERROR.value(),
-                    "登录失败",
-                    data
-            );
+            return R.error(GPMSResponseCode.CLIENT_ERROR.value(), "登录失败", data);
         }
 
     }
@@ -297,9 +276,7 @@ public class LoginApiController {
      */
     @GetMapping("api/logout")
     @ResponseBody
-    public R logout(
-            @CookieValue("ticket") String ticket
-    ) {
+    public R logout(@CookieValue("ticket") String ticket) {
         var username = userService.findUserById(userService.findLoginTicket(ticket).getUserId()).getUsername();
         userService.logout(ticket);
         SecurityContextHolder.clearContext();
@@ -314,12 +291,7 @@ public class LoginApiController {
      */
     @PostMapping("api/resetPwd")
     @ResponseBody
-    public R resetPwd(@RequestParam("username") String username,
-                      @RequestParam("password") String password,
-                      @RequestParam("emailVerifyCode") String emailVerifyCode,
-                      @RequestParam("kaptchaCode") String kaptcha,
-                      HttpServletResponse resp,
-                      @CookieValue("kaptchaOwner") String kaptchaOwner) {
+    public R resetPwd(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("emailVerifyCode") String emailVerifyCode, @RequestParam("kaptchaCode") String kaptcha, HttpServletResponse resp, @CookieValue("kaptchaOwner") String kaptchaOwner) {
         Map<String, Object> data = new HashMap<>(4);
         var status = HttpStatus.SC_OK;
 
@@ -371,12 +343,7 @@ public class LoginApiController {
      */
     @PostMapping("api/sendEmailCodeForResetPwd")
     @ResponseBody
-    public R sendEmailCodeForResetPwd(
-            @CookieValue("kaptchaOwner") String kaptchaOwner,
-            @RequestParam("kaptcha") String kaptcha,
-            @RequestParam("username") String username,
-            HttpServletResponse resp
-    ) {
+    public R sendEmailCodeForResetPwd(@CookieValue("kaptchaOwner") String kaptchaOwner, @RequestParam("kaptcha") String kaptcha, @RequestParam("username") String username, HttpServletResponse resp) {
         Map<String, Object> data = new HashMap<>(3);
         var status = HttpStatus.SC_OK;
         // 检查图片验证码
@@ -413,71 +380,116 @@ public class LoginApiController {
             var data = new HashMap<String, Object>();
             data.put("loginUser", loginUser);
 
-            // TODO 补充用户信息
-
+            // 补充用户信息
             // 查询报告总数
             int reportRows = reportService.findReportRows(loginUser.getId());
+            data.put("reportRows", reportRows);
 
-            // 查询今日提交
+            // 查询今日提交的报告数量
             int todaySubmitReportRows = reportService.findReportRowsByTodayDate(loginUser.getId());
+            data.put("todaySubmitReportRows", todaySubmitReportRows);
 
-            // 查询未读消息
-            int unreadSum = (messageService.findLetterUnreadCount(loginUser.getId(), null)) + (messageService.findNoticeUnReadCount(loginUser.getId(), null));
+            // 查询未读消息数量（私信+通知）
+            int unreadSum = messageService.findLetterUnreadCount(loginUser.getId(), null) + messageService.findNoticeUnReadCount(loginUser.getId(), null);
+            data.put("unreadSum", unreadSum);
 
-            // 查询重要通知：来自管理员的message
+            // 查询来自管理员的未读消息数量
             int messageFromAdminUnreadCount = messageService.findMessageFromSystemUnread(loginUser.getId());
+            data.put("messageFromAdminUnreadCount", messageFromAdminUnreadCount);
 
-            // 未读信息第一条的摘要
-            // 私信列表
-            List<Message> conversationList = messageService.findConversations(
-                    loginUser.getId(), 0, 1);
+            // 未读信息第一条的摘要和私信列表
+            List<Message> conversationList = messageService.findConversations(loginUser.getId(), 0, 1);
             List<Map<String, Object>> conversation = new ArrayList<>();
             if (conversationList != null) {
                 for (Message message : conversationList) {
                     Map<String, Object> map = new HashMap<>();
                     var fromUserRoleName = userService.findUserById(message.getFromId()).getRoleName();
                     var toUserRoleName = userService.findUserById(message.getToId()).getRoleName();
-                    message.set_fromId(fromUserRoleName);
-                    message.set_toId(toUserRoleName);
+                    message.set_fromId(fromUserRoleName); // 假设这里的方法是为了展示角色名
+                    message.set_toId(toUserRoleName);     // 同上
                     map.put("conversation", message); // 私信
-                    map.put("letterCount", messageService.findLetterCount(
-                            message.getConversationId())); // 私信数量
-                    map.put("unreadCount", messageService.findLetterUnreadCount(
-                            loginUser.getId(), message.getConversationId())); // 未读私信数量
+                    map.put("letterCount", messageService.findLetterCount(message.getConversationId())); // 私信数量
+                    map.put("unreadCount", messageService.findLetterUnreadCount(loginUser.getId(), message.getConversationId())); // 未读私信数量
                     int targetId = loginUser.getId() == message.getFromId() ? message.getToId() : message.getFromId();
-                    var userPut = userService.findUserById(targetId);
-                    userPut.setSalt("");
-                    userPut.setPassword("");
-                    map.put("target", userPut); // 私信对方
+                    var userTarget = userService.findUserById(targetId);
+                    userTarget.setSalt(""); // 移除敏感信息
+                    userTarget.setPassword(""); // 移除敏感信息
+                    map.put("target", userTarget); // 私信对方信息
                     conversation.add(map);
                 }
             }
-            var conversationRes = conversation;
-            // 摘要end
+            data.put("conversations", conversation); // 将私信列表摘要添加到data
 
-
-            // 通过planc、plan查询正在参加的实习
+            // 查询正在参加的实习的阶段
             int planStage;
             PlanChoose plancByUserId = planchooseService.getPlancByUserId(loginUser.getId());
+
             // 查询实习阶段
-            if (ObjectUtil.isEmpty(plancByUserId) || ObjectUtil.isNull(plancByUserId)) {
+            planStage = 1; // 初始假设为 planc 中没有记录
+            String planLineOne = "尚未选择实习";
+            String planLineTwo = "请尽快选择实习";
+            String planLineThree = "请在学院规定的时间内选择已发布的实习、或添加自主实习信息";
+
+            if (ObjectUtil.isNotEmpty(plancByUserId)) {
+                try {
+                    // 检查 plancByUserId 是否已得分
+                    if (plancByUserId.getScore() > 0) {
+                        planStage = 3;
+                        Plan planById = planService.getPlanById(plancByUserId.getPlanId());
+                        planLineOne = "已经完成的实习";
+                        planLineTwo = plancByUserId.getScore().toString();
+                        var planName = planById.getName();
+                        var departmentName = departmentsService.getDepartmentByCreator(
+                                planById.getCreator()
+                        );
+                        planLineThree = planName + " - " + departmentName + " (" + planById.getType() + ") ";
+                    } else {
+                        planStage = 2;
+                        Plan planById = planService.getPlanById(plancByUserId.getPlanId());
+                        planLineOne = "正在参加的实习";
+                        planLineTwo = planById.getName();
+                        var departmentName = departmentsService.getDepartmentByCreator(
+                                planById.getCreator()
+                        ).getName();
+                        var creatorName = userService.findUserById(planById.getCreator()).getRoleName();
+                        planLineThree = departmentName + " - " + creatorName + " (" + planById.getType() + ") ";
+                    }
+                } catch (Exception e) {
+                    log.error(e.toString());
+                    planLineOne = "实习信息加载出错";
+                    planLineTwo = "暂无记录";
+                    planLineThree = "请联系管理员";
+                }
 
             }
-            //      1 = planc中没有记录
-            //      2 = planc中有记录，尚未得分
-            //      3 = 对应的planc已经得分
+            data.put("planStage", planStage); // 添加实习阶段到data
+            data.put("planLineOne", planLineOne); // 添加实习阶段到data
+            data.put("planLineTwo", planLineTwo); // 添加实习阶段到data
+            data.put("planLineThree", planLineThree); // 添加实习阶段到data
+
+            // 获取当前日期
+            Calendar calendar = Calendar.getInstance();
+            // 设置时间为今天的结束时间，即23:59:59，这样可以包括今天内的数据
+            calendar.set(Calendar.HOUR_OF_DAY, 23);
+            calendar.set(Calendar.MINUTE, 59);
+            calendar.set(Calendar.SECOND, 59);
+            // 结束日期：今天
+            Date end = calendar.getTime();
+            // 计算开始日期：30天前
+            calendar.add(Calendar.DAY_OF_MONTH, -29); // 这里是-29，因为我们包括了今天
+            // 重置小时，分钟和秒数为0，以确保从00:00:00开始
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            // 开始日期：30天前
+            Date start = calendar.getTime();
+            data.put("activateUser", dataService.calculateDAU(start, end));
+            data.put("systemUv", dataService.calculateUV(start, end));
 
 
-            return R.ok(
-                    GPMSResponseCode.OK.value(),
-                    "login user got",
-                    data
-            );
+            return R.ok(GPMSResponseCode.OK.value(), "login user got", data);
         } else {
-            return R.error(
-                    GPMSResponseCode.CLIENT_ERROR.value(),
-                    "no login user"
-            );
+            return R.error(GPMSResponseCode.CLIENT_ERROR.value(), "no login user");
         }
     }
 

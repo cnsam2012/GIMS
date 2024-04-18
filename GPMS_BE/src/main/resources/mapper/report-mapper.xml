@@ -138,6 +138,7 @@
         </if>
         LIMIT #{offset}, #{limit}
     </select>
+
     <select id="findDepartmentSStudentSReportRow" resultType="java.lang.Integer">
         SELECT
         count(*)
@@ -154,7 +155,7 @@
     <select id="findReportRowsByTodayDate" resultType="java.lang.Integer">
         SELECT COUNT(*)
         FROM report
-        WHERE DATE(date) = CURDATE()
+        WHERE DATE(create_time) = CURDATE()
         <if test="userId != 0">
             and user_id = #{userId}
         </if>

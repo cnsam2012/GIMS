@@ -53,6 +53,11 @@ export const menuAside = supplementPath([
     icon: 'home'
   },
   {
+    path: '/myMessage',
+    title: '我的消息',
+    icon: 'bell-o'
+  },
+  {
     title: '我的',
     icon: 'user-circle-o',
     children: [
@@ -120,6 +125,11 @@ export const menuAsideStudent = supplementPath([
     path: '/index',
     title: '首页',
     icon: 'home'
+  },
+  {
+    path: '/myMessage',
+    title: '我的消息',
+    icon: 'bell-o'
   },
   {
     title: '我的',

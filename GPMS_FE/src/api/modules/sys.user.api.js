@@ -128,6 +128,14 @@ export default ({
       }
     )
   },
+  SYS_USER_GET_CURRENT_INFO () {
+    return request(
+      {
+        url: '/getLoginUserInfo',
+        method: 'POST'
+      }
+    )
+  },
   SYS_USER_GET_ALL_USERLIST (data = {}) {
     return request(
       {
