@@ -8,15 +8,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import me.chang.gpms.pojo.ro.*;
+import me.chang.gpms.service.*;
 import me.chang.gpms.util.constant.GPMSResponseCode;
 import me.chang.gpms.util.constant.GPMSUserAuth;
 import org.apache.http.HttpStatus;
 import me.chang.gpms.event.EventProducer;
 import me.chang.gpms.pojo.*;
-import me.chang.gpms.service.CommentService;
-import me.chang.gpms.service.ReportService;
-import me.chang.gpms.service.LikeService;
-import me.chang.gpms.service.UserService;
 import me.chang.gpms.util.GPMSUtil;
 import me.chang.gpms.util.HostHolder;
 import me.chang.gpms.util.R;
@@ -62,6 +59,9 @@ public class ReportApiController {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private MessageService messageService;
 
     // 网站域名
     @Value("${community.path.domain}")
@@ -276,104 +276,39 @@ public class ReportApiController {
 
 
     /**
-     * 进入特定讨论详情页
+     * 特定报告详细内容
      *
-     * @param discussPostId 单条讨论的ID
-     * @param page          分页信息
+     * @param discussPostId
      * @return
      */
     @GetMapping("detail/{discussPostId}")
-    @Operation(description = "进入特定讨论详情页")
+    @Operation(description = "特定报告详情")
     public R getReport(
             @PathVariable("discussPostId")
-            @Parameter(name = "discussPostId", description = "单条讨论的ID", example = "3")
-            int discussPostId,
-            @Parameter(required = false)
-            Page page
+            @Parameter(name = "discussPostId", description = "单条讨论的ID", example = "110008")
+            int discussPostId
+//            ,
+//            @Parameter(required = false)
+//            Page page
     ) {
         Map<String, Object> data = new HashMap<>();
 
         // 帖子
-        Report discussPost = reportService.findReportById(discussPostId);
-        String content = HtmlUtils.htmlUnescape(discussPost.getContent()); // 内容反转义，不然 markDown 格式无法显示
-        discussPost.setContent(content);
-        data.put("post", discussPost);
+        Report report = reportService.findReportById(discussPostId);
+        if (ObjectUtil.isEmpty(report) || ObjectUtil.isNull(report)) {
+            data.put("reportMsg", "查无报告");
+            return R.error(GPMSResponseCode.OK.value(), "查无报告", data);
+        }
+        String content = HtmlUtils.htmlUnescape(report.getContent()); // 内容反转义，不然 markDown 格式无法显示
+        report.setContent(content);
+        data.put("report", report);
 
         // 作者
-        User user = userService.findUserById(discussPost.getUserId());
+        User user = userService.findUserById(report.getUserId());
         data.put("user", user);
 
-        // 点赞数量
-        long likeCount = likeService.findEntityLikeCount(BbEntityType.ENTITY_TYPE_POST.value(), discussPostId);
-        data.put("likeCount", likeCount);
 
-        // 当前登录用户的点赞状态
-        int likeStatus = hostHolder.getUser() == null ? 0 :
-                likeService.findEntityLikeStatus(hostHolder.getUser().getId(), BbEntityType.ENTITY_TYPE_POST.value(), discussPostId);
-        data.put("likeStatus", likeStatus);
-
-        // 评论分页信息
-        if (page.getLimit() == 0 || ObjectUtil.isEmpty(page.getLimit())) {
-            page.setLimit(5);
-        }
-        page.setPath("/discuss/detail/" + discussPostId);
-//        page.setRows(discussPost.getCommentCount());
-
-        // 帖子的评论列表
-        List<Comment> commentList = commentService.findCommentByEntity(
-                BbEntityType.ENTITY_TYPE_POST.value(), discussPost.getId(), page.getOffset(), page.getLimit());
-
-        // 封装评论及其相关信息
-        List<Map<String, Object>> commentVoList = new ArrayList<>();
-        if (commentList != null) {
-            for (Comment comment : commentList) {
-                // 存储对帖子的评论
-                Map<String, Object> commentVo = new HashMap<>();
-                commentVo.put("comment", comment); // 评论
-                commentVo.put("user", userService.findUserById(comment.getUserId())); // 发布评论的作者
-                likeCount = likeService.findEntityLikeCount(BbEntityType.ENTITY_TYPE_COMMENT.value(), comment.getId()); // 该评论点赞数量
-                commentVo.put("likeCount", likeCount);
-                likeStatus = hostHolder.getUser() == null ? 0 : likeService.findEntityLikeStatus(
-                        hostHolder.getUser().getId(), BbEntityType.ENTITY_TYPE_COMMENT.value(), comment.getId()); // 当前登录用户对该评论的点赞状态
-                commentVo.put("likeStatus", likeStatus);
-
-
-                // 存储每个评论对应的回复（不做分页）
-                List<Comment> replyList = commentService.findCommentByEntity(
-                        BbEntityType.ENTITY_TYPE_COMMENT.value(), comment.getId(), 0, Integer.MAX_VALUE);
-                List<Map<String, Object>> replyVoList = new ArrayList<>(); // 封装对评论的评论和评论的作者信息
-                if (replyList != null) {
-                    for (Comment reply : replyList) {
-                        Map<String, Object> replyVo = new HashMap<>();
-                        replyVo.put("reply", reply); // 回复
-                        replyVo.put("user", userService.findUserById(reply.getUserId())); // 发布该回复的作者
-                        User target = reply.getTargetId() == 0 ? null : userService.findUserById(reply.getTargetId());
-                        replyVo.put("target", target); // 该回复的目标用户
-                        likeCount = likeService.findEntityLikeCount(BbEntityType.ENTITY_TYPE_COMMENT.value(), reply.getId());
-                        replyVo.put("likeCount", likeCount); // 该回复的点赞数量
-                        likeStatus = hostHolder.getUser() == null ? 0 : likeService.findEntityLikeStatus(
-                                hostHolder.getUser().getId(), BbEntityType.ENTITY_TYPE_COMMENT.value(), reply.getId());
-                        replyVo.put("likeStatus", likeStatus); // 当前登录用户的点赞状态
-
-                        replyVoList.add(replyVo);
-                    }
-                }
-                commentVo.put("replys", replyVoList);
-
-                // 每个评论对应的回复数量
-                int replyCount = commentService.findCommentCount(BbEntityType.ENTITY_TYPE_COMMENT.value(), comment.getId());
-                commentVo.put("replyCount", replyCount);
-
-                commentVoList.add(commentVo);
-            }
-        }
-
-        data.put("comments", commentVoList);
-        data.put("page", page);
-
-        var status = HttpStatus.SC_OK;
-//        return BbUtil.getJSONString(status, "success", data);
-        return R.ok(status, "特定讨论", data);
+        return R.ok(GPMSResponseCode.OK.value(), "特定报告", data);
     }
 
 
@@ -533,6 +468,49 @@ public class ReportApiController {
     }
 
 
+    @PutMapping("mark")
+    @Operation(description = "设置评分并更改已读状态")
+    public R setScore(@Parameter(required = true)
+                      @RequestBody
+                      ReportIdMarkRo rIr) {
+        if (rIr == null) {
+            var status = GPMSResponseCode.CLIENT_ERROR.value();
+            return R.error(status, "参数不齐");
+        }
+
+        User currentUser = hostHolder.getUser();
+        if (ObjectUtil.isEmpty(currentUser) || ObjectUtil.isNull(currentUser)) {
+            var status = GPMSResponseCode.CLIENT_ERROR.value();
+            return R.error(status, "未登录");
+        }
+
+        var id = rIr.getId();
+        var report = reportService.findReportById(id);
+        if (ObjectUtil.isNull(report) || ObjectUtil.isEmpty(report)) {
+            var status = GPMSResponseCode.CLIENT_ERROR.value();
+            return R.error(status, "查无report");
+        }
+        var score = rIr.getScore();
+        if (score == -1) {
+            // 若score为-1 更新分数 同时置为未读
+            // 给报告所有者发送信息
+            reportService.updateRead(id, 0);
+            reportService.updateScore(id, -1);
+            var msgContent = "您好！您的报告《" + report.getTitle() + "》正被重新评价，请耐心等待新得分。";
+            this.sendMessage(currentUser.getId(), report.getUserId(), msgContent);
+        } else {
+            // else 更新分数
+            // 给报告所有者发送信息
+            reportService.updateRead(id, 1);
+            reportService.updateScore(id, Double.parseDouble(String.valueOf(score)));
+            var msgContent = "您好！您的报告《" + report.getTitle() + "》已被评分！得分为：" + score + "。";
+            this.sendMessage(currentUser.getId(), report.getUserId(), msgContent);
+        }
+
+        return R.ok(GPMSResponseCode.OK.value(), "评分成功");
+    }
+
+
     /**
      * 删除
      *
@@ -567,6 +545,29 @@ public class ReportApiController {
         var status = GPMSResponseCode.OK.value();
 //        return BbUtil.getJSONString(status, "删除成功！");
         return R.ok(status, "删除成功");
+    }
+
+    private void sendMessage(int fromId, int toId, String messageContent) {
+        // 发送部门信息通知
+        Message message = new Message();
+        String toRoleName = userService.findUserById(toId).getRoleName();
+        String fromRoleName = userService.findUserById(fromId).getRoleName();
+
+        message.setFromId(fromId);
+        message.set_fromId(fromRoleName);
+
+        message.setToId(toId);
+        message.set_toId(toRoleName);
+
+        if (message.getFromId() < message.getToId()) {
+            message.setConversationId(message.getFromId() + "_" + message.getToId());
+        } else {
+            message.setConversationId(message.getToId() + "_" + message.getFromId());
+        }
+        message.setStatus(0); // 默认就是 0 未读，可不写
+        message.setCreateTime(new Date());
+        message.setContent(messageContent);
+        messageService.addMessage(message);
     }
 
 

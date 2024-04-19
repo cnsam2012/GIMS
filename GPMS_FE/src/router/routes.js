@@ -176,6 +176,15 @@ const frameIn = [
         component: _import('addReports')
       },
       {
+        path: 'markReports/:rid',
+        name: 'markReports',
+        meta: {
+          title: '报告评分',
+          auth: true
+        },
+        component: _import('markReports')
+      },
+      {
         path: 'addAnnouncement',
         name: 'addAnnouncement',
         meta: {

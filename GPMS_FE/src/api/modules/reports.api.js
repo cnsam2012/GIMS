@@ -19,6 +19,13 @@ export default ({
       data
     })
   },
+  FETCH_SPEC_REPORTS (data) {
+    return request({
+      contentType: 'application/json',
+      url: 'report/detail/' + data,
+      method: 'GET'
+    })
+  },
   FETCH_SPEC_USER_REPORTS (data = {}) {
     return request({
       contentType: 'application/json',
@@ -46,6 +53,14 @@ export default ({
       contentType: 'application/json',
       url: 'report/add',
       method: 'POST',
+      data
+    })
+  },
+  MARK_REPORTS (data = {}) {
+    return request({
+      contentType: 'application/json',
+      url: 'report/mark',
+      method: 'PUT',
       data
     })
   },

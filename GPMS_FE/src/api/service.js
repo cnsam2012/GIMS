@@ -67,7 +67,7 @@ function createService () {
             if (codeStr[0] === '4') {
               if (dataAxios.data) {
                 console.error(dataAxios.data)
-                // errorCreate(`客户端错误 code:${dataAxios.code} ${dataAxios.msg}: ${JSON.stringify(dataAxios.data)}`)
+                errorCreate(`客户端错误 code:${dataAxios.code} ${dataAxios.msg}: ${JSON.stringify(dataAxios.data)}`)
                 return dataAxios
               }
               errorCreate(`客户端错误 code:${dataAxios.code} ${dataAxios.msg}: ${response.config.url}`)

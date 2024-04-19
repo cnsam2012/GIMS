@@ -205,7 +205,6 @@
         update report
         set score = #{score}
         where id = #{id}
-        <include refid="logicDelete"></include>
     </update>
 
 </mapper>

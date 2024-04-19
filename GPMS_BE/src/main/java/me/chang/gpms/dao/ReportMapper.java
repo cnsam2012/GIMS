@@ -84,21 +84,20 @@ public interface ReportMapper extends BaseMapper<Report> {
 
     /**
      * 修改报告阅读状态
-     *
      * @param id
-     * @param isPass
+     * @param isRead
      * @return
      */
-    int updateRead(int id, int isPass);
+    int updateRead(int id, int isRead);
 
     /**
      * 修改报告通过状态
      *
      * @param id
-     * @param idRead
+     * @param isPass
      * @return
      */
-    int updatePass(int id, int idRead);
+    int updatePass(int id, int isPass);
 
     List<Report> findTutorSStudentSReport(int tutorId, int offset, int limit, int orderMode);
 

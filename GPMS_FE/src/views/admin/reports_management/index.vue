@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   computed: {
@@ -125,7 +125,20 @@ export default {
         {
           title: '阅读状态',
           key: 'isRead',
-          formatter: this.readNumToStrFormatter
+          formatter: this.readNumToStrFormatter,
+          sortable: true
+        },
+        {
+          title: '得分',
+          key: 'score',
+          sortable: true,
+          formatter: (row, column, cellValue, index) => {
+            if (cellValue === -1) {
+              return '——'
+            } else {
+              return cellValue
+            }
+          }
         },
         {
           title: '最后操作',
@@ -163,7 +176,7 @@ export default {
       rowHandle: {
         custom: [
           {
-            text: '查看',
+            text: '查看并评分',
             type: 'success',
             size: 'small',
             emit: 'show-detail'
@@ -181,7 +194,7 @@ export default {
           order: 9
         },
         fixed: 'right',
-        width: '210'
+        width: '260'
       },
       pagination: {
         currentPage: 1,
@@ -248,9 +261,30 @@ export default {
           value: 'content'
         }
       }
+      this.rowHandle = {
+        custom: [
+          {
+            text: '更改',
+            type: 'light',
+            size: 'small',
+            emit: 'on-edit-click'
+          }
+        ],
+        remove: {
+          size: 'small',
+          confirm: true,
+          order: 9
+        },
+        fixed: 'right',
+        width: '160'
+      }
     }
   },
   methods: {
+    ...mapActions('d2admin/nextReport', [
+      'updateReports',
+      'updateCurrentReportIndex'
+    ]),
     async fetchData () {
       const pageAndMode = {
         current: this.pagination.currentPage,
@@ -277,46 +311,12 @@ export default {
       index,
       row
     }) {
-      this.$refs.reports.showDialog({
-        mode: 'view',
-        rowIndex: index,
-        template: {
-          id: {
-            title: '提交人',
-            value: '_id',
-            formatter: this.id2NameFormatter
-          },
-          type: {
-            title: '报告类型',
-            value: 'type',
-            formatter: this.typeNumToStrFormatter
-          },
-          title: {
-            title: '标题',
-            value: 'title',
-            formatter: this.generalFormatter
-          },
-          content: {
-            title: '内容',
-            value: 'content',
-            formatter: this.generalFormatter
-          },
-          createTime: {
-            title: '提交时间',
-            value: 'createTime',
-            formatter: this.colCreateTimeFormatter
-          },
-          isRead: {
-            title: '阅读状态',
-            value: 'isRead',
-            formatter: this.readNumToStrFormatter
-          },
-          lastedEditUserId: {
-            title: '最后操作',
-            value: 'lastedEditUserId',
-            formatter: this.latestIdToUsernameFormatter
-          }
-        }
+      // this.$store.dispatch('updateReports', this.data) // 假设 this.data 存储着所有报告的列表
+      this.updateReports(this.data) // 假设 this.data 存储着所有报告的列表
+      // this.$store.dispatch('updateCurrentReportIndex', index) // 更新当前报告的索引
+      this.updateCurrentReportIndex(index) // 更新当前报告的索引
+      this.$router.push({
+        path: '/markReports/' + row.id
       })
     },
     onEditClick ({

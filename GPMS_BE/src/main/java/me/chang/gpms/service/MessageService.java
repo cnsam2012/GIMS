@@ -151,7 +151,8 @@ public class MessageService {
         // Define the query conditions
         QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("to_id", userId)
-                .eq("from_id", 910000);
+                .eq("from_id", 910000)
+                .eq("status", 0);
         // Use MyBatis Plus to execute the query and return the count of unread letters
         int unreadCount = Math.toIntExact(messageMapper.selectCount(queryWrapper));
         return unreadCount;

@@ -2,8 +2,8 @@ import { mapState } from 'vuex'
 import menuMixin from '../mixin/menu'
 import { createMenu } from '../libs/util.menu'
 import BScroll from 'better-scroll'
-import store from '@/store'
-import { menuAside, menuAsideStudent } from '@/menu'
+// import store from '@/store'
+import { menuAsideStudent } from '@/menu'
 
 export default {
   name: 'd2-layout-header-aside-menu-side',
