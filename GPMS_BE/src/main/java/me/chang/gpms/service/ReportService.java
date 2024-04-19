@@ -111,14 +111,17 @@ public class ReportService {
      * @return
      */
     public List<Report> findReports(int userId, int current, int limit, int orderMode) {
+
         Page<Report> page = new Page<>(current, limit);
         QueryWrapper<Report> qw = new QueryWrapper<>();
 
         if (userId == 0 && orderMode == 0) {
+            qw.orderByAsc("is_read");
             qw.orderByDesc("create_time");
         } else if (orderMode == 1) {
             qw = null;
         } else {
+            qw.orderByAsc("is_read");
             qw.orderByDesc("create_time");
             qw.eq(userId != 0, "user_id", userId);
         }
