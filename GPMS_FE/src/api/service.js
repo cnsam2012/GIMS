@@ -4,6 +4,7 @@ import { get } from 'lodash'
 import util from '@/libs/util'
 import { errorLog, errorCreate } from './tools'
 import store from '@/store'
+import { Message } from 'element-ui'
 
 async function refreshUnread () {
   let auc = 0
@@ -67,7 +68,12 @@ function createService () {
             if (codeStr[0] === '4') {
               if (dataAxios.data) {
                 console.error(dataAxios.data)
-                errorCreate(`客户端错误 code:${dataAxios.code} ${dataAxios.msg}: ${JSON.stringify(dataAxios.data)}`)
+                // errorCreate(`客户端错误 code:${dataAxios.code} ${dataAxios.msg}: ${JSON.stringify(dataAxios.data)}`)
+                Message({
+                  message: `客户端错误 code:${dataAxios.code} ${dataAxios.msg}: ${JSON.stringify(dataAxios.data)}`,
+                  type: 'error',
+                  duration: 5 * 1000
+                })
                 return dataAxios
               }
               errorCreate(`客户端错误 code:${dataAxios.code} ${dataAxios.msg}: ${response.config.url}`)

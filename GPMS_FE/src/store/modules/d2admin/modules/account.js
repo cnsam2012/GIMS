@@ -26,6 +26,9 @@ export default {
         code,
         rememberMe
       })
+
+      console.log(res)
+
       res = res.data // 增加这一句
       // 设置 cookie 一定要存 uuid 和 token 两个 cookie
       // 整个系统依赖这两个数据进行校验和存储
