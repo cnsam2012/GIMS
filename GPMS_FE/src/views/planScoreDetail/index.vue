@@ -71,7 +71,7 @@
       <el-row :gutter="gutter">
         <el-col :span="12">
           <el-card :shadow="shadow" style="height: 280px">
-<!--            这里放一个折线图，描述学生提交报告折线图-->
+            <div v-if="this.reportChartOptions.xAxis.data" style="height: 280px" id="lineGrid"></div>
           </el-card>
         </el-col>
         <el-col :span="12" style="display: flex; flex-direction: column; justify-content: space-between; height: 280px">
@@ -150,7 +150,7 @@
             </el-card>
           </template>
           <template v-else>
-            <el-card :shadow="shadow" :style="{ height: stepsCardHeight }"  class="is-disabled">
+            <el-card :shadow="shadow" :style="{ height: stepsCardHeight }" class="is-disabled">
               <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
                 <div style="align-self: flex-start;">
                   <span style="margin: 0px;"><i class="el-icon-check"></i></span>
@@ -172,6 +172,14 @@
   </d2-container>
 </template>
 <script>
+// 引入ECharts主模块
+// import ECharts from 'vue-echarts'
+import * as echarts from 'echarts'
+// // 手动引入所需的折线图
+// import 'echarts/lib/chart/line'
+// // 引入提示框和标题组件
+// import 'echarts/lib/component/tooltip'
+// import 'echarts/lib/component/title'
 import { mapActions, mapState } from 'vuex'
 
 export default {
@@ -180,8 +188,28 @@ export default {
       'info'
     ])
   },
+  components: {
+    // ECharts
+  },
   data () {
     return {
+      reportChartOptions: {
+        tooltip: {
+          trigger: 'axis'
+        },
+        xAxis: {
+          type: 'category',
+          data: [] // 假设日期数据已经在data.reportChartData.dates中
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [{
+          data: [], // 假设报告提交数量数据已经在data.reportChartData.reportCounts中
+          type: 'line',
+          smooth: true // 使线条平滑显示
+        }]
+      },
       gutter: 20,
       shadow: 'hover',
       stepsCardHeight: 'auto',
@@ -257,6 +285,9 @@ export default {
     this.updateCardHeight()
     this.intervalId = setInterval(this.updateCardHeight, 500) // 每1000毫秒更新一次高度，确保布局变化能够反映出来
     this.refreshData()
+    // this.$nextTick(() => {
+    //   this.initCharts()
+    // })
   },
   // beforeDestroy () {
   // },
@@ -342,6 +373,51 @@ export default {
       const res = await this.$api.FETCH_SPEC_PLAN_C_DETAIL(requestBody)
       console.log(res)
       this.data = res.data
+      this.reportChartOptions.xAxis.data = res.data.reportChartData.dates
+      this.reportChartOptions.series[0].data = res.data.reportChartData.reportCounts
+      this.initCharts()
+    },
+    initCharts () {
+      console.log(this.reportChartOptions.xAxis.data)
+      console.log(this.reportChartOptions.series[0].data)
+      const chartDom = document.getElementById('lineGrid')
+      const myChart = echarts.init(chartDom)
+      const option = {
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          },
+          backgroundColor: '#fff', // 悬浮框背景色
+          borderColor: '#000', // 悬浮框边框颜色
+          borderWidth: 1, // 悬浮框边框宽度
+          textStyle: { // 悬浮框文字样式
+            color: '#000',
+            fontSize: 12
+          }
+        },
+        title: {
+          text: '学生报告提交趋势', // This sets the title of the chart
+          left: 'left', // This positions the title in the center. Options include 'left', 'right', and 'center'.
+          top: 20, // This positions the title 20px from the top of the chart container.
+          bottom: 30
+        },
+        xAxis: {
+          type: 'category',
+          data: this.reportChartOptions.xAxis.data
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            data: this.reportChartOptions.series[0].data,
+            type: 'line',
+            smooth: true
+          }
+        ]
+      }
+      option && myChart.setOption(option)
     },
     /**
      * 自适应问候

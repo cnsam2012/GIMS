@@ -194,6 +194,15 @@ const frameIn = [
         component: _import('addAnnouncement')
       },
       {
+        path: 'selectTutor',
+        name: 'selectTutor',
+        meta: {
+          title: '选择导师',
+          auth: true
+        },
+        component: _import('selectTutor')
+      },
+      {
         path: 'announcement',
         name: 'announcement',
         meta: {

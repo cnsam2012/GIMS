@@ -8,8 +8,8 @@
     <p class="d2-page-cover__title"><b>GPMS</b> is Graduation Practice Management System</p>
     <p class="d2-page-cover__sub-title">优雅的<b>毕业实习管理系统</b></p>
     <p class="d2-page-cover__sub-title">课题《<b>数科院学生毕业实习管理系统的设计与实现</b>》 实现demo</p>
-    <p class="d2-page-cover__sub-title">Front End by <b>D2 Admin {{ $version }}</b>, thanks! </p>
-    <p class="d2-page-cover__sub-title">Powered By&nbsp;<b>陈昶</b></p>
+    <p class="d2-page-cover__sub-title">Front End by D2 Admin {{ $version }}, thanks! </p>
+    <p class="d2-page-cover__sub-title"><b>Powered By&nbsp;陈昶，感谢沈海波教授指导</b></p>
     <p class="d2-page-cover__build-time">FINAL BUILD TIME {{ $buildTime }}</p>
     <slot name="footer"/>
     <!--    <a target="blank" href="https://github.com/d2-projects/d2-admin">-->

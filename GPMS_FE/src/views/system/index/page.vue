@@ -34,7 +34,7 @@ import D2PageCover from './components/d2-page-cover'
 export default {
   components: {
     // D2Badge,
-    D2Help,
+    // D2Help,
     D2PageCover
   }
 }

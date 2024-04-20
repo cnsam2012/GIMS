@@ -1,18 +1,26 @@
 @startuml
+!theme plain
 left to right direction
 skinparam packageStyle rectangle
-actor "实习单位" as unit
+actor "院系管理人员" as unit
 
 rectangle "实习管理系统" {
-  usecase "修改用户名\n和单位名称" as UC1
-  usecase "修改用户密码" as UC2
-  usecase "发布实习岗位" as UC3
-  usecase "填写学生实习评价" as UC4
+  usecase "修改用户密码" as UC1
+  usecase "学生信息管理" as UC2
+  usecase "指导老师信息管理" as UC3
+  usecase "院系领导信息管理" as UC4
+  usecase "实习单位信息管理" as UC5
+  usecase "发布、清空通知" as UC6
+  usecase "统计学生实习情况" as UC7
+
 }
 
 unit --> UC1
 unit --> UC2
 unit --> UC3
 unit --> UC4
+unit --> UC5
+unit --> UC6
+unit --> UC7
 
 @enduml

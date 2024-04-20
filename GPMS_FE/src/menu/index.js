@@ -24,7 +24,7 @@ export const menuHeader = supplementPath([
   {
     path: '/my',
     title: '控制台',
-    icon: 'user'
+    icon: 'tachometer'
   },
   {
     path: '/addReports',
@@ -42,7 +42,7 @@ export const menuHeaderTutorAndCom = supplementPath([
   {
     path: '/my',
     title: '控制台',
-    icon: 'user'
+    icon: 'tachometer'
   }
 ])
 
@@ -64,7 +64,7 @@ export const menuAside = supplementPath([
       {
         path: '/my',
         title: '控制台',
-        icon: 'user'
+        icon: 'tachometer'
       },
       {
         path: '/alterUsername',
@@ -91,7 +91,7 @@ export const menuAside = supplementPath([
   {
     path: '/users_management',
     title: '用户管理',
-    icon: 'user-circle-o'
+    icon: 'user-plus'
   },
   {
     path: '/plans_management',
@@ -112,6 +112,11 @@ export const menuAside = supplementPath([
     path: '/addAnnouncement',
     title: '发布公告',
     icon: 'bullhorn'
+  },
+  {
+    path: '/selectTutor',
+    title: '选择导师',
+    icon: 'address-book-o'
   },
   {
     path: '/announcement',
@@ -138,7 +143,7 @@ export const menuAsideStudent = supplementPath([
       {
         path: '/my',
         title: '控制台',
-        icon: 'user'
+        icon: 'tachometer'
       },
       {
         path: '/alterUsername',
@@ -171,13 +176,118 @@ export const menuSearchSuggest = supplementPath([
     icon: 'home'
   },
   {
-    path: '/TEST_LOGIN',
-    title: '测试登录',
-    icon: 'address-card-o'
+    path: '/myMessage',
+    title: '我的消息',
+    icon: 'bell-o'
+  },
+  {
+    title: '我的',
+    icon: 'user-circle-o',
+    children: [
+      {
+        path: '/my',
+        title: '控制台',
+        icon: 'tachometer'
+      },
+      {
+        path: '/alterUsername',
+        title: '修改用户名',
+        icon: 'pencil'
+      },
+      {
+        path: '/alterPassword',
+        title: '修改密码',
+        icon: 'key'
+      }
+    ]
   },
   {
     path: '/departments_management',
     title: '部门管理',
     icon: 'building-o'
+  },
+  {
+    path: '/reports_management',
+    title: '报告管理',
+    icon: 'file-text-o'
+  },
+  {
+    path: '/users_management',
+    title: '用户管理',
+    icon: 'user-plus'
+  },
+  {
+    path: '/plans_management',
+    title: '实习管理',
+    icon: 'briefcase'
+  },
+  {
+    path: '/planchoose_management',
+    title: '已选实习',
+    icon: 'check-square-o'
+  },
+  {
+    path: '/planscore_management',
+    title: '实习评分',
+    icon: 'sort-numeric-asc'
+  },
+  {
+    path: '/addAnnouncement',
+    title: '发布公告',
+    icon: 'bullhorn'
+  },
+  {
+    path: '/announcement',
+    title: '已发布公告',
+    icon: 'exclamation'
+  }
+])
+
+export const menuSearchSuggest4Student = supplementPath([
+  {
+    path: '/index',
+    title: '首页',
+    icon: 'home'
+  },
+  {
+    path: '/myMessage',
+    title: '我的消息',
+    icon: 'bell-o'
+  },
+  {
+    title: '我的',
+    icon: 'user-circle-o',
+    children: [
+      {
+        path: '/my',
+        title: '控制台',
+        icon: 'tachometer'
+      },
+      {
+        path: '/alterUsername',
+        title: '修改用户名',
+        icon: 'pencil'
+      },
+      {
+        path: '/alterPassword',
+        title: '修改密码',
+        icon: 'key'
+      }
+    ]
+  },
+  {
+    path: '/reports_management',
+    title: '报告管理',
+    icon: 'file-text-o'
+  },
+  {
+    path: '/planchoose_management',
+    title: '已选实习',
+    icon: 'check-square-o'
+  },
+  {
+    path: '/announcement',
+    title: '已发布公告',
+    icon: 'exclamation'
   }
 ])
