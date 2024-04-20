@@ -53,7 +53,7 @@ const frameIn = [
         path: 'my',
         name: 'my',
         meta: {
-          title: '关于我',
+          title: '控制台',
           auth: true
         },
         component: _import('my/my')

@@ -80,12 +80,14 @@ public class PlanApiController {
         try {
             var data = new HashMap<String, Object>();
             Plan planById = planService.getPlanById(planIdRo.getPlanId());
+
             var creatorId = planById.getCreator();
             var userGot = userService.findUserById(creatorId);
             planById.set_creator(userGot.getRoleName());
             data.put("plan", planById);
             return R.ok(GPMSResponseCode.OK.value(), "success", data);
         } catch (Exception e) {
+            e.printStackTrace();
             return R.ok(GPMSResponseCode.SERVER_INTERNAL_ERROR.value(), "fail");
         }
 

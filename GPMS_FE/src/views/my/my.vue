@@ -1,7 +1,7 @@
 <template>
   <d2-container>
     <div style="margin-top: 20px">
-      <el-row :gutter="gutter" v-if="welcomeMesgDisplay">
+      <el-row :gutter="gutter" v-if="false">
         <el-col :span="24">
           <el-card :shadow="shadow" style="width: 100%" :style="{ height: welcomeCardHeight }">
             <div style="display: flex; justify-content: center; align-items: center; width: 100%;"
@@ -293,6 +293,11 @@ export default {
     this.intervalId = setInterval(this.updateWelcomeMsgShow, 1500)
     const res = await this.$api.SYS_USER_GET_CURRENT_INFO()
     this.data = res.data
+    try {
+      console.log(this.data.conversations[0].unreadCount)
+    } catch (e) {
+      this.data.conversations[0].unreadCount = 0
+    }
   },
   beforeDestroy () {
     if (this.intervalId) {

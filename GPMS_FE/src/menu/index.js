@@ -23,7 +23,7 @@ export const menuHeader = supplementPath([
   },
   {
     path: '/my',
-    title: '关于我',
+    title: '控制台',
     icon: 'user'
   },
   {
@@ -41,7 +41,7 @@ export const menuHeaderTutorAndCom = supplementPath([
   },
   {
     path: '/my',
-    title: '关于我',
+    title: '控制台',
     icon: 'user'
   }
 ])
@@ -63,7 +63,7 @@ export const menuAside = supplementPath([
     children: [
       {
         path: '/my',
-        title: '关于我',
+        title: '控制台',
         icon: 'user'
       },
       {
@@ -137,7 +137,7 @@ export const menuAsideStudent = supplementPath([
     children: [
       {
         path: '/my',
-        title: '关于我',
+        title: '控制台',
         icon: 'user'
       },
       {

@@ -261,7 +261,7 @@ export default {
       index,
       row
     }) {
-      this.goToPlanDetail(row.id)
+      this.goToPlanDetail(row.planId)
     },
     goToPlanDetail (planId) {
       this.$router.push({

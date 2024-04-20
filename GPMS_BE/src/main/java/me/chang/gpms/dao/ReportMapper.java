@@ -4,8 +4,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import me.chang.gpms.pojo.Report;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface ReportMapper extends BaseMapper<Report> {
@@ -108,4 +110,10 @@ public interface ReportMapper extends BaseMapper<Report> {
     int findDepartmentSStudentSReportRow(Integer comUserSId);
 
     int findReportRowsByTodayDate(@Param("userId") int userId);
+
+    int selectReportUnreadRows(int userId);
+
+    // 查询学生每天提交的报告数量
+    @Select("SELECT DATE_FORMAT(create_time, '%Y-%m-%d') as date, COUNT(*) as count FROM report WHERE user_id = #{userId} GROUP BY DATE_FORMAT(create_time, '%Y-%m-%d') ORDER BY DATE_FORMAT(create_time, '%Y-%m-%d') ASC")
+    List<Map<String, Object>> findReportDataByStudentId(@Param("userId") Integer userId);
 }

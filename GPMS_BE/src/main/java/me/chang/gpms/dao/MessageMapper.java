@@ -34,6 +34,8 @@ public interface MessageMapper extends BaseMapper<Message> {
      */
     List<Message> selectLetters(String conversationId, int offset, int limit);
     List<Message> selectAllLetters(String conversationId);
+    int selectAllLettersCount(String conversationId);
+
 
     /**
      * 查询某个会话所包含的私信数量

@@ -72,6 +72,14 @@
         AND conversation_id = #{conversationId}
         ORDER BY id DESC
     </select>
+    <select id="selectAllLettersCount" resultType="java.lang.Integer">
+        SELECT
+        COUNT(*)
+        FROM message
+        WHERE status != 2
+        AND from_id != 1
+        AND conversation_id = #{conversationId}
+    </select>
 
     <!--查询某个会话所包含的私信数量-->
     <select id="selectLetterCount" resultType="int">
@@ -158,5 +166,6 @@
         order by create_time desc
         limit #{offset}, #{limit}
     </select>
+
 
 </mapper>

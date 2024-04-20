@@ -157,4 +157,8 @@ public class MessageService {
         int unreadCount = Math.toIntExact(messageMapper.selectCount(queryWrapper));
         return unreadCount;
     }
+
+    public int findLettersRows(String conversationId) {
+        return messageMapper.selectAllLettersCount(conversationId);
+    }
 }

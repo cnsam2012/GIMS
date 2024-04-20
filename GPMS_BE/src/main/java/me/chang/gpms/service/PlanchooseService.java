@@ -67,4 +67,11 @@ public class PlanchooseService {
         qw.eq("plan_id", planId);
         planchooseMapper.delete(qw);
     }
+
+    public int setScore(PlanChoose planChoose, Integer score) {
+        // 设置对象的score为传入的score
+        planChoose.setScore(score);
+        // 使用MyBatis Plus的updateById方法更新记录
+        return planchooseMapper.updateById(planChoose);
+    }
 }

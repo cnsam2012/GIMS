@@ -127,7 +127,9 @@ export default {
     } else {
       res = res.data
       this.report = res.report
-      this.reportMark = res.report.score === -1 ? '' : res.report.score
+      if (!res.report.score === -1) {
+        this.reportMark = res.report.score
+      }
       this.user = res.user
     }
   },

@@ -19,7 +19,11 @@ import org.springframework.web.util.HtmlUtils;
 
 import jakarta.annotation.PostConstruct;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -105,7 +109,7 @@ public class ReportService {
      *
      * @param userId    当传入的 userId = 0 时查找所有用户的报告
      *                  当传入的 userId != 0 时，查找该指定用户的报告
-     * @param current    每页的起始索引
+     * @param current   每页的起始索引
      * @param limit     每页显示多少条数据
      * @param orderMode 排行模式(若传入 1, 则按照热度来排序)
      * @return
@@ -335,5 +339,53 @@ public class ReportService {
     }
 
 
+    public int findReportUnreadRows(int userId) {
+        return reportMapper.selectReportUnreadRows(userId);
+    }
 
+    public int findReportTodayRows(Integer userId) {
+        LocalDate today = LocalDate.now(); // 获取今天的日期
+        LocalDateTime startOfDay = today.atStartOfDay(); // 获取今天的开始时间
+        LocalDateTime endOfDay = today.atTime(LocalTime.MAX); // 获取今天的结束时间
+
+        QueryWrapper<Report> queryWrapper = new QueryWrapper<>();
+        queryWrapper.between("create_time", startOfDay, endOfDay); // 设置时间范围为今天
+        if (userId != null && userId != 0) {
+            queryWrapper.eq("user_id", userId); // 如果userId不为null且不为0，则添加用户ID的查询条件
+        }
+
+        // 调用自定义的查询方法，该方法需要在ReportMapper接口中定义
+        return Math.toIntExact(reportMapper.selectCount(queryWrapper)); // 返回查询到的今天提交的报告数量
+    }
+
+    public int findReportSummaryRows(Integer userId) {
+        QueryWrapper<Report> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", 3); // 设置报告类型为总结
+        if (userId != null && userId != 0) {
+            queryWrapper.eq("user_id", userId); // 如果userId不为null且不为0，则添加用户ID的查询条件
+        }
+        // 调用自定义的查询方法，该方法需要在ReportMapper接口中定义
+        return Math.toIntExact(reportMapper.selectCount(queryWrapper)); // 返回查询到的今天提交的报告数量
+    }
+
+    public double calculateReportScore(Integer userId, Integer type) {
+        QueryWrapper<Report> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", type); // 设置报告类型
+        if (userId != null && userId != 0) {
+            queryWrapper.eq("user_id", userId); // 如果userId不为null且不为0，则添加用户ID的查询条件
+        }
+
+        List<Report> reports = reportMapper.selectList(queryWrapper);
+        double res = 0.00;
+
+        for (Report report : reports){
+            res = res + report.getScore();
+        }
+        res = res / reports.size();
+        return res;
+    }
+
+    public List<Map<String, Object>> findReportDataByStudentId(Integer userId) {
+        return reportMapper.findReportDataByStudentId(userId);
+    }
 }

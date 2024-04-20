@@ -161,6 +161,18 @@
         </if>
     </select>
 
+
+    <select id="selectReportUnreadRows" resultType="java.lang.Integer">
+        select count(*)
+        from report
+        where status != 2
+        <include refid="logicDelete"></include>
+        <if test="userId != 0">
+            and user_id = #{userId}
+        </if>
+        and is_read = 0
+    </select>
+
     <!--    <update id="updateCommentCount">-->
     <!--        update report-->
     <!--        set comment_count = #{commentCount}-->

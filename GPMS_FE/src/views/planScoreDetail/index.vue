@@ -1,37 +1,38 @@
 <template>
   <d2-container>
-    <template slot="header">
-      <h1>
-        xxx 的实习： 评分页面 {{ pid }}
-      </h1>
-    </template>
-
     <div style="margin-top: 20px">
       <el-row :gutter="gutter">
-        <el-col :span="4">
-          <el-card :shadow="shadow" style="height: 130px;background-color: rgba(255,0,0,0.07)">
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100px;">
-              <h1 style="margin: 5px">不可评分</h1>
-              <span>存在待阅报告</span>
-            </div>
-          </el-card>
-        </el-col>
-        <el-col :span="4">
-          <el-card :shadow="shadow" style="height: 130px;background-color: rgba(85,255,0,0.07)">
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100px;">
-              <h1 style="margin: 5px">等待评分</h1>
-              <span>请提交最终得分</span>
-            </div>
-          </el-card>
-        </el-col>
+
+        <template v-if="data.isMarkable">
+          <el-col :span="8">
+            <el-card :shadow="shadow" style="height: 130px;background-color: rgba(85,255,0,0.07)">
+              <div
+                style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100px;">
+                <h1 style="margin: 5px">等待评分</h1>
+                <span>{{ data.markableReason }}</span>
+              </div>
+            </el-card>
+          </el-col>
+        </template>
+        <template v-else>
+          <el-col :span="8">
+            <el-card :shadow="shadow" style="height: 130px;background-color: rgba(255,0,0,0.07)">
+              <div
+                style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100px;">
+                <h1 style="margin: 5px">不可评分</h1>
+                <span>{{ data.markableReason }}</span>
+              </div>
+            </el-card>
+          </el-col>
+        </template>
         <el-col :span="4">
           <el-card :shadow="shadow" style="height: 130px">
             <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
               <!-- 新增一个div作为容器，用于包裹需要靠左对齐的内容 -->
               <div style="align-self: flex-start;">
                 <span style="margin: 0px;">学生姓名</span>
-                <h1 style="margin: 0px;">刘伊尔</h1>
-                <span style="margin-top: 5px;">xs</span>
+                <h1 style="margin: 0px;">{{ data.student.roleName }}</h1>
+                <span style="margin-top: 5px;">{{ data.student.type === 1 ? '学生' : '非学生' }}</span>
               </div>
             </div>
           </el-card>
@@ -40,27 +41,27 @@
           <el-card :shadow="shadow" style="height: 130px">
             <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
               <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px; color: red">30</span>
+                <span style="font-size: 40px; color: red">{{ data.reportUnreadRows }}</span>
                 <div class="bottom clearfix">
                   <span style="color: #99a9bf">报告待阅</span>
                 </div>
               </el-card>
               <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px">2</span>
+                <span style="font-size: 40px">{{ data.todayCreatedRows }}</span>
                 <div class="bottom clearfix">
                   <span style="color: #99a9bf">今日提交</span>
                 </div>
               </el-card>
               <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px">302</span>
+                <span style="font-size: 40px">{{ data.messageCount }}</span>
                 <div class="bottom clearfix">
                   <span style="color: #99a9bf">对话总数</span>
                 </div>
               </el-card>
               <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px;">20</span>
+                <span style="font-size: 40px;">{{ data.reportSummaryRows }}</span>
                 <div class="bottom clearfix">
-                  <span style="color: #99a9bf">重要通知</span>
+                  <span style="color: #99a9bf">提交总结</span>
                 </div>
               </el-card>
             </div>
@@ -70,33 +71,26 @@
       <el-row :gutter="gutter">
         <el-col :span="12">
           <el-card :shadow="shadow" style="height: 280px">
-            <el-descriptions title="用户信息" direction="vertical" :column="2">
-              <el-descriptions-item label="手机号">{{ data.phone ? data.phone : '暂无' }}</el-descriptions-item>
-              <el-descriptions-item label="电子邮件">{{ data.email }}</el-descriptions-item>
-              <el-descriptions-item label="用户类型">{{ data.type }}</el-descriptions-item>
-              <el-descriptions-item label="状态">{{ data.status }}</el-descriptions-item>
-              <el-descriptions-item label="创建时间">{{ data.createTime }}</el-descriptions-item>
-              <el-descriptions-item label="部门ID">{{ data.departmentId }}</el-descriptions-item>
-            </el-descriptions>
+<!--            这里放一个折线图，描述学生提交报告折线图-->
           </el-card>
         </el-col>
         <el-col :span="12" style="display: flex; flex-direction: column; justify-content: space-between; height: 280px">
           <el-card :shadow="shadow" style="height: 130px">
             <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
               <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px">30%</span>
+                <span style="font-size: 40px">{{ data.plan.percentInWeeklyReport }}%</span>
                 <div class="bottom clearfix">
                   <span style="color: #99a9bf">周记占比</span>
                 </div>
               </el-card>
               <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px">10%</span>
+                <span style="font-size: 40px">{{ data.plan.percentInMonthlyReport }}%</span>
                 <div class="bottom clearfix">
                   <span style="color: #99a9bf">月记占比</span>
                 </div>
               </el-card>
               <el-card shadow="hover" style="width:272px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px">50%</span>
+                <span style="font-size: 40px">{{ data.plan.percentInSummary }}%</span>
                 <div class="bottom clearfix">
                   <span style="color: #99a9bf">总结占比</span>
                 </div>
@@ -107,9 +101,9 @@
             <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
               <!-- 新增一个div作为容器，用于包裹需要靠左对齐的内容 -->
               <div style="align-self: flex-start;">
-                <span style="margin: 0px;">正在参加的实习</span>
-                <h1 style="margin: 0px;">网络工程师</h1>
-                <span style="margin-top: 5px;">康陶科技 - 林毅儿</span>
+                <span style="margin: 0px;">{{ data.planLineOne }}</span>
+                <h1 style="margin: 0px;">{{ data.planLineTwo }}</h1>
+                <span style="margin-top: 5px;">{{ data.planLineThree }}</span>
               </div>
             </div>
           </el-card>
@@ -120,7 +114,7 @@
         <el-col :span="16">
           <el-card :shadow="shadow" style="width: 100%" ref="elStepsCard">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; width: 100%">
-              <el-steps :active="2" style="width: 100%;" finish-status="success">
+              <el-steps :active="data.planStage" style="width: 100%;" finish-status="success">
                 <el-step title="选择实习"
                          description="在实习准备阶段，学校、单位会先考察潜在实习单位，并开设实习课程。学生可以选择集中式实习或自主寻找实习机会，自主实习的学生请在实习管理中填写具体实习信息。"></el-step>
                 <el-step title="进行实习"
@@ -136,22 +130,37 @@
             <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
               <div style="align-self: flex-start;">
                 <span style="margin: 0px;"><i class="el-icon-edit"></i></span>
-                <h1 style="margin: 0px;">78</h1>
+                <h1 style="margin: 0px;">{{ data.score }}</h1>
                 <span style="margin-top: 5px;">计划评分（计算得）</span>
               </div>
             </div>
           </el-card>
         </el-col>
         <el-col :span="4">
-          <el-card :shadow="shadow" :style="{ height: stepsCardHeight }">
-            <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
-              <div style="align-self: flex-start;">
-                <span style="margin: 0px;"><i class="el-icon-check"></i></span>
-                <h1 style="margin: 0px;">提交得分</h1>
-                <span style="margin-top: 5px;">点击确认并提交得分</span>
+
+          <template v-if="data.isMarkable">
+            <el-card :shadow="shadow" :style="{ height: stepsCardHeight }" @click.native="my_submit">
+              <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
+                <div style="align-self: flex-start;">
+                  <span style="margin: 0px;"><i class="el-icon-check"></i></span>
+                  <h1 style="margin: 0px;">提交得分</h1>
+                  <span style="margin-top: 5px;">点击确认并提交得分</span>
+                </div>
               </div>
-            </div>
-          </el-card>
+            </el-card>
+          </template>
+          <template v-else>
+            <el-card :shadow="shadow" :style="{ height: stepsCardHeight }"  class="is-disabled">
+              <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
+                <div style="align-self: flex-start;">
+                  <span style="margin: 0px;"><i class="el-icon-check"></i></span>
+                  <h1 style="margin: 0px;">提交得分</h1>
+                  <span style="margin-top: 5px;">点击确认并提交得分</span>
+                </div>
+              </div>
+            </el-card>
+          </template>
+
         </el-col>
       </el-row>
       <!--  实习状态end  -->
@@ -179,7 +188,69 @@ export default {
       welcomeCardHeight: '600px',
       msg: '正在加载...',
       pid: -1,
-      data: {}
+      data: {
+        markableReason: '-',
+        messageCount: 21,
+        student: {
+          id: -1,
+          username: '-',
+          password: '',
+          salt: '',
+          email: '-',
+          phone: null,
+          type: 1,
+          status: 1,
+          activationCode: '-',
+          headerUrl: '-',
+          createTime: '2024-04-07T03:30:38.000+00:00',
+          wechatOpenId: null,
+          departmentId: -1,
+          roleName: '-',
+          tutor: null
+        },
+        reportSummaryRows: 0,
+        reportChartData: {
+          dates: [
+            '2024-04-11'
+          ],
+          reportCounts: [
+            1
+          ]
+        },
+        todayCreatedRows: 0,
+        reportUnreadRows: 0,
+        planLineTwo: '-------',
+        planLineOne: '-------',
+        plan: {
+          id: 40,
+          type: '-',
+          name: '-',
+          majorOrieId: '-',
+          grade: 4,
+          startD: '2024-01-01T00:00:00.000+00:00',
+          endD: '2024-07-01T00:00:00.000+00:00',
+          classHour: 0,
+          credit: 4,
+          percentIn: 0,
+          percentEx: 0,
+          content: '-',
+          objective: '-',
+          demand: '-',
+          scoreCalType: 0,
+          percentInDailyReport: 5,
+          percentInWeeklyReport: 15,
+          percentInMonthlyReport: 30,
+          percentInSummary: 50,
+          deadline: '2024-04-30T16:00:00.000+00:00',
+          creator: 910020,
+          _creator: null,
+          deleted: false
+        },
+        planStage: 2,
+        planLineThree: '- ',
+        isMarkable: true,
+        score: -1
+      }
     }
   },
   mounted () {
@@ -194,44 +265,58 @@ export default {
       'close'
     ]),
     async my_submit () {
-      // this.$confirm('此操作将参加该实习, 是否继续?', '提示', {
-      //   confirmButtonText: '确定',
-      //   cancelButtonText: '取消',
-      //   type: 'warning',
-      //   confirmButtonClass: 'el-button el-button--default el-button--small el-button--success',
-      //   showClose: false
-      // }).then(() => {
-      //   var data = {
-      //     userId: this.info.userId,
-      //     planId: this.data.id,
-      //     status: 2
-      //   }
-      //   console.log(data)
-      // }).catch(() => {
-      //   this.$message({
-      //     type: 'info',
-      //     message: '已取消'
-      //   })
-      // })
-      this.$confirm('此操作将参加该实习, 是否继续?', '提示', {
+      // TODO
+      // 这里的后端接口是 this.$api.MARKING_A_PLAN_C(request_body)
+      // request_body ={
+      //   "id": 32,
+      //     "score": -1
+      // }
+      // 点击 提交得分 后，弹出一个带输入框的确认框，输入框的值是this.data.score，输入框提示的内容是“为 this.data.roleName 的实习评分”
+      // 包含确定和取消按钮，点击确定后，访问后端接口提交得分
+
+      // 使用Element UI的MessageBox.prompt来弹出输入框
+      this.$prompt('为 ' + this.data.student.roleName + ' 的实习评分', '提交得分', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning',
-        confirmButtonClass: 'el-button el-button--default el-button--small el-button--success',
-        showClose: false
-      }).then(async () => {
-        var data = {
-          userId: this.info.userId,
-          planId: this.data.id,
-          status: 2
+        // 设置输入框的初始值为当前的分数
+        inputValue: this.data.score,
+        // 验证输入的评分是否符合要求
+        inputValidator: (value) => {
+          // 首先，检查输入是否为数字
+          if (isNaN(value)) {
+            return '只能输入数字'
+          }
+          // 将输入值转换为数字类型，以进行范围检查
+          const numberValue = Number(value)
+          // 然后，检查数字是否在0到100之间
+          if (numberValue < 0 || numberValue > 100) {
+            return '评分范围应在0到100之间'
+          }
+          // 如果通过所有检查，则返回true，表示输入有效
+          return true
+        },
+        inputErrorMessage: '无效的评分'
+      }).then(({ value }) => {
+        // 确定按钮被点击，value为输入的评分
+        // 调用后端接口提交评分
+        const requestBody = {
+          id: this.pid, // 假设使用计划ID作为提交评分的标识
+          score: value
         }
-        await this.$api.ADD_A_PLAN_C(data)
-        await this.$router.push({ name: 'planchoose_management' })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消'
+        // 替换以下代码为实际调用后端接口的代码
+        this.$api.MARKING_A_PLAN_C(requestBody).then(response => {
+          // 处理响应
+          this.$message({
+            type: 'success',
+            message: '评分提交成功'
+          })
+        }).catch(e => {
+          // 处理错误
+          this.$message.error('评分提交失败: ' + e)
         })
+        console.log('提交的评分:', requestBody) // 测试输出，实际开发中应调用接口
+      }).catch(() => {
+        // 取消按钮被点击
       })
     },
     updateCardHeight () {
@@ -253,11 +338,10 @@ export default {
     async refreshData () {
       var pid = this.$route.params.planid
       this.pid = pid
-      // var requestBody = {
-      //   planId: pid
-      // }
-      // const res = await this.$api.FETCH_SPEC_PLAN(requestBody)
-      // this.data = res.data.plan
+      var requestBody = pid
+      const res = await this.$api.FETCH_SPEC_PLAN_C_DETAIL(requestBody)
+      console.log(res)
+      this.data = res.data
     },
     /**
      * 自适应问候
@@ -354,5 +438,10 @@ export default {
 
 .clearfix:after {
   clear: both
+}
+
+.is-disabled {
+  pointer-events: none; /* 禁止点击 */
+  opacity: 0.5; /* 半透明显示 */
 }
 </style>

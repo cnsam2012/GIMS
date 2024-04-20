@@ -39,6 +39,13 @@ export default ({
       data
     })
   },
+  FETCH_SPEC_PLAN_C_DETAIL (data = {}) {
+    return request({
+      url: 'planc/detail',
+      method: 'post',
+      data
+    })
+  },
   ADD_A_PLAN (data = {}) {
     return request({
       url: 'plan/add',
@@ -50,6 +57,13 @@ export default ({
     return request({
       url: 'planc/add',
       method: 'post',
+      data
+    })
+  },
+  MARKING_A_PLAN_C (data = {}) {
+    return request({
+      url: 'planc/score',
+      method: 'put',
       data
     })
   },

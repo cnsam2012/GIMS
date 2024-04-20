@@ -131,6 +131,10 @@ public class LoginApiController {
         Map<String, Object> data = new HashMap<>();
         if (map == null || map.isEmpty()) {
             data.put("msg", "注册成功, 我们已经向您的邮箱发送了一封激活邮件，请尽快激活!");
+
+//            TODO: 注册后给用户发送欢迎信息，让message表识别到新用户，避免unreadCount空指针异常
+//            this.sendMessage();
+
             var status = HttpStatus.SC_OK; //200
             return R.ok(GPMSResponseCode.OK.value(), "registry_done");
         } else {
@@ -423,13 +427,11 @@ public class LoginApiController {
             // 查询正在参加的实习的阶段
             int planStage;
             PlanChoose plancByUserId = planchooseService.getPlancByUserId(loginUser.getId());
-
             // 查询实习阶段
             planStage = 1; // 初始假设为 planc 中没有记录
             String planLineOne = "尚未选择实习";
             String planLineTwo = "请尽快选择实习";
             String planLineThree = "请在学院规定的时间内选择已发布的实习、或添加自主实习信息";
-
             if (ObjectUtil.isNotEmpty(plancByUserId)) {
                 try {
                     // 检查 plancByUserId 是否已得分
@@ -441,7 +443,7 @@ public class LoginApiController {
                         var planName = planById.getName();
                         var departmentName = departmentsService.getDepartmentByCreator(
                                 planById.getCreator()
-                        );
+                        ).getName();
                         planLineThree = planName + " - " + departmentName + " (" + planById.getType() + ") ";
                     } else {
                         planStage = 2;
@@ -460,7 +462,6 @@ public class LoginApiController {
                     planLineTwo = "暂无记录";
                     planLineThree = "请联系管理员";
                 }
-
             }
             data.put("planStage", planStage); // 添加实习阶段到data
             data.put("planLineOne", planLineOne); // 添加实习阶段到data
@@ -512,6 +513,29 @@ public class LoginApiController {
             return "邮件验证码错误";
         }
         return "";
+    }
+
+    private void sendMessage(int fromId, int toId, String messageContent) {
+        // 发送部门信息通知
+        Message message = new Message();
+        String toRoleName = userService.findUserById(toId).getRoleName();
+        String fromRoleName = userService.findUserById(fromId).getRoleName();
+
+        message.setFromId(fromId);
+        message.set_fromId(fromRoleName);
+
+        message.setToId(toId);
+        message.set_toId(toRoleName);
+
+        if (message.getFromId() < message.getToId()) {
+            message.setConversationId(message.getFromId() + "_" + message.getToId());
+        } else {
+            message.setConversationId(message.getToId() + "_" + message.getFromId());
+        }
+        message.setStatus(0); // 默认就是 0 未读，可不写
+        message.setCreateTime(new Date());
+        message.setContent(messageContent);
+        messageService.addMessage(message);
     }
 }
 
