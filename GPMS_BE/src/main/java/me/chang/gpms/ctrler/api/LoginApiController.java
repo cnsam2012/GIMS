@@ -388,10 +388,18 @@ public class LoginApiController {
             // 查询报告总数
             int reportRows = reportService.findReportRows(loginUser.getId());
             data.put("reportRows", reportRows);
+            if (loginUser.getType() != 1) {
+                reportRows = reportService.findReportRows(0);
+                data.put("reportRows", reportRows);
+            }
 
             // 查询今日提交的报告数量
             int todaySubmitReportRows = reportService.findReportRowsByTodayDate(loginUser.getId());
             data.put("todaySubmitReportRows", todaySubmitReportRows);
+            if (loginUser.getType() != 1) {
+                todaySubmitReportRows = reportService.findReportRowsByTodayDate(0);
+                data.put("todaySubmitReportRows", todaySubmitReportRows);
+            }
 
             // 查询未读消息数量（私信+通知）
             int unreadSum = messageService.findLetterUnreadCount(loginUser.getId(), null) + messageService.findNoticeUnReadCount(loginUser.getId(), null);

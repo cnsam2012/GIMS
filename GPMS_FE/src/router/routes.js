@@ -212,6 +212,15 @@ const frameIn = [
         component: _import('announcementDetail')
       },
       {
+        path: 'stepDescription',
+        name: 'stepDescription',
+        meta: {
+          title: '实习过程',
+          auth: true
+        },
+        component: _import('stepDescription')
+      },
+      {
         path: 'myMessage',
         name: 'myMessage',
         meta: {

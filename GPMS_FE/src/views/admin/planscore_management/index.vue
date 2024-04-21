@@ -131,7 +131,20 @@ export default {
         },
         {
           title: '创建时间',
-          key: 'createTime'
+          key: 'createTime',
+          formatter: (row, column, cellValue, index) => {
+            try {
+              var dateRegex = /^\d{4}-\d{2}-\d{2}/
+              var match = cellValue.match(dateRegex)
+              if (match) {
+                return match[0] // 返回匹配到的日期部分
+              } else {
+                return 'NULL' // 如果没有匹配到日期部分，则返回空字符串
+              }
+            } catch (e) {
+              console.warn(e)
+            }
+          }
         }
       ],
       data: [
@@ -151,7 +164,7 @@ export default {
       },
       pagination: {
         currentPage: 1,
-        pageSize: 4,
+        pageSize: 6,
         total: 15
       },
       formOptions: {

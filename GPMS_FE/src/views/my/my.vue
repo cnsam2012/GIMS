@@ -110,18 +110,20 @@
         <el-col :span="12" style="display: flex; flex-direction: column; justify-content: space-between; height: 280px">
           <el-card :shadow="shadow" style="height: 130px">
             <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
-              <el-card shadow="none" style="width:130px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px">{{ data.activateUser }}</span>
-                <div class="bottom clearfix">
-                  <span style="color: #99a9bf">活跃用户</span>
-                </div>
-              </el-card>
-              <el-card shadow="none" style="width:130px;height: 95px; border: none; margin-right: 10px">
-                <span style="font-size: 40px">{{ data.systemUv }}</span>
-                <div class="bottom clearfix">
-                  <span style="color: #99a9bf">系统UV</span>
-                </div>
-              </el-card>
+              <template v-if="info.userType === 9">
+                <el-card shadow="none" style="width:130px;height: 95px; border: none; margin-right: 10px">
+                  <span style="font-size: 40px">{{ data.activateUser }}</span>
+                  <div class="bottom clearfix">
+                    <span style="color: #99a9bf">活跃用户</span>
+                  </div>
+                </el-card>
+                <el-card shadow="none" style="width:130px;height: 95px; border: none; margin-right: 10px">
+                  <span style="font-size: 40px">{{ data.systemUv }}</span>
+                  <div class="bottom clearfix">
+                    <span style="color: #99a9bf">系统UV</span>
+                  </div>
+                </el-card>
+              </template>
               <el-card shadow="hover" style="width:272px;height: 95px; border: none; margin-right: 10px"
                        @click.native="onNewMsgClick">
                 <template v-if="data.conversations[0].unreadCount == 0">
@@ -143,63 +145,118 @@
               </el-card>
             </div>
           </el-card>
-          <el-card :shadow="shadow" style="height: 130px" @click.native="onPlanShowClick">
-            <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
-              <!-- 新增一个div作为容器，用于包裹需要靠左对齐的内容 -->
-              <div style="align-self: flex-start;">
-                <span style="margin: 0px;">{{ data.planLineOne }}</span>
-
-                <template v-if="data.planStage === 1">
-                  <h1 style="margin: 0px; color: red">{{ data.planLineTwo }}</h1>
-                </template>
-                <template v-else>
-                  <h1 style="margin: 0px;">{{ data.planLineTwo }}</h1>
-                </template>
-
-                <span style="margin-top: 5px;">{{ data.planLineThree }}</span>
+          <template v-if="info.userType === 9">
+            <el-card :shadow="shadow" style="height: 130px" @click.native="toRepoManagement">
+              <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
+                <!-- 新增一个div作为容器，用于包裹需要靠左对齐的内容 -->
+                <div style="align-self: flex-start;">
+                  <span style="margin: 0px;">最新提交</span>
+                  <h1 style="margin: 0px;">施夕婉的总结</h1>
+                  <span style="margin-top: 5px;">“这是我的总结”</span>
+                </div>
               </div>
-            </div>
-          </el-card>
+            </el-card>
+          </template>
+          <template v-else>
+            <el-card :shadow="shadow" style="height: 130px" @click.native="onPlanShowClick">
+              <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
+                <!-- 新增一个div作为容器，用于包裹需要靠左对齐的内容 -->
+                <div style="align-self: flex-start;">
+                  <span style="margin: 0px;">{{ data.planLineOne }}</span>
+
+                  <template v-if="data.planStage === 1">
+                    <h1 style="margin: 0px; color: red">{{ data.planLineTwo }}</h1>
+                  </template>
+                  <template v-else>
+                    <h1 style="margin: 0px;">{{ data.planLineTwo }}</h1>
+                  </template>
+
+                  <span style="margin-top: 5px;">{{ data.planLineThree }}</span>
+                </div>
+              </div>
+            </el-card>
+          </template>
         </el-col>
       </el-row>
       <!--  实习状态  -->
       <el-row :gutter="gutter">
         <el-col :span="16">
-          <el-card :shadow="shadow" style="width: 100%" ref="elStepsCard" @click.native="onPlanStepClick">
-            <div style="display: flex; justify-content: center; align-items: center; height: 100%; width: 100%">
-              <el-steps :active="data.planStage" style="width: 100%;" finish-status="success">
-                <el-step title="选择实习"
-                         description="在实习准备阶段，学校、单位会先考察潜在实习单位，并开设实习课程。学生可以选择集中式实习或自主寻找实习机会，自主实习的学生请在实习管理中填写具体实习信息。"></el-step>
-                <el-step title="进行实习"
-                         description="在实习实施阶段，学生须定期提交实习周报和月报以记录实习体验。同时，指导老师会提供日常指导，监督实习进度。"></el-step>
-                <el-step title="实习结束"
-                         description="实习总结阶段，学生需撰写实习报告，反思和总结实习经历，并提交所有实习记录文件。指导老师将对学生的实习表现进行评价和等级评定。"></el-step>
-              </el-steps>
-            </div>
-          </el-card>
-        </el-col>
-        <el-col :span="4">
-          <el-card :shadow="shadow" :style="{ height: stepsCardHeight }" @click.native="onSubmitReportClick">
-            <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
-              <div style="align-self: flex-start;">
-                <span style="margin: 0px;"><i class="el-icon-circle-plus-outline"></i></span>
-                <h1 style="margin: 0px;">提交报告</h1>
-                <span style="margin-top: 5px;">点此快速提交报告</span>
+          <template v-if="info.userType === 9">
+            <el-card :shadow="shadow" style="width: 100%" ref="elStepsCard" @click.native="onPlanStepDescClick">
+              <div style="display: flex; justify-content: center; align-items: center; height: 100%; width: 100%">
+                <el-steps :active="data.planStage" style="width: 100%;" finish-status="success">
+                  <el-step title="选择实习"
+                           description="在实习准备阶段，学校、单位会先考察潜在实习单位，并开设实习课程。学生可以选择集中式实习或自主寻找实习机会，自主实习的学生请在实习管理中填写具体实习信息。"></el-step>
+                  <el-step title="进行实习"
+                           description="在实习实施阶段，学生须定期提交实习周报和月报以记录实习体验。同时，指导老师会提供日常指导，监督实习进度。"></el-step>
+                  <el-step title="实习结束"
+                           description="实习总结阶段，学生需撰写实习报告，反思和总结实习经历，并提交所有实习记录文件。指导老师将对学生的实习表现进行评价和等级评定。"></el-step>
+                </el-steps>
               </div>
-            </div>
-          </el-card>
-        </el-col>
-        <el-col :span="4">
-          <el-card :shadow="shadow" :style="{ height: stepsCardHeight }" @click.native="onChangePlanClick">
-            <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
-              <div style="align-self: flex-start;">
-                <span style="margin: 0px;"><i class="el-icon-info"></i></span>
-                <h1 style="margin: 0px;">更改实习</h1>
-                <span style="margin-top: 5px;">点此更改实习信息</span>
+            </el-card>
+          </template>
+          <template v-else>
+            <el-card :shadow="shadow" style="width: 100%" ref="elStepsCard" @click.native="onPlanStepClick">
+              <div style="display: flex; justify-content: center; align-items: center; height: 100%; width: 100%">
+                <el-steps :active="data.planStage" style="width: 100%;" finish-status="success">
+                  <el-step title="选择实习"
+                           description="在实习准备阶段，学校、单位会先考察潜在实习单位，并开设实习课程。学生可以选择集中式实习或自主寻找实习机会，自主实习的学生请在实习管理中填写具体实习信息。"></el-step>
+                  <el-step title="进行实习"
+                           description="在实习实施阶段，学生须定期提交实习周报和月报以记录实习体验。同时，指导老师会提供日常指导，监督实习进度。"></el-step>
+                  <el-step title="实习结束"
+                           description="实习总结阶段，学生需撰写实习报告，反思和总结实习经历，并提交所有实习记录文件。指导老师将对学生的实习表现进行评价和等级评定。"></el-step>
+                </el-steps>
               </div>
-            </div>
-          </el-card>
+            </el-card>
+          </template>
+
         </el-col>
+
+        <template v-if="info.userType === 9">
+          <el-col :span="8">
+            <el-card :shadow="shadow" :style="{ height: stepsCardHeight }" @click.native="onMarkReportClick">
+              <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
+                <div style="align-self: flex-start;">
+                  <span style="margin: 0px;"><i class="el-icon-circle-plus-outline"></i></span>
+                  <h1 style="margin: 0px;">批阅报告</h1>
+                  <span style="margin-top: 5px;">点此快速批阅报告</span>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
+        </template>
+        <template v-else>
+          <el-col :span="4">
+            <el-card :shadow="shadow" :style="{ height: stepsCardHeight }" @click.native="onSubmitReportClick">
+              <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
+                <div style="align-self: flex-start;">
+                  <span style="margin: 0px;"><i class="el-icon-circle-plus-outline"></i></span>
+                  <h1 style="margin: 0px;">提交报告</h1>
+                  <span style="margin-top: 5px;">点此快速提交报告</span>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
+        </template>
+
+
+        <template v-if="info.userType === 9">
+        </template>
+
+        <template v-else>
+          <el-col :span="4">
+            <el-card :shadow="shadow" :style="{ height: stepsCardHeight }" @click.native="onChangePlanClick">
+              <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
+                <div style="align-self: flex-start;">
+                  <span style="margin: 0px;"><i class="el-icon-info"></i></span>
+                  <h1 style="margin: 0px;">更改实习</h1>
+                  <span style="margin-top: 5px;">点此更改实习信息</span>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
+        </template>
+
       </el-row>
       <!--  实习状态end  -->
     </div>
@@ -308,7 +365,10 @@ export default {
     ...mapState('d2admin', {
       searchActive: state => state.search.active,
       searchHotkey: state => state.search.hotkey
-    })
+    }),
+    ...mapState('d2admin/user', [
+      'info'
+    ])
   },
   methods: {
     ...mapMutations({
@@ -473,6 +533,21 @@ export default {
       // TODO 按照当前步骤作出不同跳转
       this.$router.push({
         path: '/planchoose_management'
+      })
+    },
+    onMarkReportClick () {
+      this.$router.push({
+        path: '/reports_management'
+      })
+    },
+    toRepoManagement () {
+      this.$router.push({
+        path: '/markReports/110027'
+      })
+    },
+    onPlanStepDescClick () {
+      this.$router.push({
+        path: '/stepDescription'
       })
     }
   }

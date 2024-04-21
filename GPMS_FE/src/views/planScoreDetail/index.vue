@@ -16,7 +16,8 @@
         </template>
         <template v-else>
           <el-col :span="8">
-            <el-card :shadow="shadow" style="height: 130px;background-color: rgba(255,0,0,0.07)">
+            <el-card :shadow="shadow" style="height: 130px;background-color: rgba(255,0,0,0.07)"
+                     @click.native="onMarkingFaildClick">
               <div
                 style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100px;">
                 <h1 style="margin: 5px">不可评分</h1>
@@ -40,7 +41,8 @@
         <el-col :span="12">
           <el-card :shadow="shadow" style="height: 130px">
             <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
-              <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
+              <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px"
+                       @click.native="toReadingRepo">
                 <span style="font-size: 40px; color: red">{{ data.reportUnreadRows }}</span>
                 <div class="bottom clearfix">
                   <span style="color: #99a9bf">报告待阅</span>
@@ -52,7 +54,8 @@
                   <span style="color: #99a9bf">今日提交</span>
                 </div>
               </el-card>
-              <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px">
+              <el-card shadow="hover" style="width:130px;height: 95px; border: none; margin-right: 10px"
+                       @click.native="toMessageReading">
                 <span style="font-size: 40px">{{ data.messageCount }}</span>
                 <div class="bottom clearfix">
                   <span style="color: #99a9bf">对话总数</span>
@@ -181,7 +184,6 @@ import * as echarts from 'echarts'
 // import 'echarts/lib/component/tooltip'
 // import 'echarts/lib/component/title'
 import { mapActions, mapState } from 'vuex'
-
 export default {
   computed: {
     ...mapState('d2admin/user', [
@@ -295,6 +297,35 @@ export default {
     ...mapActions('d2admin/page', [
       'close'
     ]),
+    async onMarkingFaildClick () {
+      this.$prompt('提醒 ' + this.data.student.roleName, '发送提醒', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        // 设置输入框的初始值为当前的分数
+        inputValue: '您好，您的实习尚不能被评分，理由是：' + this.data.markableReason + '。请尽快完成任务',
+        inputErrorMessage: '无效的内容'
+      }).then(({ value }) => {
+        // 确定按钮被点击，value为输入的评分
+        // 调用后端接口提交评分
+        const requestBody = {
+          toName: this.data.student.roleName,
+          content: value
+        }
+        // 替换以下代码为实际调用后端接口的代码
+        this.$api.SEND_MESSAGE(requestBody).then(response => {
+          // 处理响应
+          this.$message({
+            type: 'success',
+            message: '信息发送成功'
+          })
+        }).catch(e => {
+          // 处理错误
+          this.$message.error('信息发送失败: ' + e)
+        })
+      }).catch(() => {
+        // 取消按钮被点击
+      })
+    },
     async my_submit () {
       // TODO
       // 这里的后端接口是 this.$api.MARKING_A_PLAN_C(request_body)
@@ -441,6 +472,24 @@ export default {
         state = '晚上好! '
       }
       return state
+    },
+    toReadingRepo () {
+      this.$router.push({
+        path: '/reports_management'
+      })
+    },
+    toMessageReading () {
+      let conversationId = ''
+      if (this.data.student.id > this.info.userId) {
+        conversationId = this.info.userId + '_' + this.data.student.id
+      } else {
+        conversationId = this.data.student.id + '_' + this.info.userId
+      }
+      const a = this.info.rolename
+      const b = this.data.student.roleName
+      this.$router.push({
+        path: '/myMessageDetail/' + conversationId + '/' + a + '/' + b
+      })
     }
   }
 }

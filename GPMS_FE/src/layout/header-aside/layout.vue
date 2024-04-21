@@ -23,7 +23,7 @@
           <!-- 如果你只想在开发环境显示这个按钮请添加 v-if="$env === 'development'" -->
           <d2-header-message/>
           <d2-header-search @click="handleSearchClick"/>
-          <d2-header-log/>
+<!--          <d2-header-log/>-->
           <d2-header-fullscreen/>
           <!--          <d2-header-theme/>-->
           <d2-header-size/>

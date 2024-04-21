@@ -353,7 +353,7 @@ public class PlanChooseApiController {
                     planLineThree = departmentName + " - " + creatorName + " (" + planById.getType() + ") ";
                 }
             } catch (Exception e) {
-                log.error(e.toString());
+                e.printStackTrace();
                 planLineOne = "实习信息加载出错";
                 planLineTwo = "暂无记录";
                 planLineThree = "请联系管理员";
