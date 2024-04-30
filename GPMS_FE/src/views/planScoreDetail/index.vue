@@ -133,7 +133,7 @@
             <div style="display: flex; align-items: center; justify-content: flex-start; height: 100%; width: 100%;">
               <div style="align-self: flex-start;">
                 <span style="margin: 0px;"><i class="el-icon-edit"></i></span>
-                <h1 style="margin: 0px;">{{ data.score }}</h1>
+                <h1 style="margin: 0px;">{{ toFixed2(data.score) }}</h1>
                 <span style="margin-top: 5px;">计划评分（计算得）</span>
               </div>
             </div>
@@ -490,6 +490,12 @@ export default {
       this.$router.push({
         path: '/myMessageDetail/' + conversationId + '/' + a + '/' + b
       })
+    },
+    toFixed2(value) {
+      if (isNaN(value)) {
+        return value;
+      }
+      return Number.parseFloat(value).toFixed(2);
     }
   }
 }

@@ -1,0 +1,21 @@
+@startuml
+!theme plain
+class Report {
+  - id: int
+  - user_id: int
+  - title: string
+  - content: string
+  - type: string
+  - status: string
+  - create_time: datetime
+  - comment: string
+  - score: float
+  - is_deleted: boolean
+  - is_read: boolean
+  - is_pass: boolean
+  - last_edit_user_id: int
+  - att_id: int
+  - is_draft: boolean
+}
+
+@enduml
