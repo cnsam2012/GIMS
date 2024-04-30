@@ -238,8 +238,6 @@
             </el-card>
           </el-col>
         </template>
-
-
         <template v-if="info.userType === 9">
         </template>
 
