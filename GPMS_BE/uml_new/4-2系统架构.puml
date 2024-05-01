@@ -9,7 +9,7 @@ package "反向代理" {
 }
 
 package "后端服务" {
-  [GPMS Api Controller] as Backend
+  [GIMS Api Controller] as Backend
   database "数据库" {
     [关系型数据库] as SQLDB
     [文档存储] as NoSQLDB
